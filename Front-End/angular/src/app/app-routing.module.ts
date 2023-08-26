@@ -5,6 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 // project import
 import { AdminComponent } from './theme/layout/admin/admin.component';
 import { GuestComponent } from './theme/layout/guest/guest.component';
+import SamplePageComponent from './demo/sample-page/sample-page.component';
 
 const routes: Routes = [
   {
@@ -41,6 +42,10 @@ const routes: Routes = [
         loadComponent: () => import('./demo/sample-page/sample-page.component')
       }
     ]
+  },
+  {
+    path: 'Home',
+    component: SamplePageComponent,
   },
   {
     path: '',

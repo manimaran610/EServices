@@ -35,6 +35,19 @@ export const NavigationItems: NavigationItem[] = [
     ]
   },
   {
+    id: 'Sample-Page',
+    title: 'Test - comp',
+    type: 'group',
+    icon: 'icon-group',
+    children: [
+      {
+        id: 'Home',
+        title: 'Home Page',
+        type: 'item',
+        url: '/Home'
+      }]
+    },
+  {
     id: 'ui-component',
     title: 'Ui Component',
     type: 'group',
