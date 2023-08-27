@@ -1,10 +1,10 @@
 <ul class="navbar-nav ms-auto">
   <li>
-    <div class="dropdown" ngbDropdown placement="auto">
+    <!-- <div class="dropdown" ngbDropdown placement="auto">
       <a ngbDropdownToggle href="javascript:"
         ><i class="icon feather icon-bell" title="Notification"></i><span class="badge bg-danger"><span class="sr-only"></span></span
       ></a>
-     </div>
+     </div> -->
           
          
   <li (click)="this.visibleUserList = !this.visibleUserList">
@@ -35,7 +35,7 @@
             ><a href="javascript:" class="dropdown-item"><i class="feather icon-mail"></i> My Messages</a></li
           >
           <li
-            ><a href="javascript:" class="dropdown-item"><i class="feather icon-lock"></i> Lock Screen</a></li
+            ><a href="/auth/signin" class="dropdown-item"><i class="feather icon-log-out"></i> Logout</a></li
           >
         </ul>
       </div>
