@@ -1,0 +1,72 @@
+
+<p-table #singleSelectionTable id="singleSelectionTable" [value]="listOfItems"
+    [paginator]="hasPagination" [rows]="rows" selectionMode="single" [(selection)]="selectedRow" [dataKey]="dataKey"
+    [rowsPerPageOptions]="rowsPerPageOptions" [columns]="gridColumnOptions" editMode="row" [lazy]="hasLazyLoading"
+    [totalRecords]="totalRecords" [loading]="loadingSpinner" (onRowSelect)="onRowSelected($event)"
+    (onLazyLoad)="onLazyLoadEvent($event)"
+    [(first)]="firstOffset"  [sortField]="sortField!" [sortOrder]="sortOrder">
+
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            <th *ngIf="hasradioButton" style="width: 4rem"></th>
+            <ng-container *ngFor="let col of columns">
+
+                <th *ngIf="col.isSortable" [pSortableColumn]="col.field" [ngStyle]="{'width':col.width}">
+                    {{ col.header }}
+                    <p-sortIcon *ngIf="col.isSortable" [field]="col.field"></p-sortIcon>
+                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" type="text" [showAddButton]="false"
+                        [showOperator]="false" display="menu"></p-columnFilter>
+                </th>
+
+                <th *ngIf="!col.isSortable">
+                    {{ col.header }}
+                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" display="menu" [showAddButton]="false"
+                        [showOperator]="false"></p-columnFilter>
+                </th>
+            </ng-container>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing" let-rowIndex="rowIndex">
+        <tr [pEditableRow]="rowData" #htmlTableRowElement>
+            <td *ngIf="hasradioButton">
+                <p-tableRadioButton [value]="rowData" (click)="onRadioSelected()"></p-tableRadioButton>
+            </td>
+            <td *ngFor="let col of columns">
+                <p-cellEditor>
+                    <ng-template pTemplate="input">
+                        <input pInputText type="text" class="form-control" [(ngModel)]="rowData[col.field]">
+                    </ng-template>
+                    <ng-template *ngIf="!col.hasRouterLink" pTemplate="output">
+                        {{rowData[col.field]}}
+                    </ng-template>
+                    <ng-template *ngIf="col.hasRouterLink" pTemplate="output">
+                        <a routerLink="col.routerLink +'/' + rowData[dataKey] + '/view'">{{rowData[col.field]}}</a>
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+
+            <td>
+                <div class="flex align-items-center justify-content-center gap-2">
+
+                    <button *ngIf="!editing && canEdit" pInitEditableRow pRipple class="btn btn-primary"
+                        (click)="onRowEditInit(rowData,rowIndex) "><i class="feather icon-edit"></i></button>
+                    <button *ngIf="!editing && canDelete" iconType="delete" class="m-2 btn btn-primary"
+                        (click)="onRowDelete(rowData,rowIndex)"><i class="feather icon-trash"></i></button>
+                    <button *ngIf="editing" pSaveEditableRow type="button"  class="btn btn-primary"
+                        (click)="onRowEditSave(rowData,htmlTableRowElement)"><i class="feather icon-save"></i></button>
+                    <button ton *ngIf="editing" type="button" pCancelEditableRow class="m-2 btn btn-primary"
+                        (click)="onRowEditCancel(rowData, rowIndex)"><i class="feather icon-x"></i></button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage" let-c>
+        <tr>
+            <td [attr.colspan]="c.length">
+                No records found
+            </td>
+        </tr>
+
+    </ng-template>
+</p-table>

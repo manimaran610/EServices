@@ -1,3 +1,4 @@
+import { SearchFormsComponent } from './demo/Search-forms/Search-forms.component';
 // Angular Import
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
@@ -6,6 +7,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AdminComponent } from './theme/layout/admin/admin.component';
 import { GuestComponent } from './theme/layout/guest/guest.component';
 import SamplePageComponent from './demo/sample-page/sample-page.component';
+
 
 const routes: Routes = [
   {
@@ -40,6 +42,10 @@ const routes: Routes = [
       {
         path: 'sample-page',
         loadComponent: () => import('./demo/sample-page/sample-page.component')
+      },
+      {
+        path: 'search-forms',
+        component: SearchFormsComponent,
       }
     ]
   },
@@ -47,6 +53,7 @@ const routes: Routes = [
     path: 'Home',
     component: SamplePageComponent,
   },
+
   {
     path: '',
     component: GuestComponent,

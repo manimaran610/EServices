@@ -1,5 +1,6 @@
+import { SharedModule } from 'src/app/theme/shared/shared.module';
 // Angular Import
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -22,7 +23,8 @@ import { NavContentComponent } from './theme/layout/admin/navigation/nav-content
 import { NavCollapseComponent } from './theme/layout/admin/navigation/nav-content/nav-collapse/nav-collapse.component';
 import { NavGroupComponent } from './theme/layout/admin/navigation/nav-content/nav-group/nav-group.component';
 import { NavItemComponent } from './theme/layout/admin/navigation/nav-content/nav-item/nav-item.component';
-import { SharedModule } from './theme/shared/shared.module';
+import { TableModule } from 'primeng/table';
+
 
 @NgModule({
   declarations: [
@@ -42,9 +44,11 @@ import { SharedModule } from './theme/shared/shared.module';
     NavItemComponent,
     NavCollapseComponent,
     NavGroupComponent
+    
   ],
-  imports: [BrowserModule, AppRoutingModule, SharedModule, FormsModule, ReactiveFormsModule, BrowserAnimationsModule],
+  imports: [BrowserModule, AppRoutingModule, SharedModule, FormsModule, ReactiveFormsModule, BrowserAnimationsModule,TableModule],
   providers: [],
+  schemas:[CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
