@@ -1,24 +1,49 @@
-
-<p-table #singleSelectionTable id="singleSelectionTable" [value]="listOfItems"
-    [paginator]="hasPagination" [rows]="rows" selectionMode="single" [(selection)]="selectedRow" [dataKey]="dataKey"
-    [rowsPerPageOptions]="rowsPerPageOptions" [columns]="gridColumnOptions" editMode="row" [lazy]="hasLazyLoading"
+<div class="table-responsive">
+<p-table #singleSelectionTable id="singleSelectionTable" [value]="listOfItems" 
+    [paginator]="hasPagination" [rows]="rows" selectionMode="single" [(selection)]="selectedRow" [dataKey]="dataKey" 
+    [rowsPerPageOptions]="rowsPerPageOptions" [columns]="hasColumnGroup ? groupedColumnOptions : gridColumnOptions" editMode="row" [lazy]="hasLazyLoading"
     [totalRecords]="totalRecords" [loading]="loadingSpinner" (onRowSelect)="onRowSelected($event)"
     (onLazyLoad)="onLazyLoadEvent($event)"
     [(first)]="firstOffset"  [sortField]="sortField!" [sortOrder]="sortOrder">
-
+   
     <ng-template pTemplate="header" let-columns>
-        <tr>
+        <div  *ngIf="hasColumnGroup" >
+        <tr *ngFor="let gridcol of columns">
+            
             <th *ngIf="hasradioButton" style="width: 4rem"></th>
-            <ng-container *ngFor="let col of columns">
+           
+            <ng-container *ngFor="let col of gridcol.gridColumnOptions">
 
-                <th *ngIf="col.isSortable" [pSortableColumn]="col.field" [ngStyle]="{'width':col.width}">
+                <th *ngIf="col.isSortable" [pSortableColumn]="col.field" [ngStyle]="{'width':col.width}"  [attr.rowspan]="col.rowspan"  [attr.colspan]="col.colspan">
                     {{ col.header }}
                     <p-sortIcon *ngIf="col.isSortable" [field]="col.field"></p-sortIcon>
                     <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" type="text" [showAddButton]="false"
                         [showOperator]="false" display="menu"></p-columnFilter>
                 </th>
 
-                <th *ngIf="!col.isSortable">
+                <th *ngIf="!col.isSortable"  rowspan="col.rowspan" colspan="col.colspan">
+                    {{ col.header }}
+                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" display="menu" [showAddButton]="false"
+                        [showOperator]="false"></p-columnFilter>
+                </th>
+            </ng-container>
+        </tr>
+    </div>
+       
+        <tr *ngIf="!hasColumnGroup">
+            
+            <th *ngIf="hasradioButton" style="width: 4rem"></th>
+           
+            <ng-container *ngFor="let col of columns">
+
+                <th *ngIf="col.isSortable" [pSortableColumn]="col.field" [ngStyle]="{'width':col.width}" rowspan="col.rowspan" colspan="col.colspan">
+                    {{ col.header }}
+                    <p-sortIcon *ngIf="col.isSortable" [field]="col.field"></p-sortIcon>
+                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" type="text" [showAddButton]="false"
+                        [showOperator]="false" display="menu"></p-columnFilter>
+                </th>
+
+                <th *ngIf="!col.isSortable"  rowspan="col.rowspan" colspan="col.colspan">
                     {{ col.header }}
                     <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" display="menu" [showAddButton]="false"
                         [showOperator]="false"></p-columnFilter>
@@ -70,3 +95,4 @@
 
     </ng-template>
 </p-table>
+</div>

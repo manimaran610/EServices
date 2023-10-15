@@ -1,17 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { GridColumnOptions } from 'src/Models/grid-column-options';
+import { GroupedColumnOptions } from 'src/Models/grouped-column-options';
 
 
 @Component({
     selector: 'app-grid',
     standalone: true,
     imports: [CommonModule,SharedModule,TableModule,FormsModule ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA ],
     templateUrl: './grid.component.html',
     styleUrls: ['./grid.component.css']
 })
@@ -22,6 +24,7 @@ export class GridComponent implements OnInit {
 
     @Input() title: string = '';
     @Input() listOfItems: any[] = [];
+    @Input() groupedColumnOptions:GroupedColumnOptions[]= [];
     @Input() gridColumnOptions: GridColumnOptions[] = [];
     @Input() dataKey: any;
     @Input() rows: number = 20;
@@ -35,6 +38,8 @@ export class GridComponent implements OnInit {
     @Input() loadingSpinner: boolean = false;
     @Input() selected: any;
     @Input() hasRetension: boolean = false;
+    @Input() hasColumnGroup: boolean = false;
+
 
     @Output() Save: EventEmitter<any> = new EventEmitter<any>();
     @Output() Delete: EventEmitter<any> = new EventEmitter<any>();
@@ -57,6 +62,10 @@ export class GridComponent implements OnInit {
     public ngOnInit() {
         this.selectedRow = this.selected;
         console.log("grid comp")
+        console.log(this.hasColumnGroup)
+        console.log(this.groupedColumnOptions)
+
+
     }
 
 
@@ -86,7 +95,6 @@ export class GridComponent implements OnInit {
     onRowEditInit(rowData: any, index: number) {
         this.singleSelectionTable.initRowEdit(rowData);
         this.clonedProducts[rowData[this.dataKey]] = { ...rowData };
-        this.addNewEditableRow()
     }
 
     onRowEditCancel(rowData: any, index: number) {

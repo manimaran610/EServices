@@ -6,7 +6,8 @@ import { Routes, RouterModule } from '@angular/router';
 // project import
 import { AdminComponent } from './theme/layout/admin/admin.component';
 import { GuestComponent } from './theme/layout/guest/guest.component';
-import SamplePageComponent from './demo/sample-page/sample-page.component';
+import SamplePageComponent from './demo/home-page/home-page.component';
+import { Form1Component } from './demo/ahu-forms/form1/form1.component';
 
 
 const routes: Routes = [
@@ -40,12 +41,16 @@ const routes: Routes = [
         loadComponent: () => import('./demo/forms & tables/tbl-bootstrap/tbl-bootstrap.component')
       },
       {
-        path: 'sample-page',
-        loadComponent: () => import('./demo/sample-page/sample-page.component')
+        path: 'Home-page',
+        loadComponent: () => import('./demo/home-page/home-page.component')
       },
       {
         path: 'search-forms',
         component: SearchFormsComponent,
+      },
+      {
+        path: 'form1',
+        component: Form1Component,
       }
     ]
   },

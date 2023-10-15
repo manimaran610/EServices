@@ -5,6 +5,8 @@ export class GridColumnOptions {
     public isEditable?: boolean = false;
     public hasFilter?: boolean = false;
     public width?: string = '';
+    public rowspan?: string = '';
+    public colspan?: string = '';
     public hasRouterLink?: boolean = false;
     public routerLink?: string;
     public hasDropDownOptions?: boolean = false;

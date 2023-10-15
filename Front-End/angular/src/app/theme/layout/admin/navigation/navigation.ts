@@ -30,7 +30,7 @@ export const NavigationItems: NavigationItem[] = [
         id: 'Home',
         title: 'Home',
         type: 'item',
-        url: '/sample-page',
+        url: '/Home-page',
         icon: 'feather icon-home',
 
 

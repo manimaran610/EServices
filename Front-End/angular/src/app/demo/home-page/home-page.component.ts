@@ -1,4 +1,4 @@
-import { CoreServices } from './../../../Models/core-services.Model';
+import { CoreServices } from '../../../Models/core-services.Model';
 // angular import
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -7,11 +7,11 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 
 @Component({
-  selector: 'app-sample-page',
+  selector: 'app-home-page',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  templateUrl: './sample-page.component.html',
-  styleUrls: ['./sample-page.component.scss']
+  templateUrl: './Home-page.component.html',
+  styleUrls: ['./Home-page.component.scss']
 })
 export default class SamplePageComponent implements OnInit {
 

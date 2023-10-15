@@ -18,17 +18,17 @@ export class SearchFormsComponent implements OnInit {
     console.log("search-forms-componenet")
   }
  options:GridColumnOptions[]=[
-  {field: 'name', header: 'Name', isSortable: true, hasFilter: false,isEditable:true},
-    {field: 'Age', header: 'Age', isSortable: true, hasFilter: true},
-    {field: 'exp', header: 'Experience', isSortable: true, hasFilter: true},
+  {field: 'formName', header: 'AHU Number', isSortable: true, hasFilter: false},
+    {field: 'ClientName', header: 'Client Name', isSortable: true, hasFilter: true},
+    {field: 'DateCreated', header: 'Date Created', isSortable: true, hasFilter: true}
 
  ]
 
  list:any[] =[
-  {"id":1324,"name":"mani","Age":24,"exp":2},
-  {"id":1325,"name":"maran","Age":10,"exp":7},
+  {"id":1324,"formName":"ACH001","ClientName":"Sun Medicals pvt. Ltd","DateCreated":new Date().toDateString()},
+  {"id":1326,"formName":"ACH002","ClientName":" MAcron Medicals pvt. Ltd","DateCreated":new Date().toDateString()},
 
-  {"id":1326,"name":"arun","Age":99,"exp":1},
+  {"id":1325,"formName":"ACH003","ClientName":"Sathan Medicals pvt. Ltd","DateCreated":new Date().toDateString()},
 
 
 
