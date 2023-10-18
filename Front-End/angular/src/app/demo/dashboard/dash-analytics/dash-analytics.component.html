@@ -9,7 +9,19 @@
       <p class="m-b-0"
         >{{ card.text }}<span class="float-end">{{ card.no }}</span></p
       >
-    </app-card>
+    </app-card></div>
+
+    <div class="col-md-6 col-xl-3" *ngFor="let card of cards">
+      <app-card [hidHeader]="true" cardClass="{{ card.background }} order-card">
+        <!-- <h6 class="text-white">{{ card.title }}</h6>
+        <h2 class="text-end text-white"
+          ><i class="feather {{ card.icon }} float-start"></i><span>{{ card.number }}</span>
+        </h2>
+        <p class="m-b-0"
+          >{{ card.text }}<span class="float-end">{{ card.no }}</span></p
+        > -->
+        <h3 class="text-white text-center" >Order Form <i class="feather {{ card.icon }} "></i></h3>
+      </app-card>
   </div>
   <!-- order-card end -->
 

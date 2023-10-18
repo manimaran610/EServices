@@ -1,11 +1,13 @@
-import { LegalEntityType } from "./legal-entity-type.Model";
 
-export class ApplicationServices{
-    id?:string='';
-    name?:string='';
-    description?:string='';
-    price?:number=0;
-    legalEntityType?:LegalEntityType
-    
+export class ApplicationServices {
+    id?: string = '';
+    title?: string = '';
+    subTitle?:string='';
+    description?: string = '';
+    imgSrc?: string = '';
+    background: string = '';
+    navigateTo?: string = '';
+    icon: string = '';
+
 
 }

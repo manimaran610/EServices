@@ -1,21 +1,21 @@
 <div class="col-sm-12">
   <div>
-    <h1 >Welcome to AHU Portal !</h1><br/>
-    
+    <h2 class="text-center">Welcome to AHU Portal !</h2>
+
   </div>
   <hr>
-  <div class="row" >
-    <div class="col-ld-4 col-md-4 col-sm-12" *ngFor="let item of coreServicesList">
-      <app-card [hidHeader]="true" blockClass="text-center">
-        <i class="d-block f-40"><img class="img-icon" src={{item.imgSrc}}></i>
-         
-        <h4 class="m-t-20"><span class="text-c-blue//">{{item.title}}</span></h4>
-        <p class="m-b-20">{{item.services.length > 0 ? item.services[0].name:''}}
-        <br />{{item.services.length > 1 ? item.services[1].name:''}}
-        <br />{{item.services.length > 2 ? item.services[2].name +'...':''}}<br/>
-        </p>
-       <a href="/form1"><button class="btn btn-primary btn-sm btn-round" type="button"> Create Form</button></a>
-      </app-card>
-    </div>
-
+  <div class="row" *ngFor="let coreService of coreServicesList">
+    <app-card cardTitle="{{coreService.title}}" [options]="false">
+      <div class="row">
+        <div class="col-ld-3 col-md-4 col-sm-12" *ngFor="let item of coreService.services">
+          <app-card [hidHeader]="true" cardClass="{{ item.background }} order-card" >
+            <a href="{{item.navigateTo}}">
+              <h3 class="text-white text-center">{{item.title}}<i class="feather {{ item.icon }} m-2"></i></h3>
+              <h5 class="text-white text-center">{{item.subTitle}}</h5>
+            </a>
+          </app-card>
+        </div>
+      </div>
+    </app-card>
+  </div>
 </div>

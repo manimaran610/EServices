@@ -32,6 +32,8 @@ export class AdminComponent {
     }
 
     this.navCollapsed = this.windowWidth >= 992 ? GradientConfig.collapse_menu : false;
+  //set to true , By Default It will be colapsed
+    this.navCollapsed =true
     this.navCollapsedMob = false;
   }
 
