@@ -65,7 +65,7 @@ export default class SamplePageComponent implements OnInit {
             title: 'Add Instrument',
             background: 'bg-c-blue',
             icon: 'icon ',
-            navigateTo:'/form1'
+            navigateTo:'/Instrument/Add-Instrument'
           }, 
         ]
       }

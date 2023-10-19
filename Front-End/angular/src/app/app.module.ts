@@ -26,6 +26,7 @@ import { NavItemComponent } from './theme/layout/admin/navigation/nav-content/na
 import { TableModule } from 'primeng/table';
 
 
+
 @NgModule({
   declarations: [
     AppComponent,

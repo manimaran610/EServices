@@ -8,6 +8,7 @@ import { AdminComponent } from './theme/layout/admin/admin.component';
 import { GuestComponent } from './theme/layout/guest/guest.component';
 import SamplePageComponent from './demo/home-page/home-page.component';
 import { Form1Component } from './demo/ahu-forms/form1/form1.component';
+import { AddInstrumentComponent } from './demo/Instruments/add-instrument/add-instrument.component';
 
 
 const routes: Routes = [
@@ -51,6 +52,15 @@ const routes: Routes = [
       {
         path: 'form1',
         component: Form1Component,
+      },
+      {
+        path:'Instrument',
+        children:[
+          {
+            path:'Add-Instrument',
+            component:AddInstrumentComponent
+          }
+        ]
       }
     ]
   },

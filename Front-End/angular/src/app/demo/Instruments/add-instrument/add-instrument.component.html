@@ -1,0 +1,59 @@
+<app-card cardTitle="Add Instrument" [options]="false">
+  <h4 class="text-c-blue">Instrument Details:</h4>
+  <hr />
+  <form [formGroup]="instrumentFormGroup" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Serial No:</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="serialNo"
+            placeholder="Enter Serial Number" />
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group ">
+          <label for="exampleCheck1">Calibrated on</label>
+          <input type="date" class="form-control" id="exampleCheck1" formControlName="calibratedOn" />
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Make</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="make"
+            placeholder="Enter Make" />
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group ">
+          <label for="exampleCheck1">Calibrated Due on</label>
+          <input type="date" class="form-control" id="exampleCheck1" formControlName="calibratedDueOn"/>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Model</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="model" placeholder="Enter Model"/>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group ">
+          <label for="exampleCheck1">Certificate</label>
+          <input type="text" class="form-control" id="exampleCheck1" formControlName="certificate" placeholder="Enter Certificate"/>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <div class="container">
+      <div class="row">
+        <div class="col text-center">
+          <button class="btn btn-primary m-2" type="button"  (click)="onClear()">Clear</button>
+         <button class="btn btn-success" type="submit">Save Instrument</button>
+        </div>
+      </div>
+    </div>
+    </form>
+</app-card>
+
