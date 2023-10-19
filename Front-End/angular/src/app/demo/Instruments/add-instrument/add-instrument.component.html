@@ -1,13 +1,33 @@
-<app-card cardTitle="Add Instrument" [options]="false">
+
+<!-- BreadCrumb -->
+<nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>'">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a href="/Home-page"><i class="feather icon-home"></i></a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Add Instrument</li>
+  </ol>
+</nav>
+
+<!-- Toast Messages -->
+<p-messages [value]="msgs"></p-messages>
+
+<!-- <button type="button" class="btn btn-primary mb-5" (click)="toggle()">Add instrument</button> -->
+
+<!-- Add Instrument Form -->
+<app-card cardTitle="Add Instrument" *ngIf="isAddInstrument" [options]="false">
   <h4 class="text-c-blue">Instrument Details:</h4>
   <hr />
+  <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000"></p-confirmDialog>
   <form [formGroup]="instrumentFormGroup" (ngSubmit)="onSubmit()">
     <div class="row">
       <div class="col-md-6">
         <div class="form-group">
           <label for="exampleInputPassword1">Serial No:</label>
-          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="serialNo"
-            placeholder="Enter Serial Number" />
+          <input type="text" class="form-control is-invalid" id="exampleInputPassword1" formControlName="serialNo"  placeholder="Enter Serial Number" />
+          <!-- [ngClass]="{'is-invalid': instrumentFormGroup.controls['serialNo'].errors  && (instrumentFormGroup.controls['serialNo'].touched || instrumentFormGroup.controls['serialNo'].dirty), 'is-valid':instrumentFormGroup.controls['serialNo'].valid}" />
+            <div class="invalid-feedback" *ngIf="!instrumentFormGroup.controls['serialNo'].valid">Required</div> -->
+
         </div>
       </div>
       <div class="col-md-6">
@@ -56,4 +76,8 @@
     </div>
     </form>
 </app-card>
+
+
+
+
 
