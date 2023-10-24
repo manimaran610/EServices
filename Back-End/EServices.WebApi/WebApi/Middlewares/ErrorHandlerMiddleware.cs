@@ -1,6 +1,8 @@
 ﻿using Application.Exceptions;
 using Application.Wrappers;
 using Microsoft.AspNetCore.Http;
+using Serilog.Context;
+using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +32,7 @@ namespace WebApi.Middlewares
                 var response = context.Response;
                 response.ContentType = "application/json";
                 var responseModel = new Response<string>() { Succeeded = false, Message = error?.Message };
-                
+
                 switch (error)
                 {
                     case Application.Exceptions.ApiException e:
@@ -49,6 +51,7 @@ namespace WebApi.Middlewares
                     default:
                         // unhandled error
                         response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        Serilog.Log.Error(error.Message);
                         break;
                 }
                 var result = JsonSerializer.Serialize(responseModel);

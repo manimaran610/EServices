@@ -14,18 +14,12 @@ namespace WebApi.Extensions
         {
             services.AddSwaggerGen(c =>
             {
-                // c.IncludeXmlComments(string.Format(@"{0}\CleanArchitecture.WebApi.xml", System.AppDomain.CurrentDomain.BaseDirectory));
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "Clean Architecture - WebApi",
+                    Title = "EServices - WebApi",
                     Description = "This Api will be responsible for overall data distribution and authorization.",
-                    Contact = new OpenApiContact
-                    {
-                        Name = "codewithmukesh",
-                        Email = "hello@codewithmukesh.com",
-                        Url = new Uri("https://codewithmukesh.com/contact"),
-                    }
+    
                 });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
