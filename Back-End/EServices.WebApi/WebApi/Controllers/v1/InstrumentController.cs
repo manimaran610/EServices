@@ -18,10 +18,16 @@ namespace WebApi.Controllers.v1
     {
         //GET: api/<controller>
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] GetAllInstrumentsParameter filter)
+        public async Task<IActionResult> Get([FromQuery] GetAllInstrumentsParameter reqParams)
         {
-          
-            return Ok(await Mediator.Send(new GetAllInstrumentsQuery() { PageSize = filter.PageSize, PageNumber = filter.PageNumber  }));
+
+            return Ok(await Mediator.Send(new GetAllInstrumentsQuery()
+            {
+                PageSize = reqParams.PageSize,
+                PageNumber = reqParams.PageNumber,
+                Filter =reqParams.Filter,
+                Sort=reqParams.Sort
+            }));
         }
 
         // GET api/<controller>/5
@@ -33,7 +39,7 @@ namespace WebApi.Controllers.v1
 
         // POST api/<controller>
         [HttpPost]
-        public async Task<IActionResult> Post([FromQuery]CreateInstrumentCommand command)
+        public async Task<IActionResult> Post([FromQuery] CreateInstrumentCommand command)
         {
             return Ok(await Mediator.Send(command));
         }

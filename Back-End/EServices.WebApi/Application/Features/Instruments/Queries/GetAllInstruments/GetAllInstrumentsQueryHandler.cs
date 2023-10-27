@@ -23,8 +23,10 @@ namespace Application.Features.Instruments.Queries.GetAllInstruments
         public async Task<PagedResponse<IEnumerable<GetAllInstrumentsViewModel>>> Handle(GetAllInstrumentsQuery request, CancellationToken cancellationToken)
         {
             var validFilter = _mapper.Map<GetAllInstrumentsParameter>(request);
-            var instrumentPagedResponse = await _instrumentRepository.GetPagedReponseAsync(validFilter.PageNumber,validFilter.PageSize);
+
+            var instrumentPagedResponse = await _instrumentRepository.GetPagedReponseAsync(validFilter.PageNumber,validFilter.PageSize,validFilter.Filter,validFilter.Sort);
             var totalCount = await _instrumentRepository.TotalCountAsync();
+
             var instrumentViewModel = _mapper.Map<IEnumerable<GetAllInstrumentsViewModel>>(instrumentPagedResponse);
             return new PagedResponse<IEnumerable<GetAllInstrumentsViewModel>>(instrumentViewModel, validFilter.PageNumber, validFilter.PageSize,instrumentViewModel.Count(),totalCount);           
         }

@@ -3,10 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Domain.Common;
 using FluentValidation;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Shared.Extensions
 {
@@ -14,7 +12,7 @@ namespace Infrastructure.Shared.Extensions
     public static class DynamicSortExtension
     {
         private const BindingFlags DefaultBindingFlags = BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
-        public static  DbSet<T> GetSortedList<T>(this DbSet<T> collection, string sort) where T :AuditableBaseEntity
+        public static  IEnumerable<T> GetSortedList<T>(this IEnumerable<T> collection, string sort) where T :AuditableBaseEntity
         {
             if (string.IsNullOrEmpty(sort)) return collection;
             var array = sort.Contains(',') ? sort.Split(",") : new string[] { sort };
@@ -30,7 +28,7 @@ namespace Infrastructure.Shared.Extensions
             var result = SortDynamically<T>(collection, listOfsortOptions);
             return result; 
         }
-        private static DbSet<T> SortDynamically<T>(DbSet<T> collection, IList<SortOptions> sorts) where T :AuditableBaseEntity
+        private static IEnumerable<T> SortDynamically<T>(IEnumerable<T> collection, IList<SortOptions> sorts) where T :AuditableBaseEntity
         {
             if (sorts.Count == 0)
             {
@@ -40,8 +38,8 @@ namespace Infrastructure.Shared.Extensions
             var sortedPersonsAlt = firstSort.Direction.ToLower()
             switch
             {
-                "asc" => collection.OrderBy(x =>x!.GetType().GetProperty(firstSort.PropertyName, DefaultBindingFlags).GetValue(x, null).ToString(), StringComparer.Ordinal),
-                "desc" => collection.OrderByDescending(x => x!.GetType().GetProperty(firstSort.PropertyName, DefaultBindingFlags).GetValue(x, null).ToString(), StringComparer.Ordinal),
+                "asc" => collection.OrderBy(x =>x!.GetPropertyValue(firstSort.PropertyName), StringComparer.Ordinal),
+                "desc" => collection.OrderByDescending(x => x!.GetPropertyValue(firstSort.PropertyName), StringComparer.Ordinal),
                 _ => throw new ValidationException("Sort Direction must be asc or desc")
             };
             foreach (var sort in sorts.OrderBy(x => x.SortOrder).Skip(1))
@@ -49,12 +47,12 @@ namespace Infrastructure.Shared.Extensions
                 sortedPersonsAlt = sort.Direction.ToLower()
                 switch
                 {
-                    "asc" => sortedPersonsAlt.ThenBy(x => x!.GetType().GetProperty(sort.PropertyName, DefaultBindingFlags).GetValue(x, null).ToString(), StringComparer.Ordinal),
-                    "desc" => sortedPersonsAlt.ThenByDescending(x => x!.GetType().GetProperty(sort.PropertyName, DefaultBindingFlags).GetValue(x, null).ToString(), StringComparer.Ordinal),
+                    "asc" => sortedPersonsAlt.ThenBy(x => x!.GetPropertyValue(sort.PropertyName), StringComparer.Ordinal),
+                    "desc" => sortedPersonsAlt.ThenByDescending(x =>  x!.GetPropertyValue(sort.PropertyName), StringComparer.Ordinal),
                     _ => throw new ValidationException("sort Direction must be asc or desc")
                 };
             }
-            return collection;
+            return sortedPersonsAlt;
         }
         private class SortOptions
         {
@@ -75,6 +73,11 @@ namespace Infrastructure.Shared.Extensions
                 }
             }
             return result;
+        }
+
+          private static string GetPropertyValue(this object inputObject, string propertyName)
+        {
+            return inputObject.GetType().GetProperty(propertyName, DefaultBindingFlags)?.GetValue(inputObject, null)?.ToString()!;
         }
     }
 

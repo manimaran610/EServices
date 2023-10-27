@@ -238,7 +238,7 @@ namespace Infrastructure.Shared.Extensions
             return filteredResult;
         }
 
-        public static string GetPropertyValue(string propertyName, object inputObject)
+        private static string GetPropertyValue(this string propertyName, object inputObject)
         {
             return inputObject.GetType().GetProperty(propertyName, DefaultBindingFlags)?.GetValue(inputObject, null)?.ToString()!;
         }

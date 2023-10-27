@@ -1,15 +1,15 @@
 ﻿using Application.Interfaces;
+using Domain.Common;
 using Infrastructure.Persistence.Contexts;
+using Infrastructure.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Persistence.Repository
 {
-    public class GenericRepositoryAsync<T> : IGenericRepositoryAsync<T> where T : class
+    public class GenericRepositoryAsync<T> : IGenericRepositoryAsync<T> where T : AuditableBaseEntity
     {
         private readonly ApplicationDbContext _dbContext;
 
@@ -23,14 +23,16 @@ namespace Infrastructure.Persistence.Repository
             return await _dbContext.Set<T>().FindAsync(id);
         }
 
-        public async Task<IReadOnlyList<T>> GetPagedReponseAsync(int pageNumber, int pageSize)
+        public async Task<IReadOnlyList<T>> GetPagedReponseAsync(int pageNumber, int pageSize, string filter = null, string sort = null)
         {
             return await _dbContext
                 .Set<T>()
+                .GetFilteredList(filter)
+                .GetSortedList(sort)
+                .AsNoTracking()
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
-                .AsNoTracking()
-                .ToListAsync();
+                .ToDynamicListAsync<T>();
         }
 
         public async Task<T> AddAsync(T entity)
@@ -58,5 +60,12 @@ namespace Infrastructure.Persistence.Repository
                  .Set<T>()
                  .ToListAsync();
         }
+
+        public async Task<int> TotalCountAsync()
+        {
+            return await Task.FromResult(_dbContext
+         .Set<T>().Count());
+        }
+
     }
 }
