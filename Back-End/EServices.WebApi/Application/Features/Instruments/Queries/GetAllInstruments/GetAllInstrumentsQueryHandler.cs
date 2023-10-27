@@ -24,8 +24,9 @@ namespace Application.Features.Instruments.Queries.GetAllInstruments
         {
             var validFilter = _mapper.Map<GetAllInstrumentsParameter>(request);
             var instrumentPagedResponse = await _instrumentRepository.GetPagedReponseAsync(validFilter.PageNumber,validFilter.PageSize);
+            var totalCount = await _instrumentRepository.TotalCountAsync();
             var instrumentViewModel = _mapper.Map<IEnumerable<GetAllInstrumentsViewModel>>(instrumentPagedResponse);
-            return new PagedResponse<IEnumerable<GetAllInstrumentsViewModel>>(instrumentViewModel, validFilter.PageNumber, validFilter.PageSize);           
+            return new PagedResponse<IEnumerable<GetAllInstrumentsViewModel>>(instrumentViewModel, validFilter.PageNumber, validFilter.PageSize,instrumentViewModel.Count(),totalCount);           
         }
     }
 }

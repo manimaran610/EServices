@@ -9,5 +9,8 @@ namespace Application.Features.Instruments.Queries.GetAllInstruments
     {
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
+        public string Filter { get; set; } = string.Empty;
+        public string Sort { get; set; } = string.Empty;
+
     }
 }
