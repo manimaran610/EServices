@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Application.Interfaces.Repositories;
 using Application.Wrappers;
 using AutoMapper;
+using FluentValidation;
 using MediatR;
 
 namespace Application.Features.Instruments.Queries.GetAllInstruments
@@ -22,13 +23,12 @@ namespace Application.Features.Instruments.Queries.GetAllInstruments
 
         public async Task<PagedResponse<IEnumerable<GetAllInstrumentsViewModel>>> Handle(GetAllInstrumentsQuery request, CancellationToken cancellationToken)
         {
-            var validFilter = _mapper.Map<GetAllInstrumentsParameter>(request);
 
-            var instrumentPagedResponse = await _instrumentRepository.GetPagedReponseAsync(validFilter.PageNumber,validFilter.PageSize,validFilter.Filter,validFilter.Sort);
+            var instrumentPagedResponse = await _instrumentRepository.GetPagedReponseAsync(request.PageNumber,request.PageSize,request.Filter,request.Sort);
             var totalCount = await _instrumentRepository.TotalCountAsync();
 
             var instrumentViewModel = _mapper.Map<IEnumerable<GetAllInstrumentsViewModel>>(instrumentPagedResponse);
-            return new PagedResponse<IEnumerable<GetAllInstrumentsViewModel>>(instrumentViewModel, validFilter.PageNumber, validFilter.PageSize,instrumentViewModel.Count(),totalCount);           
+            return new PagedResponse<IEnumerable<GetAllInstrumentsViewModel>>(instrumentViewModel, request.PageNumber, request.PageSize,instrumentViewModel.Count(),totalCount);           
         }
     }
 }

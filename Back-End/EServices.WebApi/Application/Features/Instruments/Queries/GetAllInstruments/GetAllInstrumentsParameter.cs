@@ -6,7 +6,7 @@ using Application.Filters;
 
 namespace Application.Features.Instruments.Queries.GetAllInstruments
 {
-    public class GetAllInstrumentsParameter :RequestParameter
+    public class GetAllInstrumentsParameter : RequestParameter
     {
         
     }
