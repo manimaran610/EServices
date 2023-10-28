@@ -25,9 +25,7 @@ namespace Application.Features.Instruments.Commands.CreateInstrument
         public async Task<Response<int>> Handle(CreateInstrumentCommand request, CancellationToken cancellationToken)
         {
             var instrument = _mapper.Map<Domain.Entities.Instrument>(request);
-            instrument.CertificateName = request.Certificate.FileName;
-            instrument.CertificateFile = await ReadFileContent(request.Certificate);
-            
+                     
             await _instrumentRepository.AddAsync(instrument);
             return new Response<int>(instrument.Id);
         }

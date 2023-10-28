@@ -27,10 +27,18 @@ namespace WebApi
             services.AddPersistenceInfrastructure(_config);
             services.AddSharedInfrastructure(_config);
             services.AddSwaggerExtension();
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
             services.AddApiVersioningExtension();
             services.AddHealthChecks();
             services.AddScoped<IAuthenticatedUserService, AuthenticatedUserService>();
+
+            // Add Cors
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -44,6 +52,7 @@ namespace WebApi
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+            app.UseCors("MyPolicy");
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();
@@ -52,10 +61,10 @@ namespace WebApi
             app.UseErrorHandlingMiddleware();
             app.UseHealthChecks("/health");
 
-           app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints =>
+             {
+                 endpoints.MapControllers();
+             });
         }
     }
 }

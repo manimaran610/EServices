@@ -32,14 +32,14 @@ namespace WebApi.Controllers.v1
 
         // POST api/<controller>
         [HttpPost]
-        public async Task<IActionResult> Post([FromQuery] CreateInstrumentCommand command)
+        public async Task<IActionResult> Post(CreateInstrumentCommand command)
         {
             return Ok(await Mediator.Send(command));
         }
 
         // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromQuery] UpdateInstrumentCommand command)
+        public async Task<IActionResult> Put(int id,UpdateInstrumentCommand command)
         {
             if (id != command.Id)
             {
