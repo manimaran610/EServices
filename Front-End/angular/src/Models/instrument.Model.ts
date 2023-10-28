@@ -1,8 +1,9 @@
 export class Instrument {
-    serialNo: string='';
-    make: string='';
-    model: string='';
+    serialNo: string = '';
+    make: string = '';
+    model: string = '';
     calibratedOn?: Date;
     calibratedDueOn?: Date;
-    certificateName?: any;
+    certificateName?: string;
+    CertificateFile: any;
 }
