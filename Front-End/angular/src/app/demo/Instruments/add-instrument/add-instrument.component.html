@@ -10,7 +10,8 @@
 </nav>
 
 <!-- Toast Messages -->
-<p-messages [value]="msgs"></p-messages>
+<!-- <p-messages  position="top-center" [value]="msgs"></p-messages> -->
+<p-toast position="bottom-center" key="tc"></p-toast>
 
 <!-- <button type="button" class="btn btn-primary mb-5" (click)="toggle()">Add instrument</button> -->
 
@@ -69,7 +70,7 @@
     <div class="container">
       <div class="row">
         <div class="col text-center">
-          <button class="btn btn-primary m-2" type="button"  (click)="onClear()">Clear</button>
+          <button class="btn btn-primary m-2" type="button"  pButton pRipple  (click)="onClear()">Clear</button>
          <button class="btn btn-success" type="submit">Save Instrument</button>
         </div>
       </div>
