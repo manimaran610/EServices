@@ -18,9 +18,8 @@ namespace Application.Mappings
             CreateMap<CreateProductCommand, Product>();
             CreateMap<GetAllProductsQuery, GetAllProductsParameter>();
 
-  CreateMap<Instrument, GetAllInstrumentsViewModel>().ReverseMap();
-            CreateMap<CreateInstrumentCommand,Instrument>();
-            CreateMap<GetAllInstrumentsQuery, GetAllInstrumentsParameter>();
+            CreateMap<Instrument, GetAllInstrumentsViewModel>().ReverseMap();
+            CreateMap<CreateInstrumentCommand, Instrument>();
 
         }
     }

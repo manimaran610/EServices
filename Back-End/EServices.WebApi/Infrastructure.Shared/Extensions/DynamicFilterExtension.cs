@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Domain.Common;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Shared.Extensions
 {
@@ -12,9 +11,9 @@ namespace Infrastructure.Shared.Extensions
     {
         private const BindingFlags DefaultBindingFlags = BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
 
-        public static DbSet<T> GetFilteredList<T>(this DbSet<T> collection, string propertyName, string filterString) where T:AuditableBaseEntity
+        public static List<T> GetFilteredList<T>(this IEnumerable<T> collection, string propertyName, string filterString) where T:AuditableBaseEntity
         {
-            var filteredResult = collection;
+            var filteredResult = new List<T>();
             var filterName = string.Empty;
             var filterNameValue = string.Empty;
             if (filterString.Contains(':'))

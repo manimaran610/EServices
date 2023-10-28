@@ -18,7 +18,7 @@ namespace Infrastructure.Shared.Extensions
                 {
                     filteredResult = GetFilterFromFilterString(filterString.Split(",")[0]);
                     filterString.Split(",")
-                    .Skip(1).ToList()
+                    .Skip(0).ToList()
                     .ForEach(e => filteredResult.Filters.Add(GetFilterFromFilterString(e)));
                 }
                 else filteredResult = GetFilterFromFilterString(filterString);
@@ -35,7 +35,7 @@ namespace Infrastructure.Shared.Extensions
                     Field = filterString.Split(':')[0],
                     Operator = filterString.Split(':')[1],
                     Value = filterString.Split(':')[2],
-                    Logic = "and"
+                    Logic = "&&"
                 };
             }
             return new Filter();

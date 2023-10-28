@@ -18,16 +18,9 @@ namespace WebApi.Controllers.v1
     {
         //GET: api/<controller>
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] GetAllInstrumentsParameter reqParams)
+        public async Task<IActionResult> Get([FromQuery] GetAllInstrumentsQuery query)
         {
-
-            return Ok(await Mediator.Send(new GetAllInstrumentsQuery()
-            {
-                PageSize = reqParams.PageSize,
-                PageNumber = reqParams.PageNumber,
-                Filter =reqParams.Filter,
-                Sort=reqParams.Sort
-            }));
+            return Ok(await Mediator.Send(query));
         }
 
         // GET api/<controller>/5
