@@ -16,9 +16,8 @@ namespace Infrastructure.Shared.Extensions
             {
                 if (filterString.Contains(","))
                 {
-                    filteredResult = GetFilterFromFilterString(filterString.Split(",")[0]);
-                    filterString.Split(",")
-                    .Skip(0).ToList()
+                    filteredResult.Logic = "&&";
+                    filterString.Split(",").ToList()
                     .ForEach(e => filteredResult.Filters.Add(GetFilterFromFilterString(e)));
                 }
                 else filteredResult = GetFilterFromFilterString(filterString);
