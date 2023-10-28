@@ -7,25 +7,25 @@ namespace Application.Filters
 {
     public class RequestParameter : IRequestParameter
     {
-        public int PageNumber { get; set; }
-        public int PageSize { get; set; }
+        public int Offset { get; set; }
+        public int Count { get; set; }
         public string Filter { get; set; }
         public string Sort { get; set; }
         public RequestParameter()
         {
-            this.PageNumber = 1;
-            this.PageSize = 10;
+            this.Offset = 1;
+            this.Count = 10;
         }
         public RequestParameter(int pageNumber, int pageSize)
         {
-            this.PageNumber = pageNumber < 1 ? 1 : pageNumber;
-            this.PageSize = pageSize < 1 ? 0 : pageSize;
+            this.Offset = pageNumber < 1 ? 1 : pageNumber;
+            this.Count = pageSize < 1 ? 0 : pageSize;
         }
 
         public RequestParameter(int pageNumber, int pageSize, string filter, string sort)
         {
-            this.PageNumber = pageNumber < 1 ? 1 : pageNumber;
-            this.PageSize = pageSize < 1 ? 0 : pageSize;
+            this.Offset = pageNumber < 1 ? 1 : pageNumber;
+            this.Count = pageSize < 1 ? 0 : pageSize;
             this.Filter = filter;
             this.Sort = sort;
         }

@@ -6,26 +6,26 @@ namespace Application.Wrappers
 {
     public class PagedResponse<T> : Response<T>
     {
-        public int PageNumber { get; set; }
-        public int PageSize { get; set; }
+        public int Offset { get; set; }
+        public int Count { get; set; }
         public int TotalCount { get; set; }
-        public int Count {get;set;}
+        public int ResultCount {get;set;}
 
-        public PagedResponse(T data, int pageNumber, int pageSize)
+        public PagedResponse(T data, int offset, int count)
         {
-            this.PageNumber = pageNumber;
-            this.PageSize = pageSize;
+            this.Offset = offset;
+            this.Count = count;
             this.Data = data;
             this.Message = null;
             this.Succeeded = true;
             this.Errors = null;
         }
 
-        public PagedResponse(T data, int pageNumber, int pageSize,int count, int totalCount)
+        public PagedResponse(T data, int offset, int count,int resultCount, int totalCount)
         {
-            this.PageNumber = pageNumber;
-            this.PageSize = pageSize;
+            this.Offset = offset;
             this.Count = count;
+            this.ResultCount = resultCount;
             this.TotalCount = totalCount;
             this.Data = data;
             this.Message = null;

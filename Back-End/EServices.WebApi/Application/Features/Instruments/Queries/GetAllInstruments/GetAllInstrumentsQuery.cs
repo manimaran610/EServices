@@ -8,8 +8,8 @@ namespace Application.Features.Instruments.Queries.GetAllInstruments
 {
     public class GetAllInstrumentsQuery :IRequestParameter, IRequest<PagedResponse<IEnumerable<GetAllInstrumentsViewModel>>>
     {
-        public int PageNumber { get; set; }
-        public int PageSize { get; set; }
+        public int Offset { get; set; }
+        public int Count { get; set; }
         public string Filter { get; set; }
         public string Sort { get; set; }
 

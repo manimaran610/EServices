@@ -23,15 +23,15 @@ namespace Infrastructure.Persistence.Repository
             return await _dbContext.Set<T>().FindAsync(id);
         }
 
-        public async Task<IReadOnlyList<T>> GetPagedReponseAsync(int pageNumber, int pageSize, string filter = null, string sort = null)
+        public async Task<IReadOnlyList<T>> GetPagedReponseAsync(int offset, int count, string filter = null, string sort = null)
         {
             return await _dbContext
                 .Set<T>()
                 .GetFilteredList(filter)
                 .GetSortedList(sort)
                 .AsNoTracking()
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                .Skip(offset)
+                .Take(count)
                 .ToDynamicListAsync<T>();
         }
 

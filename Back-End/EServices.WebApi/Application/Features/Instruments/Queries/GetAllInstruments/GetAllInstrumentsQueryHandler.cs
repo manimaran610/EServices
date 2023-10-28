@@ -24,11 +24,11 @@ namespace Application.Features.Instruments.Queries.GetAllInstruments
         public async Task<PagedResponse<IEnumerable<GetAllInstrumentsViewModel>>> Handle(GetAllInstrumentsQuery request, CancellationToken cancellationToken)
         {
 
-            var instrumentPagedResponse = await _instrumentRepository.GetPagedReponseAsync(request.PageNumber,request.PageSize,request.Filter,request.Sort);
+            var instrumentPagedResponse = await _instrumentRepository.GetPagedReponseAsync(request.Offset,request.Count,request.Filter,request.Sort);
             var totalCount = await _instrumentRepository.TotalCountAsync();
 
             var instrumentViewModel = _mapper.Map<IEnumerable<GetAllInstrumentsViewModel>>(instrumentPagedResponse);
-            return new PagedResponse<IEnumerable<GetAllInstrumentsViewModel>>(instrumentViewModel, request.PageNumber, request.PageSize,instrumentViewModel.Count(),totalCount);           
+            return new PagedResponse<IEnumerable<GetAllInstrumentsViewModel>>(instrumentViewModel, request.Offset, request.Count,instrumentViewModel.Count(),totalCount);           
         }
     }
 }
