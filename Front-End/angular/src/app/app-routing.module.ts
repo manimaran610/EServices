@@ -54,11 +54,11 @@ const routes: Routes = [
         component: Form1Component,
       },
       {
-        path:'Instrument',
-        children:[
+        path: 'Instrument',
+        children: [
           {
-            path:'Add-Instrument',
-            component:AddInstrumentComponent
+            path: 'Add-Instrument',
+            component: AddInstrumentComponent
           }
         ]
       }
@@ -89,4 +89,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

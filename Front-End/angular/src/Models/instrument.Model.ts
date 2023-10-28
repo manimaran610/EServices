@@ -4,5 +4,5 @@ export class Instrument {
     model: string='';
     calibratedOn?: Date;
     calibratedDueOn?: Date;
-    certificate: string='';
+    certificateName?: any;
 }

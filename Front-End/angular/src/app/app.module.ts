@@ -24,6 +24,7 @@ import { NavCollapseComponent } from './theme/layout/admin/navigation/nav-conten
 import { NavGroupComponent } from './theme/layout/admin/navigation/nav-content/nav-group/nav-group.component';
 import { NavItemComponent } from './theme/layout/admin/navigation/nav-content/nav-item/nav-item.component';
 import { TableModule } from 'primeng/table';
+import { HttpClientModule } from '@angular/common/http';
 
 
 
@@ -47,7 +48,7 @@ import { TableModule } from 'primeng/table';
     NavGroupComponent
     
   ],
-  imports: [BrowserModule, AppRoutingModule, SharedModule, FormsModule, ReactiveFormsModule, BrowserAnimationsModule,TableModule],
+  imports: [BrowserModule, AppRoutingModule, SharedModule, FormsModule, ReactiveFormsModule, BrowserAnimationsModule,TableModule,HttpClientModule],
   providers: [],
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]

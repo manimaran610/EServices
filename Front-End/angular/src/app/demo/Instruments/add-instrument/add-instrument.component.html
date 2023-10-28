@@ -61,7 +61,7 @@
       <div class="col-md-6">
         <div class="form-group ">
           <label for="exampleCheck1">Certificate</label>
-          <input type="text" class="form-control" id="exampleCheck1" formControlName="certificate" placeholder="Enter Certificate"/>
+          <input type="file" class="form-control" id="exampleCheck1"  #fileInput (change)="uploadFile($event.target)" formControlName="certificate" placeholder="Select Certificate"/>
         </div>
       </div>
     </div>
