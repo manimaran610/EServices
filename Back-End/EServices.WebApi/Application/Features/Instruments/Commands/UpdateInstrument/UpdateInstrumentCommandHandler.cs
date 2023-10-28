@@ -32,12 +32,13 @@ namespace Application.Features.Instruments.Commands.UpdateInstrument
                 instrument.Model = command.Model;
                 instrument.CalibratedOn = command.CalibratedOn;
                 instrument.CalibratedDueOn = command.CalibratedDueOn;
+                instrument.CertificateName =command.CertificateName;
 
-                if (command.Certificate != null)
-                {
-                    instrument.CertificateName = command.Certificate.FileName;
-                    instrument.CertificateFile = await ReadFileContent(command.Certificate);
-                }
+                // if (command.Certificate != null)
+                // {
+                //     instrument.CertificateName = command.Certificate.FileName;
+                //     instrument.CertificateFile = await ReadFileContent(command.Certificate);
+                // }
 
                 await _instrumentRepository.UpdateAsync(instrument);
                 return new Response<int>(instrument.Id);
