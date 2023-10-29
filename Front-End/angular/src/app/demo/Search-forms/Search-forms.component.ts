@@ -18,9 +18,9 @@ export class SearchFormsComponent implements OnInit {
     console.log("search-forms-componenet")
   }
  options:GridColumnOptions[]=[
-  {field: 'formName', header: 'AHU Number', isSortable: true, hasFilter: false},
-    {field: 'ClientName', header: 'Client Name', isSortable: true, hasFilter: true},
-    {field: 'DateCreated', header: 'Date Created', isSortable: true, hasFilter: true}
+  {field: 'formName', header: 'AHU Number', isSortable: true, hasFilter: false,hasTableValue:true},
+    {field: 'ClientName', header: 'Client Name', isSortable: true, hasFilter: true,hasTableValue:true},
+    {field: 'DateCreated', header: 'Date Created', isSortable: true, hasFilter: true,hasTableValue:true}
 
  ]
 

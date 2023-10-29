@@ -26,33 +26,33 @@ export default class SamplePageComponent implements OnInit {
           {
             title: 'ACPH',
             background: 'bg-c-blue',
-            icon: 'icon ',
+            icon: 'icon icon-anchor ',
             navigateTo: '/form1'
           },
           {
             title: 'Filter Integrity',
-            background: 'bg-c-blue',
-            icon: 'icon ',
+            background: 'bg-c-green',
+            icon: 'icon icon-filter',
             navigateTo: '/form1'
           },
           {
             title: 'Particle count',
             subTitle:'(Single Cycle)',
-            background: 'bg-c-blue',
-            icon: 'icon ',
+            background: 'bg-c-yellow',
+            icon: 'icon icon-codepen',
             navigateTo: '/form1'
           },
           {
             title: 'Particle count',
             subTitle:'(Three Cycle)',
-            background: 'bg-c-blue',
-            icon: 'icon ',
+            background: 'bg-c-red',
+            icon: 'icon icon-codepen',
             navigateTo: '/form1'
           },
           {
             title: 'Temp. Mapping',
-            background: 'bg-c-blue',
-            icon: 'icon ',
+            background: 'bg-c-purple',
+            icon: 'icon icon-thermometer',
             navigateTo: '/form1'
           },
 
@@ -64,7 +64,7 @@ export default class SamplePageComponent implements OnInit {
           {
             title: 'Add Instrument',
             background: 'bg-c-blue',
-            icon: 'icon ',
+            icon: 'icon icon-framer',
             navigateTo:'/Instrument/Add-Instrument'
           }, 
         ]
@@ -76,3 +76,18 @@ export default class SamplePageComponent implements OnInit {
 
 
 
+// (
+//   'blue': $blue,
+//   'indigo': $indigo,
+//   'purple': $purple,
+//   'pink': $pink,
+//   'red': $red,
+//   'orange': $orange,
+//   'yellow': $yellow,
+//   'green': $green,
+//   'teal': $teal,
+//   'cyan': $cyan,
+//   'white': $white,
+//   'gray': $gray-600,
+//   'gray-dark': $gray-800
+// ),

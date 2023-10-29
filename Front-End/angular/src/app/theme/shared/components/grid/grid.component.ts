@@ -12,8 +12,8 @@ import { GroupedColumnOptions } from 'src/Models/grouped-column-options';
 @Component({
     selector: 'app-grid',
     standalone: true,
-    imports: [CommonModule,SharedModule,TableModule,FormsModule ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA ],
+    imports: [CommonModule, SharedModule, TableModule, FormsModule],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
     templateUrl: './grid.component.html',
     styleUrls: ['./grid.component.css']
 })
@@ -24,7 +24,7 @@ export class GridComponent implements OnInit {
 
     @Input() title: string = '';
     @Input() listOfItems: any[] = [];
-    @Input() groupedColumnOptions:GroupedColumnOptions[]= [];
+    @Input() groupedColumnOptions: GroupedColumnOptions[] = [];
     @Input() gridColumnOptions: GridColumnOptions[] = [];
     @Input() dataKey: any;
     @Input() rows: number = 20;
@@ -56,8 +56,11 @@ export class GridComponent implements OnInit {
     clonedProducts: { [s: string]: any } = {};
     isNewRowInserted: boolean = false;
 
+    getFilteredColumns = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).filter(option => option.hasTableValue);
 
-    constructor() {  }
+
+
+    constructor() { }
 
     public ngOnInit() {
         this.selectedRow = this.selected;
@@ -74,7 +77,7 @@ export class GridComponent implements OnInit {
     onRowSelected(event: any) { }
 
     onLazyLoadEvent(event: any) {
-      
+
         let queryParams = {
             offset: event.first,
             count: event.rows,
@@ -120,15 +123,15 @@ export class GridComponent implements OnInit {
     }
 
     private generateRandomId = (): string => {
-      let result = '';
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      const charactersLength = characters.length;
-      for (let i = 0; i < 12; i++) {
-          result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      }
-      return result;
+        let result = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersLength = characters.length;
+        for (let i = 0; i < 12; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
 
-  };
+    };
 
 
 

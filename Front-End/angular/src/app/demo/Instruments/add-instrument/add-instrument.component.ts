@@ -63,7 +63,7 @@ export class AddInstrumentComponent implements OnInit {
             this.instrumentModel.CertificateFile = this.tempFile;
             this.confirmDialog();
         } else {
-            this.messageService.add({ key: 'tc', severity: 'info', summary: 'Required', detail: "choose the certificate file", life: 4000 });
+            this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Required', detail: "choose the certificate file", life: 4000 });
         }
 
     }
