@@ -41,8 +41,7 @@ namespace Application.Parameters
 
         private bool ValidateSortString(string input)
         {
-            bool isValid = input.Contains(',') ? !input.Split(',').ToList().Any(e => ValidateSortFormat(e) == false)
-            : ValidateSortFormat(input);
+            bool isValid = input.Contains(',') ? !input.Split(',').ToList().Any(e => ValidateSortFormat(e) == false) : ValidateSortFormat(input);
             return isValid;
         }
 

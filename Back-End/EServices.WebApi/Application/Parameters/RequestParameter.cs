@@ -16,16 +16,16 @@ namespace Application.Filters
             this.Offset = 1;
             this.Count = 10;
         }
-        public RequestParameter(int pageNumber, int pageSize)
+        public RequestParameter(int offset, int count)
         {
-            this.Offset = pageNumber < 1 ? 1 : pageNumber;
-            this.Count = pageSize < 1 ? 0 : pageSize;
+            this.Offset = offset < 1 ? 1 : offset;
+            this.Count = count < 1 ? 0 : count;
         }
 
-        public RequestParameter(int pageNumber, int pageSize, string filter, string sort)
+        public RequestParameter(int offset, int count, string filter, string sort)
         {
-            this.Offset = pageNumber < 1 ? 1 : pageNumber;
-            this.Count = pageSize < 1 ? 0 : pageSize;
+            this.Offset = offset < 1 ? 1 : offset;
+            this.Count = count < 1 ? 0 : count;
             this.Filter = filter;
             this.Sort = sort;
         }
