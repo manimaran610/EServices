@@ -56,16 +56,13 @@ export class AddInstrumentComponent implements OnInit {
     ngOnInit() { }
 
     async onSubmit() {
-        console.log("Form submitted")
-        if (this.tempFileName !== undefined && this.tempFile !== undefined) {
-            this.instrumentModel = this.instrumentFormGroup.value;
-            this.instrumentModel.certificateName = this.tempFileName;
-            this.instrumentModel.CertificateFile = this.tempFile;
-            this.confirmDialog();
-        } else {
-            this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Required', detail: "choose the certificate file", life: 4000 });
+        if (this.instrumentFormGroup.valid) {
+            console.log("Form submitted")
+                this.instrumentModel = this.instrumentFormGroup.value;
+                this.instrumentModel.certificateName = this.tempFileName;
+                this.instrumentModel.CertificateFile = this.tempFile;
+                this.confirmDialog();
         }
-
     }
 
     onClear() { this.instrumentFormGroup.reset() }
@@ -102,13 +99,13 @@ export class AddInstrumentComponent implements OnInit {
 
         if (event.files.length > 0 && event.files[0].size < 5120000) {
             this.tempFileName = event.files[0].name;
-            console.log(event.files[0])
-            console.log(this.tempFileName)
+          if(event.files[0].name.split('?')[0].split('.').pop() !== 'pdf') {
+            this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Please choose PDF Files", life: 4000 });
+          }
             this.tempFile = await this.fileToBase64(event.files[0]);
-            console.log(this.tempFile)
         }
         else if (event.files.length > 0 && event.files[0].size > 5120000) {
-            this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Not Supported', detail: "File size should be less than 5MB", life: 4000 });
+            this.instrumentFormGroup.controls['certificate'].setErrors({max:true} )
         }
         else {
             this.tempFile = undefined;
@@ -118,6 +115,12 @@ export class AddInstrumentComponent implements OnInit {
 
     addFormControlValidators() {
         this.instrumentFormGroup.controls['serialNo'].addValidators([Validators.required])
+        this.instrumentFormGroup.controls['make'].addValidators([Validators.required])
+        this.instrumentFormGroup.controls['model'].addValidators([Validators.required])
+        this.instrumentFormGroup.controls['calibratedOn'].addValidators([Validators.required])
+        this.instrumentFormGroup.controls['calibratedDueOn'].addValidators([Validators.required])
+        this.instrumentFormGroup.controls['certificate'].addValidators([Validators.required])
+
     }
 
     toggle() { this.isAddInstrument = !this.isAddInstrument; }
