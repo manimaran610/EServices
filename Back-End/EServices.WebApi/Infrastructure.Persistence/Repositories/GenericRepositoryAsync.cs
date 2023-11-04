@@ -5,7 +5,9 @@ using Infrastructure.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq.Dynamic.Core;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace Infrastructure.Persistence.Repository
 {
@@ -23,13 +25,22 @@ namespace Infrastructure.Persistence.Repository
             return await _dbContext.Set<T>().FindAsync(id);
         }
 
-        public async Task<IReadOnlyList<T>> GetPagedReponseAsync(int offset, int count, string filter = null, string sort = null)
+        public async Task<IReadOnlyList<T>> GetPagedReponseAsync
+        (
+            int offset,
+            int count,
+            string filter = null,
+            string sort = null,
+            Expression<System.Func<T, T>> selectExpression = null
+        )
         {
+            if(selectExpression == null) selectExpression = e=>e;
             return await _dbContext
                 .Set<T>()
                 .GetFilteredList(filter)
                 .GetSortedList(sort)
                 .AsNoTracking()
+                .Select(selectExpression)
                 .Skip(offset)
                 .Take(count)
                 .ToDynamicListAsync<T>();

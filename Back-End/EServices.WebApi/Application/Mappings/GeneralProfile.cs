@@ -4,9 +4,7 @@ using Application.Features.Products.Commands.CreateProduct;
 using Application.Features.Products.Queries.GetAllProducts;
 using AutoMapper;
 using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace Application.Mappings
 {
@@ -18,7 +16,9 @@ namespace Application.Mappings
             CreateMap<CreateProductCommand, Product>();
             CreateMap<GetAllProductsQuery, GetAllProductsParameter>();
 
-            CreateMap<Instrument, GetAllInstrumentsViewModel>().ReverseMap();
+            CreateMap<Instrument, GetAllInstrumentsViewModel>()
+            .ForMember(m => m.SerialNo,opt =>opt.MapFrom(entity => entity.SerialNumber))
+            .ReverseMap();
             CreateMap<CreateInstrumentCommand, Instrument>();
 
         }
