@@ -24,7 +24,8 @@ export class InstrumentService {
     return this.httpService.getById<Instrument>(id);
   }
 
-  getAllPagedResponse(reqParams: RequestParameter): Observable<BaseResponse<Instrument[]>> {
+  getAllPagedResponse(reqParams?: RequestParameter): Observable<BaseResponse<Instrument[]>> {
+    reqParams = reqParams !== undefined ? reqParams! : new RequestParameter();
     return this.httpService.getAll<Instrument[]>(reqParams);
   }
 

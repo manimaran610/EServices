@@ -1,6 +1,6 @@
 export class RequestParameter {
-    pageNumber: number = 1;
-    pageSize: number = Number.MAX_VALUE;
+    offset: number = 0;
+    count: number =100;
     filter: string = '';
     sort: string = '';
 }

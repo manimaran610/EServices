@@ -29,9 +29,10 @@ export class BaseHttpClientServiceService {
   }
 
   public setHttpParams(reqParam: RequestParameter) {
+    console.log(reqParam)
     return new HttpParams()
-      .set('offset', reqParam.pageNumber!)
-      .set('count', reqParam.pageSize!)
+      .set('offset', reqParam.offset!)
+      .set('count', reqParam.count!)
       .set('Sort', reqParam.sort!)
       .set('Filter', reqParam.filter!)
   }

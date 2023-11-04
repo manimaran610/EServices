@@ -16,10 +16,10 @@
 <!-- <button type="button" class="btn btn-primary mb-5" (click)="toggle()">Add instrument</button> -->
 
 <!-- Add Instrument Form -->
-<app-card cardTitle="Add Instrument" *ngIf="isAddInstrument" [options]="false">
+<!-- <app-card cardTitle="Add Instrument" *ngIf="isAddInstrument" [options]="false">
   <h4 class="text-c-blue">Instrument Details:</h4>
   <hr />
-  <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000"></p-confirmDialog>
+  <p-confirmDialog [style]="{width: '25vw'}" [baseZIndex]="10000"></p-confirmDialog>
   <form [formGroup]="instrumentFormGroup" (ngSubmit)="onSubmit()">
     <div class="row">
       <div class="col-md-6">
@@ -92,7 +92,9 @@
       </div>
     </div>
     </form>
-</app-card>
+</app-card> -->
+
+<app-customer-details></app-customer-details>
 
 
 

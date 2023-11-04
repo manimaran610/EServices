@@ -1,4 +1,4 @@
-import { BaseHttpClientServiceService } from './../../../../Services/Shared/base-http-client-service.service';
+import { CustomerDetailsComponent } from 'src/app/demo/reports/shared/customer-details/customer-details.component';
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CommonModule } from '@angular/common';
@@ -12,13 +12,14 @@ import { InstrumentService } from 'src/Services/Instrument.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ToastModule } from 'primeng/toast';
 import { BaseResponse } from 'src/Models/response-models/base-response';
-import { ActivatedRoute, Router } from '@angular/router';
+import {  Router } from '@angular/router';
+import { BaseHttpClientServiceService } from 'src/Services/Shared/base-http-client-service.service';
 
 
 @Component({
     selector: 'app-add-instrument',
     standalone: true,
-    imports: [CommonModule, SharedModule, ConfirmDialogModule, MessagesModule, HttpClientModule, ToastModule],
+    imports: [CommonModule, SharedModule, ConfirmDialogModule, MessagesModule, HttpClientModule, ToastModule,CustomerDetailsComponent],
     providers: [ConfirmationService, InstrumentService, BaseHttpClientServiceService, MessageService],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     templateUrl: './add-instrument.component.html',

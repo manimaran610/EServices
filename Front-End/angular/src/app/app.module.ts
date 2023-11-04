@@ -25,6 +25,8 @@ import { NavGroupComponent } from './theme/layout/admin/navigation/nav-content/n
 import { NavItemComponent } from './theme/layout/admin/navigation/nav-content/nav-item/nav-item.component';
 import { TableModule } from 'primeng/table';
 import { HttpClientModule } from '@angular/common/http';
+import { CustomerDetailsComponent } from './demo/reports/shared/customer-details/customer-details.component';
+
 
 
 
@@ -45,7 +47,8 @@ import { HttpClientModule } from '@angular/common/http';
     NavContentComponent,
     NavItemComponent,
     NavCollapseComponent,
-    NavGroupComponent
+    NavGroupComponent,
+    
     
   ],
   imports: [BrowserModule, AppRoutingModule, SharedModule, FormsModule, ReactiveFormsModule, BrowserAnimationsModule,TableModule,HttpClientModule],
