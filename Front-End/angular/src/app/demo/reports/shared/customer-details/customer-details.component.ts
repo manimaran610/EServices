@@ -25,7 +25,8 @@ export class CustomerDetailsComponent implements OnInit {
   customerDetailsFormGroup: FormGroup;
   
   instrumentList: Instrument[] = [];
-  filteredInstrumentList: Instrument[] = [];
+  filterInstBySNo: Instrument[] = [];
+  filterInstByType: Instrument[] = [];
   constructor(private instrumentService: InstrumentService) {
 
     this.customerDetailsFormGroup = new FormGroup(
@@ -67,6 +68,8 @@ export class CustomerDetailsComponent implements OnInit {
       next: (response: BaseResponse<Instrument[]>) => {
         if (response.succeeded) {
           this.instrumentList = response.data;
+          this.filterInstByType = this.removeDuplicates(this.instrumentList,'type')
+              
         }
       },
       error: (e) => { console.error(e.error) },
@@ -77,7 +80,10 @@ export class CustomerDetailsComponent implements OnInit {
   onSelectOptionChange() {
     const id = this.customerDetailsFormGroup.controls['instrumentType'].value;
     const instrument = this.instrumentList.find(e => e.id == id);
-    this.filteredInstrumentList = this.instrumentList.filter(e => e.model == instrument?.model);
+    this.filterInstBySNo = this.instrumentList.filter(e => e.type == instrument?.type);
   }
 
+  removeDuplicates(data: any[], key: string): any[] {
+    return data.filter((item, index, self) => self.findIndex((i) => i[key] === item[key]) === index);
+  }
 }

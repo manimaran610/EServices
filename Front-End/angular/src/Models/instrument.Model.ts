@@ -3,9 +3,10 @@ export class Instrument {
     serialNo: string = '';
     make: string = '';
     model: string = '';
+    type:string ='';
     calibratedOn?: Date;
     calibratedDueOn?: Date;
     certificateName?: string;
-    CertificateFile?: any;
+    certificateFile?: any;
 
 }

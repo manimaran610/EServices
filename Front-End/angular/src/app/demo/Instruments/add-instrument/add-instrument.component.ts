@@ -1,4 +1,4 @@
-import { CustomerDetailsComponent } from 'src/app/demo/reports/shared/customer-details/customer-details.component';
+import { FileProcessingService } from './../../../../Services/Shared/file-processing.service';
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CommonModule } from '@angular/common';
@@ -19,8 +19,8 @@ import { BaseHttpClientServiceService } from 'src/Services/Shared/base-http-clie
 @Component({
     selector: 'app-add-instrument',
     standalone: true,
-    imports: [CommonModule, SharedModule, ConfirmDialogModule, MessagesModule, HttpClientModule, ToastModule,CustomerDetailsComponent],
-    providers: [ConfirmationService, InstrumentService, BaseHttpClientServiceService, MessageService],
+    imports: [CommonModule, SharedModule, ConfirmDialogModule, MessagesModule, HttpClientModule, ToastModule],
+    providers: [ConfirmationService, InstrumentService, BaseHttpClientServiceService, MessageService,FileProcessingService],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
     templateUrl: './add-instrument.component.html',
     styleUrls: ['./add-instrument.component.css']
@@ -38,7 +38,8 @@ export class AddInstrumentComponent implements OnInit {
         private confirmationService: ConfirmationService,
         private instrumentService: InstrumentService,
         private messageService: MessageService,
-        private router: Router
+        private fileProcessingService:FileProcessingService,
+        public router: Router
     ) {
 
         this.instrumentFormGroup = new FormGroup(
@@ -46,6 +47,7 @@ export class AddInstrumentComponent implements OnInit {
                 serialNo: new FormControl(),
                 make: new FormControl(),
                 model: new FormControl(),
+                type: new FormControl(),
                 calibratedOn: new FormControl(),
                 calibratedDueOn: new FormControl(),
                 certificate: new FormControl(),
@@ -55,14 +57,18 @@ export class AddInstrumentComponent implements OnInit {
     }
 
     ngOnInit() { }
+    navigateToUrl = (url: string | undefined) => this.router.navigateByUrl(url!);
+
 
     async onSubmit() {
         if (this.instrumentFormGroup.valid) {
             console.log("Form submitted")
                 this.instrumentModel = this.instrumentFormGroup.value;
                 this.instrumentModel.certificateName = this.tempFileName;
-                this.instrumentModel.CertificateFile = this.tempFile;
+                this.instrumentModel.certificateFile = this.tempFile;
                 this.confirmDialog();
+        }else {
+            this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Instrument details Invalid", life: 4000 });
         }
     }
 
@@ -85,8 +91,7 @@ export class AddInstrumentComponent implements OnInit {
     postInstrumentToAPIServer() {
         this.instrumentService.postInstrument(this.instrumentModel).subscribe({
             next: (response: BaseResponse<number>) => {
-                if (response.succeeded) this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Instrument created', life: 4000 });
-
+                if (response.succeeded) this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Instrument created', life: 4000 });        
             },
             error: (e) => {
                 this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed', detail: e.error.title, life: 4000 });
@@ -103,7 +108,8 @@ export class AddInstrumentComponent implements OnInit {
           if(event.files[0].name.split('?')[0].split('.').pop() !== 'pdf') {
             this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Please choose PDF Files", life: 4000 });
           }
-            this.tempFile = await this.fileToBase64(event.files[0]);
+            this.tempFile = await this.fileProcessingService.fileToBase64(event.files[0]);
+           
         }
         else if (event.files.length > 0 && event.files[0].size > 5120000) {
             this.instrumentFormGroup.controls['certificate'].setErrors({max:true} )
@@ -118,45 +124,13 @@ export class AddInstrumentComponent implements OnInit {
         this.instrumentFormGroup.controls['serialNo'].addValidators([Validators.required])
         this.instrumentFormGroup.controls['make'].addValidators([Validators.required])
         this.instrumentFormGroup.controls['model'].addValidators([Validators.required])
+        this.instrumentFormGroup.controls['type'].addValidators([Validators.required])
         this.instrumentFormGroup.controls['calibratedOn'].addValidators([Validators.required])
         this.instrumentFormGroup.controls['calibratedDueOn'].addValidators([Validators.required])
         this.instrumentFormGroup.controls['certificate'].addValidators([Validators.required])
 
     }
 
-    toggle() { this.isAddInstrument = !this.isAddInstrument; }
-
-    base64ToFile(base64String: string, filename: string, mimeType: string): File {
-        const byteCharacters = atob(base64String);
-        const byteNumbers = new Array(byteCharacters.length);
-
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: mimeType });
-
-        return new File([blob], filename, { type: mimeType });
-    }
-
-    fileToBase64(file: File): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-
-            reader.onload = () => {
-                if (typeof reader.result === 'string') {
-                    resolve(reader.result);
-                } else {
-                    reject(new Error('Failed to convert file to base64'));
-                }
-            };
-
-            reader.onerror = (error) => {
-                reject(error);
-            };
-
-            reader.readAsDataURL(file);
-        });
-    }
 }
+
+  

@@ -6,9 +6,10 @@ import { Routes, RouterModule } from '@angular/router';
 // project import
 import { AdminComponent } from './theme/layout/admin/admin.component';
 import { GuestComponent } from './theme/layout/guest/guest.component';
-import SamplePageComponent from './demo/home-page/home-page.component';
+import HomePageComponent from './demo/home-page/home-page.component';
 import { Form1Component } from './demo/ahu-forms/form1/form1.component';
 import { AddInstrumentComponent } from './demo/Instruments/add-instrument/add-instrument.component';
+import { AcphComponent } from './demo/reports/acph/acph.component';
 
 
 const routes: Routes = [
@@ -18,7 +19,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: '/sample-page',
+        redirectTo: 'Home',
         pathMatch: 'full'
       },
       {
@@ -42,7 +43,7 @@ const routes: Routes = [
         loadComponent: () => import('./demo/forms & tables/tbl-bootstrap/tbl-bootstrap.component')
       },
       {
-        path: 'Home-page',
+        path: 'Home',
         loadComponent: () => import('./demo/home-page/home-page.component')
       },
       {
@@ -61,12 +62,21 @@ const routes: Routes = [
             component: AddInstrumentComponent
           }
         ]
-      }
+      },
+      {
+      path: 'Reports',
+      children: [
+        {
+          path: 'ACPH',
+          component: AcphComponent
+        }
+      ]
+    }
     ]
   },
   {
-    path: 'Home',
-    component: SamplePageComponent,
+    path: 'Home1',
+    component: HomePageComponent,
   },
 
   {

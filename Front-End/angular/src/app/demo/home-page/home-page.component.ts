@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 
 // project import
 import { SharedModule } from 'src/app/theme/shared/shared.module';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home-page',
@@ -14,10 +15,12 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
   templateUrl: './Home-page.component.html',
   styleUrls: ['./Home-page.component.scss']
 })
-export default class SamplePageComponent implements OnInit {
+export default class HomePageComponent implements OnInit {
 
   coreServicesList: CoreServices[] = [];
+  constructor(private router: Router) {
 
+  }
   ngOnInit(): void {
     this.coreServicesList = [
       {
@@ -27,7 +30,7 @@ export default class SamplePageComponent implements OnInit {
             title: 'ACPH',
             background: 'bg-c-blue',
             icon: 'icon icon-anchor ',
-            navigateTo: '/form1'
+            navigateTo: '/Reports/ACPH'
           },
           {
             title: 'Filter Integrity',
@@ -37,14 +40,14 @@ export default class SamplePageComponent implements OnInit {
           },
           {
             title: 'Particle count',
-            subTitle:'(Single Cycle)',
+            subTitle: '(Single Cycle)',
             background: 'bg-c-yellow',
             icon: 'icon icon-codepen',
             navigateTo: '/form1'
           },
           {
             title: 'Particle count',
-            subTitle:'(Three Cycle)',
+            subTitle: '(Three Cycle)',
             background: 'bg-c-red',
             icon: 'icon icon-codepen',
             navigateTo: '/form1'
@@ -59,23 +62,25 @@ export default class SamplePageComponent implements OnInit {
         ]
       },
       {
-        title:'Instrument Details',
-        services:[
+        title: 'Instrument Details',
+        services: [
           {
             title: 'Add Instrument',
             background: 'bg-c-blue',
             icon: 'icon icon-framer',
-            navigateTo:'/Instrument/Add-Instrument'
-          }, 
+            navigateTo: '/Instrument/Add-Instrument'
+          },
         ]
       }
     ]
   }
 
+
+
+
+  navigateToUrl = (url: string | undefined) => this.router.navigateByUrl(url!);
+
 }
-
-
-
 // (
 //   'blue': $blue,
 //   'indigo': $indigo,

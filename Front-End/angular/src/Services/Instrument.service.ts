@@ -14,10 +14,8 @@ export class InstrumentService {
     httpService.mapURLPath('Instrument')
   }
 
-  postInstrument(data: any): Observable<BaseResponse<number>> {
-    console.warn(("postInstrument services method started"));
-
-    return this.httpService.post<any, number>(data)
+  postInstrument(data: Instrument): Observable<BaseResponse<number>> {
+    return this.httpService.post<Instrument, number>(data)
   }
 
   getInstrumentById(id: string): Observable<BaseResponse<Instrument>> {

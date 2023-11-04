@@ -70,7 +70,7 @@
           <label for="exampleInputPassword1">Instrument Type:</label>
           <select class="form-select" id="inputGroupSelect04" formControlName="instrumentType" (change)="onSelectOptionChange()">
             <option value="0" selected disabled>Choose type</option>
-            <option *ngFor="let item of instrumentList" [value]="item.id">{{item.model}}</option>
+            <option *ngFor="let item of filterInstByType" [value]="item.id">{{item.type}}</option>
           </select>
         </div>
       </div>
@@ -80,7 +80,7 @@
           <label for="exampleInputPassword1">Instrument SerialNo:</label>
           <select class="form-select" id="inputGroupSelect04" formControlName="instrumentSerialNo">
             <option value="0" selected disabled>Choose Serial No</option>
-            <option *ngFor="let item of filteredInstrumentList; let i = index" [value]="item.id" [selected]="i === 0" >
+            <option *ngFor="let item of filterInstBySNo; let i = index" [value]="item.id" [selected]="i === 0" >
               {{item.serialNo}}</option>
           </select>
         </div>
