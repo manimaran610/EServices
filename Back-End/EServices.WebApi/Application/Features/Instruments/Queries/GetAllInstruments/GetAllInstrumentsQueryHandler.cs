@@ -32,6 +32,7 @@ namespace Application.Features.Instruments.Queries.GetAllInstruments
                 SerialNumber = e.SerialNumber,
                 Make = e.Make,
                 Model = e.Model,
+                Type=e.Type,
                 CalibratedOn = e.CalibratedOn,
                 CalibratedDueOn = e.CalibratedDueOn
             };
