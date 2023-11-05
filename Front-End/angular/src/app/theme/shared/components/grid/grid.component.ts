@@ -1,3 +1,4 @@
+import { OnChanges } from '@angular/core';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 import { CommonModule } from '@angular/common';
@@ -17,7 +18,7 @@ import { GroupedColumnOptions } from 'src/Models/grouped-column-options';
     templateUrl: './grid.component.html',
     styleUrls: ['./grid.component.css']
 })
-export class GridComponent implements OnInit {
+export class GridComponent implements OnInit, OnChanges {
 
 
     @ViewChild('singleSelectionTable', { static: false }) singleSelectionTable: any;
@@ -39,6 +40,7 @@ export class GridComponent implements OnInit {
     @Input() selected: any;
     @Input() hasRetension: boolean = false;
     @Input() hasColumnGroup: boolean = false;
+    @Input() addNewRow: EventEmitter<any> = new EventEmitter<any>();
 
 
     @Output() Save: EventEmitter<any> = new EventEmitter<any>();
@@ -56,21 +58,25 @@ export class GridComponent implements OnInit {
     clonedProducts: { [s: string]: any } = {};
     isNewRowInserted: boolean = false;
 
-    getFilteredColumns = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).filter(option => option.hasTableValue);
+    getFilteredColumns = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).filter(option => option.hasTableValue && !option.isStandalone);
 
-
+    getStandaloneColumns = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).filter(option => option.isStandalone);
 
     constructor() { }
 
     public ngOnInit() {
         this.selectedRow = this.selected;
-        console.log("grid comp")
-        console.log(this.hasColumnGroup)
-        console.log(this.groupedColumnOptions)
-
-
     }
 
+    ngOnChanges() {
+        console.log('changes detected')
+        this.addNewRow.subscribe((e) => {
+            if (e == true) {
+                this.addNewEditableRow()
+            }
+        })
+
+    }
 
     onRadioSelected() { this.RadioChanges.emit(this.selectedRow); }
 
@@ -112,6 +118,9 @@ export class GridComponent implements OnInit {
 
     onRowEditSave(rowData: any, htmlTableRowElement: any) {
         this.Save.emit(rowData);
+       this.getStandaloneColumns().forEach(e=> this.calcList.push(e.field));
+        rowData[this.getStandaloneColumns()[0].field] = 255;
+        console.log(rowData);
         this.singleSelectionTable.saveRowEdit(rowData, htmlTableRowElement);
         delete this.clonedProducts[rowData[this.dataKey]];
     }
@@ -133,7 +142,14 @@ export class GridComponent implements OnInit {
 
     };
 
-
-
+    calcList: any[] = [];
+    calc(input: any): string {
+       return this.calcList.length.toString();
+    }
+    calcIf(input: any): boolean {
+        console.log('calcIf'  + !this.calcList.includes(input))
+        console.log(this.calcList)
+        return !this.calcList.includes(input);
+    }
 
 }

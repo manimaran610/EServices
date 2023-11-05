@@ -28,20 +28,20 @@ export class Form1Component implements OnInit {
 
 groupedOptions:GroupedColumnOptions[]=
 [
-  {gridColumnOptions:[
-      {field: 'product', header: 'Product', isSortable: true, hasFilter: true,rowspan:'3',colspan:undefined,hasTableValue:true},
-      {field: 'sale', header: 'sale', rowspan:undefined,colspan:'4',hasTableValue:false}]
-},
-{gridColumnOptions:[
-  {field: 'sales', header: 'sales', rowspan:undefined,colspan:'2',hasTableValue:false},
-  {field: 'profit', header: 'profit',rowspan:undefined, colspan:'2',hasTableValue:false}]
-},
-{gridColumnOptions:[
-  {field: 'lastYearSale', header: 'Last Year',hasTableValue:true,isSortable: true, hasFilter: true,},
-  {field: 'thisYearSale', header: 'This Year',hasTableValue:true,isSortable: true, hasFilter: true},
-  {field: 'lastYearProfit', header: 'Last Year',hasTableValue:true,isSortable: true, hasFilter: true},
-  {field: 'thisYearProfit', header: 'This Year',hasTableValue:true,isSortable: true, hasFilter: true}]
-},
+//   {gridColumnOptions:[
+//       {field: 'product', header: 'Product', isSortable: true, hasFilter: true,rowspan:'3',colspan:undefined,hasTableValue:true},
+//       {field: 'sale', header: 'sale', rowspan:undefined,colspan:'4',hasTableValue:false}]
+// },
+// {gridColumnOptions:[
+//   {field: 'sales', header: 'sales', rowspan:undefined,colspan:'2',hasTableValue:false},
+//   {field: 'profit', header: 'profit',rowspan:undefined, colspan:'2',hasTableValue:false}]
+// },
+// {gridColumnOptions:[
+//   {field: 'lastYearSale', header: 'Last Year',hasTableValue:true,isSortable: true, hasFilter: true,},
+//   {field: 'thisYearSale', header: 'This Year',hasTableValue:true,isSortable: true, hasFilter: true},
+//   {field: 'lastYearProfit', header: 'Last Year',hasTableValue:true,isSortable: true, hasFilter: true},
+//   {field: 'thisYearProfit', header: 'This Year',hasTableValue:true,isSortable: true, hasFilter: true}]
+// },
 ]
 
 tableColumns:GridColumnOptions[]=[];

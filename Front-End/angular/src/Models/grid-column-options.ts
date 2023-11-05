@@ -12,6 +12,6 @@ export class GridColumnOptions {
     public hasDropDownOptions?: boolean = false;
     public dropDownOptions?: string[] = [];
     public hasTableValue:boolean = true;
-
+    public isStandalone:boolean = false;
 
 }

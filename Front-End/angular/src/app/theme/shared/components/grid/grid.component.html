@@ -11,41 +11,41 @@
             <ng-container *ngFor="let col of gridcol.gridColumnOptions">
 
                 <th *ngIf="col.isSortable" [pSortableColumn]="col.field" [ngStyle]="{'width':col.width}"
-                        [attr.rowspan]="col.rowspan" [attr.colspan]="col.colspan">
-                        {{ col.header }}
-                        <p-sortIcon *ngIf="col.isSortable" [field]="col.field"></p-sortIcon>
-                        <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" type="text" [showAddButton]="false"
-                            [showOperator]="false" display="menu"></p-columnFilter>
-                    </th>
-                       
-                    <th *ngIf="!col.isSortable" [attr.rowspan]="col.rowspan" [attr.colspan]="col.colspan">
-                        {{ col.header }}
-                        <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" display="menu" [showAddButton]="false"
-                            [showOperator]="false"></p-columnFilter>
-                    </th>
+                    [attr.rowspan]="col.rowspan" [attr.colspan]="col.colspan">
+                    {{ col.header }}
+                    <p-sortIcon *ngIf="col.isSortable" [field]="col.field"></p-sortIcon>
+                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" type="text" [showAddButton]="false"
+                        [showOperator]="false" display="menu"></p-columnFilter>
+                </th>
+
+                <th *ngIf="!col.isSortable" [attr.rowspan]="col.rowspan" [attr.colspan]="col.colspan">
+                    {{ col.header }}
+                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" display="menu" [showAddButton]="false"
+                        [showOperator]="false"></p-columnFilter>
+                </th>
             </ng-container>
             <th *ngIf="canEdit || canDelete"></th>
         </tr>
     </ng-template>
 
-    <ng-template  *ngIf="!hasColumnGroup" pTemplate="header" let-columns>
+    <ng-template *ngIf="!hasColumnGroup" pTemplate="header" let-columns>
         <tr>
             <th *ngIf="hasradioButton" style="width: 4rem"></th>
 
             <ng-container *ngFor="let col of columns">
 
                 <th *ngIf="col.isSortable" [pSortableColumn]="col.field" [ngStyle]="{'width':col.width}">
-                        {{ col.header }}
-                        <p-sortIcon *ngIf="col.isSortable" [field]="col.field"></p-sortIcon>
-                        <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" type="text" [showAddButton]="false"
-                            [showOperator]="false" display="menu"></p-columnFilter>
-                    </th>
-                       
-                    <th *ngIf="!col.isSortable" rowspan="col.rowspan" colspan="col.colspan">
-                        {{ col.header }}
-                        <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" display="menu" [showAddButton]="false"
-                            [showOperator]="false"></p-columnFilter>
-                    </th>
+                    {{ col.header }}
+                    <p-sortIcon *ngIf="col.isSortable" [field]="col.field"></p-sortIcon>
+                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" type="text" [showAddButton]="false"
+                        [showOperator]="false" display="menu"></p-columnFilter>
+                </th>
+
+                <th *ngIf="!col.isSortable" rowspan="col.rowspan" colspan="col.colspan">
+                    {{ col.header }}
+                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" display="menu" [showAddButton]="false"
+                        [showOperator]="false"></p-columnFilter>
+                </th>
             </ng-container>
             <!-- <th *ngIf="canEdit || canDelete"></th> -->
 
@@ -57,12 +57,14 @@
             <td *ngIf="hasradioButton">
                 <p-tableRadioButton [value]="rowData" (click)="onRadioSelected()"></p-tableRadioButton>
             </td>
-            <td *ngFor="let col of getFilteredColumns()" >
+            <td *ngFor="let col of getFilteredColumns()">
                 <p-cellEditor>
                     <ng-template pTemplate="input">
-                        <input pInputText type="text" class="form-control" [(ngModel)]="rowData[col.field]" >
+                        <div class="form-group">
+                            <input pInputText type="text" class="form-control" [(ngModel)]="rowData[col.field]">
+                        </div>
                     </ng-template>
-                    <ng-template *ngIf="!col.hasRouterLink" pTemplate="output">
+                    <ng-template *ngIf="!col.hasRouterLink" class="" pTemplate="output">
                         {{rowData[col.field]}}
                     </ng-template>
                     <ng-template *ngIf="col.hasRouterLink" pTemplate="output">
@@ -70,6 +72,13 @@
                     </ng-template>
                 </p-cellEditor>
             </td>
+
+                      
+                <td *ngFor="let col of getStandaloneColumns()"  class="">
+                           <strong> {{ rowIndex===0 ? calc(col) :'' }}</strong>
+                </td>
+
+
             <td>
                 <div class="flex align-items-center justify-content-center gap-2">
 

@@ -1,12 +1,13 @@
+import { BaseResponse } from './../../../../../Models/response-models/base-response';
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DynamicDialogConfig, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { Instrument } from 'src/Models/instrument.Model';
-import { BaseResponse } from 'src/Models/response-models/base-response';
 import { InstrumentService } from 'src/Services/Instrument.service';
 import { BaseHttpClientServiceService } from 'src/Services/Shared/base-http-client-service.service';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
@@ -14,8 +15,8 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
 @Component({
   selector: 'app-customer-details',
   standalone: true,
-  imports: [CommonModule, SharedModule, ConfirmDialogModule, HttpClientModule, ReactiveFormsModule],
-  providers: [ConfirmationService, InstrumentService, BaseHttpClientServiceService],
+  imports: [CommonModule, SharedModule, ConfirmDialogModule, HttpClientModule, ReactiveFormsModule,DynamicDialogModule],
+  providers: [ConfirmationService, InstrumentService, BaseHttpClientServiceService ,DynamicDialogConfig],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './customer-details.component.html',
   styleUrls: ['./customer-details.component.css']
@@ -26,8 +27,11 @@ export class CustomerDetailsComponent implements OnInit {
   
   instrumentList: Instrument[] = [];
   filterInstBySNo: Instrument[] = [];
-  filterInstByType: Instrument[] = [];
-  constructor(private instrumentService: InstrumentService) {
+  filterInstByType: Instrument[] = [];  
+  oneventFire : EventEmitter<number> = new EventEmitter<number>();
+
+
+  constructor(private instrumentService: InstrumentService, public ref: DynamicDialogConfig) {
 
     this.customerDetailsFormGroup = new FormGroup(
       {
@@ -46,11 +50,11 @@ export class CustomerDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.getInstrumentsFromServer();
-
   }
 
   onSubmit() {
-    console.log(this.customerDetailsFormGroup.value)
+    console.log('Form submitted')
+    this.oneventFire.emit(10)   
   }
   onClear() { this.customerDetailsFormGroup.reset() }
 
