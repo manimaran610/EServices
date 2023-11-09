@@ -2,9 +2,10 @@
 using Application.Wrappers;
 using Microsoft.AspNetCore.Http;
 using Serilog.Context;
-using Serilog.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.Json;
@@ -23,6 +24,7 @@ namespace WebApi.Middlewares
 
         public async Task Invoke(HttpContext context)
         {
+            var start = Stopwatch.GetTimestamp();
             try
             {
                 await _next(context);
@@ -51,13 +53,31 @@ namespace WebApi.Middlewares
                     default:
                         // unhandled error
                         response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        LogContext.PushProperty("Exception", error);
                         Serilog.Log.Error(error.Message);
                         break;
                 }
                 var result = JsonSerializer.Serialize(responseModel);
-
                 await response.WriteAsync(result);
             }
+            var elapsed = GetElapsedMilliseconds(start, Stopwatch.GetTimestamp());
+            LogRequestResponse(context, elapsed);
         }
+        private void LogRequestResponse(HttpContext context, double elapsed)
+        {
+            LogContext.PushProperty("QueryString", context.Request.QueryString);
+            LogContext.PushProperty("StatusCode", context.Response.StatusCode);
+            LogContext.PushProperty("Elapsed", elapsed);
+
+            Serilog.Log.Information($"{context.Request.Method} - {context.Request.Path}");
+        }
+
+        double GetElapsedMilliseconds(long start, long stop)
+        {
+            return (stop - start) * 1000 / (double)Stopwatch.Frequency;
+        }
+
+
+
     }
 }

@@ -6,9 +6,6 @@ using Infrastructure.Persistence.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Infrastructure.Persistence
 {
@@ -32,6 +29,8 @@ namespace Infrastructure.Persistence
             services.AddTransient(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
             services.AddTransient<IProductRepositoryAsync, ProductRepositoryAsync>();
             services.AddTransient<IInstrumentRepositoryAsync, InstrumentRepositoryAsync>();
+            services.AddTransient<ICustomerDetailRepositoryAsync, CustomerDetailRepositoryAsync>();
+
 
             #endregion
         }

@@ -1,6 +1,8 @@
 
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Domain.Common;
 
 namespace Domain.Entities
@@ -15,6 +17,8 @@ namespace Domain.Entities
         public DateTime CalibratedDueOn { get; set; }
         public string CertificateName { get; set; }
         public string CertificateFile { get; set; }
+
+        public virtual List<CustomerDetail> CustomerDetails { get; set; } = default;
 
     }
 }

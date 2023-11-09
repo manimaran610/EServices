@@ -8,6 +8,7 @@ using System.Linq.Dynamic.Core;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Persistence.Repository
 {
@@ -34,7 +35,9 @@ namespace Infrastructure.Persistence.Repository
             Expression<System.Func<T, T>> selectExpression = null
         )
         {
-            if(selectExpression == null) selectExpression = e=>e;
+            selectExpression = selectExpression == null ? e => e : selectExpression;
+            sort = sort == null ? "Created:desc" : sort + ",Created:desc";
+
             return await _dbContext
                 .Set<T>()
                 .GetFilteredList(filter)
@@ -44,6 +47,7 @@ namespace Infrastructure.Persistence.Repository
                 .Skip(offset)
                 .Take(count)
                 .ToDynamicListAsync<T>();
+
         }
 
         public async Task<T> AddAsync(T entity)

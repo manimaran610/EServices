@@ -18,14 +18,14 @@ namespace Application.Filters
         }
         public RequestParameter(int offset, int count)
         {
-            this.Offset = offset < 1 ? 1 : offset;
-            this.Count = count < 1 ? 0 : count;
+            this.Offset = offset < 1 ? 0 : offset;
+            this.Count = count < 1 ? 10 : count;
         }
 
         public RequestParameter(int offset, int count, string filter, string sort)
         {
-            this.Offset = offset < 1 ? 1 : offset;
-            this.Count = count < 1 ? 0 : count;
+            this.Offset = offset < 1 ? 0 : offset;
+            this.Count = count < 1 ? 10 : count;
             this.Filter = filter;
             this.Sort = sort;
         }

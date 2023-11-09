@@ -34,7 +34,7 @@ namespace WebApi.Controllers.v1
         [HttpPost]
         public async Task<IActionResult> Post(CreateInstrumentCommand command)
         {
-            return Ok(await Mediator.Send(command));
+            return Created("Created",await Mediator.Send(command));
         }
 
         // PUT api/<controller>/5

@@ -24,6 +24,8 @@ namespace Infrastructure.Persistence.Contexts
             _authenticatedUser = authenticatedUser;
         }
         public DbSet<Instrument> Instruments { get; set; }
+        public DbSet<CustomerDetail> CustomerDetails { get; set; }
+
 
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
@@ -54,6 +56,12 @@ namespace Infrastructure.Persistence.Contexts
                 property.SetColumnType("decimal(18,6)");
             }
             base.OnModelCreating(builder);
+
+            builder.Entity<CustomerDetail>()
+                .HasOne(e =>e.Instrument)
+                .WithMany(e => e.CustomerDetails)
+                .HasForeignKey(e => e.InstrumentId)
+                .HasPrincipalKey(e => e.Id);
         }
     }
 }

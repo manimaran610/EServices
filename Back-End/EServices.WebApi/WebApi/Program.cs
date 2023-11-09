@@ -28,7 +28,9 @@ namespace WebApi
             //Initialize Logger
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(config)
+                .Enrich.FromLogContext()
                 .CreateLogger();
+                
             var host = CreateHostBuilder(args).Build();
             using (var scope = host.Services.CreateScope())
             {

@@ -30,11 +30,5 @@ namespace Application.Features.Instruments.Commands.CreateInstrument
             return new Response<int>(instrument.Id);
         }
 
-        private async Task<byte[]> ReadFileContent(IFormFile file)
-        {
-            using var ms = new MemoryStream();
-            await file.CopyToAsync(ms);
-            return ms.ToArray();
-        }
     }
 }
