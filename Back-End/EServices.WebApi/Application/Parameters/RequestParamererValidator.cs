@@ -1,6 +1,8 @@
 
+using System;
 using System.Linq;
 using Application.Filters;
+using Domain.Common;
 using FluentValidation;
 
 namespace Application.Parameters
@@ -15,12 +17,14 @@ namespace Application.Parameters
             RuleFor(e => e.Filter)
             .Must(ValidateFilterString)
             .When(e => !string.IsNullOrEmpty(e.Filter))
-            .WithMessage("Filter is invalid"); // valid filter format - field:operator:value
+            .WithMessage("Filter is invalid");
+            // valid filter format - field:operator:value
 
             RuleFor(e => e.Sort)
              .Must(ValidateSortString)
              .When(e => !string.IsNullOrEmpty(e.Sort))
              .WithMessage("Sort is invalid");
+
         }
 
 
@@ -52,5 +56,6 @@ namespace Application.Parameters
                         input.Split(':').Length == 2 &&
                         sortDirection.Any(e => e == input.Split(':')[1].ToLower());
         }
+
     }
 }
