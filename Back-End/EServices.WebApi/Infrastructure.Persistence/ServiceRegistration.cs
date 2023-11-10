@@ -24,12 +24,13 @@ namespace Infrastructure.Persistence
                options.UseSqlServer(
                    configuration.GetConnectionString("DefaultConnection"),
                    b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+
             }
             #region Repositories
-            services.AddTransient(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
-            services.AddTransient<IProductRepositoryAsync, ProductRepositoryAsync>();
-            services.AddTransient<IInstrumentRepositoryAsync, InstrumentRepositoryAsync>();
-            services.AddTransient<ICustomerDetailRepositoryAsync, CustomerDetailRepositoryAsync>();
+            services.AddScoped(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
+            services.AddScoped<IProductRepositoryAsync, ProductRepositoryAsync>();
+            services.AddScoped<IInstrumentRepositoryAsync, InstrumentRepositoryAsync>();
+            services.AddScoped<ICustomerDetailRepositoryAsync, CustomerDetailRepositoryAsync>();
 
 
             #endregion
