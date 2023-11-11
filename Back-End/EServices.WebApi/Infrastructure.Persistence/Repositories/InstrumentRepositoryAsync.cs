@@ -13,11 +13,8 @@ namespace Infrastructure.Persistence.Repositories
 
     public class InstrumentRepositoryAsync : GenericRepositoryAsync<Instrument>, IInstrumentRepositoryAsync
     {
-        private readonly DbSet<Instrument> _instruments;
-
         public InstrumentRepositoryAsync(ApplicationDbContext dbContext) : base(dbContext)
         {
-            _instruments = dbContext.Set<Instrument>();
         }
 
     }

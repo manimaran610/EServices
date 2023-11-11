@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore.DynamicLinq;
 
 namespace Infrastructure.Persistence.Repository
 {
@@ -21,9 +22,14 @@ namespace Infrastructure.Persistence.Repository
             _dbContext = dbContext;
         }
 
-        public virtual async Task<T> GetByIdAsync(int id)
+        public virtual async Task<T> GetByIdAsync(int id, Expression<System.Func<T, T>> selectExpression = null)
         {
-            return await _dbContext.Set<T>().FindAsync(id);
+            selectExpression = selectExpression == null ? e => e : selectExpression;
+            return await _dbContext.Set<T>()
+            .Where(e => e.Id == id && !e.IsDeleted)
+            .Select(selectExpression)
+            .FirstOrDefaultAsync();
+
         }
 
         public async Task<IReadOnlyList<T>> GetPagedReponseAsync
@@ -32,7 +38,8 @@ namespace Infrastructure.Persistence.Repository
             int count,
             string filter = null,
             string sort = null,
-            Expression<System.Func<T, T>> selectExpression = null
+            Expression<System.Func<T, T>> selectExpression = null,
+            string filterOperator = null
         )
         {
             selectExpression = selectExpression == null ? e => e : selectExpression;
@@ -40,14 +47,14 @@ namespace Infrastructure.Persistence.Repository
 
             return await _dbContext
                 .Set<T>()
-                .GetFilteredList(filter)
+                .Where(e => !e.IsDeleted)
+                .GetFilteredList(filter, filterOperator)
                 .GetSortedList(sort)
-                .AsNoTracking()
                 .Select(selectExpression)
+                .AsNoTracking()
                 .Skip(offset)
                 .Take(count)
                 .ToDynamicListAsync<T>();
-
         }
 
         public async Task<T> AddAsync(T entity)
@@ -56,10 +63,17 @@ namespace Infrastructure.Persistence.Repository
             await _dbContext.SaveChangesAsync();
             return entity;
         }
+        public async Task<List<T>> AddRangeAsync(List<T> entities)
+        {
+            await _dbContext.Set<T>().AddRangeAsync(entities);
+            await _dbContext.SaveChangesAsync();
+            return entities;
+        }
 
         public async Task UpdateAsync(T entity)
         {
-            _dbContext.Entry(entity).State = EntityState.Modified;
+            // _dbContext.Entry(entity).State = EntityState.Modified;
+            _dbContext.Update<T>(entity);
             await _dbContext.SaveChangesAsync();
         }
 
@@ -67,6 +81,11 @@ namespace Infrastructure.Persistence.Repository
         {
             _dbContext.Set<T>().Remove(entity);
             await _dbContext.SaveChangesAsync();
+        }
+        public async Task SoftDeleteAsync(T entity)
+        {
+            entity.IsDeleted = true;
+            await UpdateAsync(entity);
         }
 
         public async Task<IReadOnlyList<T>> GetAllAsync()
@@ -79,7 +98,8 @@ namespace Infrastructure.Persistence.Repository
         public async Task<int> TotalCountAsync()
         {
             return await Task.FromResult(_dbContext
-         .Set<T>().Count());
+         .Set<T>()
+         .Count(e => !e.IsDeleted));
         }
 
     }

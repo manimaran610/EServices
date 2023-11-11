@@ -21,7 +21,7 @@ namespace Application.Features.Instruments.Commands.DeleteInstrument
         {
             var instrument = await _instrumentRepository.GetByIdAsync(command.Id);
             if (instrument == null) throw new ApiException($"instrument Not Found.");
-            await _instrumentRepository.DeleteAsync(instrument);
+            await _instrumentRepository.SoftDeleteAsync(instrument);
             return new Response<int>(instrument.Id);
         }
     }

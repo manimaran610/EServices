@@ -6,6 +6,7 @@ using Infrastructure.Persistence.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Configuration;
 
 namespace Infrastructure.Persistence
 {
@@ -16,21 +17,27 @@ namespace Infrastructure.Persistence
             if (configuration.GetValue<bool>("UseInMemoryDatabase"))
             {
                 services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseInMemoryDatabase("ApplicationDb"));
+                    options.UseInMemoryDatabase("ApplicationDb")
+            );
             }
             else
             {
+       
                 services.AddDbContext<ApplicationDbContext>(options =>
                options.UseSqlServer(
                    configuration.GetConnectionString("DefaultConnection"),
-                   b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+                   b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)),
+                   ServiceLifetime.Transient,ServiceLifetime.Transient);                   
 
             }
             #region Repositories
-            services.AddScoped(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
-            services.AddScoped<IProductRepositoryAsync, ProductRepositoryAsync>();
-            services.AddScoped<IInstrumentRepositoryAsync, InstrumentRepositoryAsync>();
-            services.AddScoped<ICustomerDetailRepositoryAsync, CustomerDetailRepositoryAsync>();
+            services.AddTransient(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
+            services.AddTransient<IProductRepositoryAsync, ProductRepositoryAsync>();
+            services.AddTransient<IInstrumentRepositoryAsync, InstrumentRepositoryAsync>();
+            services.AddTransient<ICustomerDetailRepositoryAsync, CustomerDetailRepositoryAsync>();
+            services.AddTransient<IRoomRepositoryAsync, RoomRepositoryAsync>();
+            services.AddTransient<IRoomGrillRepositoryAsync, RoomGrillRepositoryAsync>();
+
 
 
             #endregion

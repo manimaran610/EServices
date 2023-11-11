@@ -2,11 +2,7 @@
 using Domain.Common;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,6 +21,9 @@ namespace Infrastructure.Persistence.Contexts
         }
         public DbSet<Instrument> Instruments { get; set; }
         public DbSet<CustomerDetail> CustomerDetails { get; set; }
+        public DbSet<Room> Rooms { get; set; }
+        public DbSet<RoomGrill> RoomGrills { get; set; }
+
 
 
 
@@ -58,10 +57,28 @@ namespace Infrastructure.Persistence.Contexts
             base.OnModelCreating(builder);
 
             builder.Entity<CustomerDetail>()
-                .HasOne(e =>e.Instrument)
+                .HasOne(e => e.Instrument)
                 .WithMany(e => e.CustomerDetails)
                 .HasForeignKey(e => e.InstrumentId)
                 .HasPrincipalKey(e => e.Id);
+
+            builder.Entity<Room>()
+           .HasOne(e => e.CustomerDetail)
+           .WithMany(e => e.Rooms)
+           .HasForeignKey(e => e.CustomerDetailId)
+           .HasPrincipalKey(e => e.Id);
+
+
+            builder.Entity<RoomGrill>()
+           .HasOne(e => e.Room)
+           .WithMany(e => e.RoomGrills)
+           .HasForeignKey(e => e.RoomId)
+          .HasPrincipalKey(e => e.Id);
+
+
+
         }
+
+
     }
 }

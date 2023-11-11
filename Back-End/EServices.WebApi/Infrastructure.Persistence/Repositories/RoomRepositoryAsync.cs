@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Persistence.Repositories
 {
 
-    public class CustomerDetailRepositoryAsync : GenericRepositoryAsync<CustomerDetail>, ICustomerDetailRepositoryAsync
+    public class RoomRepositoryAsync : GenericRepositoryAsync<Room>, IRoomRepositoryAsync
     {
 
-        public CustomerDetailRepositoryAsync(ApplicationDbContext dbContext) : base(dbContext)
+        public RoomRepositoryAsync(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
 

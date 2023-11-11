@@ -6,11 +6,12 @@ using Application.Parameters;
 using Domain.Entities;
 using FluentValidation;
 
-namespace Application.Features.Instruments.Queries.GetAllInstruments
+namespace Application.Features.Rooms.Queries.GetAllRooms
 {
-    public class GetAllInstrumentsQueryValidator : RequestParamererValidator<GetAllInstrumentsQuery>
+    public class GetAllRoomsQueryValidator : RequestParamererValidator<GetAllRoomsQuery>
     {
-            public GetAllInstrumentsQueryValidator(){
+        
+        public GetAllRoomsQueryValidator(){
             
             RuleFor(e => e.Filter)
             .Must(ValidateFieldsFromQueryString)
@@ -31,7 +32,7 @@ namespace Application.Features.Instruments.Queries.GetAllInstruments
         }
         private bool ValidateFields(string fieldName)
         {
-            return new Instrument().GetType().GetProperties().Any(e => string.Equals(e.Name, fieldName, System.StringComparison.OrdinalIgnoreCase));
+            return new Room().GetType().GetProperties().Any(e => string.Equals(e.Name, fieldName, System.StringComparison.OrdinalIgnoreCase));
         }
     }
 }

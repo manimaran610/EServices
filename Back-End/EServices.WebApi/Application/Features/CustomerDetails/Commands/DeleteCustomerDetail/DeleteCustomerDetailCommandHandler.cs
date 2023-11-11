@@ -21,7 +21,7 @@ namespace Application.Features.CustomerDetails.Commands.DeleteCustomerDetail
         {
             var customerDetail = await _customerDetailRepository.GetByIdAsync(command.Id);
             if (customerDetail == null) throw new ApiException($"CustomerDetail Not Found.");
-            await _customerDetailRepository.DeleteAsync(customerDetail);
+            await _customerDetailRepository.SoftDeleteAsync(customerDetail);
             return new Response<int>(customerDetail.Id);
         }
     }
