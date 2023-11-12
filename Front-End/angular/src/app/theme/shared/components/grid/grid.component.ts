@@ -1,4 +1,4 @@
-import { OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, OnChanges } from '@angular/core';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 import { CommonModule } from '@angular/common';
@@ -15,6 +15,7 @@ import { GroupedColumnOptions } from 'src/Models/grouped-column-options';
     standalone: true,
     imports: [CommonModule, SharedModule, TableModule, FormsModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
+     changeDetection: ChangeDetectionStrategy.Default,
     templateUrl: './grid.component.html',
     styleUrls: ['./grid.component.css']
 })
@@ -47,7 +48,6 @@ export class GridComponent implements OnInit, OnChanges {
     @Output() Delete: EventEmitter<any> = new EventEmitter<any>();
     @Output() RadioChanges: EventEmitter<any> = new EventEmitter<any>();
     @Output() LazyLoad: EventEmitter<any> = new EventEmitter<any>();
-    @Output() outList: any[]=this.listOfItems;
 
     firstOffset: number = 0;
     sortField: string | undefined;
@@ -76,6 +76,7 @@ export class GridComponent implements OnInit, OnChanges {
                 this.addNewEditableRow()
             }
         })
+        
 
     }
 
@@ -119,16 +120,6 @@ export class GridComponent implements OnInit, OnChanges {
 
     onRowEditSave(rowData: any, htmlTableRowElement: any) {
         this.Save.emit(rowData);
-        // if (this.listOfItems.find(e => e[this.dataKey] === rowData[this.dataKey]) === undefined) {
-        //     this.listOfItems=[this.listOfItems,rowData]
-        //     console.log(this.listOfItems);
-        // }
-        // else {
-        //     const index = this.listOfItems.findIndex(e => e[this.dataKey] === rowData[this.dataKey]);
-        //     this.listOfItems[index] = rowData;
-        //     console.log(this.listOfItems);
-
-        // }
         this.singleSelectionTable.saveRowEdit(rowData, htmlTableRowElement);
         delete this.clonedProducts[rowData[this.dataKey]];
     }

@@ -1,9 +1,10 @@
+import { Event } from '@angular/router';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { GroupedColumnOptions } from './../../../../../Models/grouped-column-options';
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit, EventEmitter } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -59,7 +60,7 @@ export class AcphRoomGrillsComponent implements OnInit {
     }
   ]
 
-  constructor(private messageService: MessageService, public ref: DynamicDialogConfig) {
+  constructor(private messageService: MessageService, public ref: DynamicDialogConfig, private changeRef: ChangeDetectorRef) {
     this.acphRoomsFormGroup = new FormGroup(
       {
         roomName: new FormControl(),
@@ -76,7 +77,8 @@ export class AcphRoomGrillsComponent implements OnInit {
     console.log(this.acphRoomsFormGroup.value);
     console.warn(this.list);
 
-    this.mapFormtoRoomObject();
+
+    this.mapFormToRoomObject();
     console.log(this.roomModel);
 
   }
@@ -85,24 +87,44 @@ export class AcphRoomGrillsComponent implements OnInit {
   addGrills() { this.addNewRowEvent.emit(true); }
 
   onGrillSave(event: any) {
-    if (this.tempGrillsList.find(e => e.id === event.id) === undefined) {
-      this.tempGrillsList.push(event);
+
+    event = this.performGrillCalculations(event);
+
+    if (this.list.find(e => e.id === event.id) === undefined) {
+      this.list.push(event);
+    } else {
+      const index = this.list.findIndex(e => e.id === event.id);
+      this.list[index] = event;
     }
-    this.acphRoomsFormGroup.controls['noOfGrills'].patchValue(this.tempGrillsList.length)
+    this.acphRoomsFormGroup.controls['noOfGrills'].patchValue(this.list.length)
+    this.changeRef.detectChanges();
 
   }
+
+
   onGrillDelete(event: any) {
-    if (this.tempGrillsList.find(e => e.id === event.id) !== undefined) {
-      this.tempGrillsList = this.tempGrillsList.filter(e => e.id !== event.id);
+    if (this.list.find(e => e.id === event.id) !== undefined) {
+      this.list = this.list.filter(e => e.id !== event.id);
     }
-    this.acphRoomsFormGroup.controls['noOfGrills'].patchValue(this.tempGrillsList.length)
+    this.acphRoomsFormGroup.controls['noOfGrills'].patchValue(this.list.length)
+    this.changeRef.detectChanges();
+
 
   }
 
+  performGrillCalculations(grill: any) {
+    const avgVelocityInFPM = parseInt(grill.one) + parseInt(grill.two) + parseInt(grill.three) + parseInt(grill.four) + parseInt(grill.five);
+    grill.avgVelocityInFPM = avgVelocityInFPM / 5;
+    grill.airFlowCFM = Math.round(parseFloat(grill.sqrt) * grill.avgVelocityInFPM);
+    grill.roomVolume = parseInt(this.acphRoomsFormGroup.controls['roomVolume'].value)
+    grill.airChanges =  (grill.airFlowCFM / grill.roomVolume) * 60;
+    console.log(grill);
+    return grill;
+  }
 
   onClear() {
     this.acphRoomsFormGroup.reset()
-    this.tempGrillsList = [];
+    this.list = [];
   }
   addFormControlValidators() {
     this.acphRoomsFormGroup.controls['roomName'].addValidators([Validators.required])
@@ -111,13 +133,13 @@ export class AcphRoomGrillsComponent implements OnInit {
     this.acphRoomsFormGroup.controls['roomVolume'].addValidators([Validators.required])
   }
 
-  mapFormtoRoomObject() {
+  mapFormToRoomObject() {
     this.roomModel = new Room();
     this.roomModel.name = this.acphRoomsFormGroup.controls['roomName'].value;
     this.roomModel.designACPH = this.acphRoomsFormGroup.controls['design'].value;
     this.roomModel.noOfGrills = this.acphRoomsFormGroup.controls['noOfGrills'].value;
     this.roomModel.roomVolume = this.acphRoomsFormGroup.controls['roomVolume'].value;
-    this.tempGrillsList.forEach(e => this.roomModel?.grills.push(this.MapToRoomGrill(e)))
+    this.list.forEach(e => this.roomModel?.grills.push(this.MapToRoomGrill(e)))
   }
 
   MapToRoomGrill(grill: any): RoomGrill {
