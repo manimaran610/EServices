@@ -59,10 +59,10 @@
         </div>
       </div>
     </div>
-    <button class="btn btn-primary m-5"  (click)="addGrills()"> Add Grill Cells</button>
+    <button class="btn btn-primary m-5" type="button"  (click)="addGrills()"> Add Grill Cells</button>
 
     <app-grid [title]="'ACPH Room Grills'" [listOfItems]="list" [groupedColumnOptions]="groupedColumnOptions"  [addNewRow]="addNewRowEvent"
-    [dataKey]="'id'"  [canEdit] ="true"[canDelete]="true" [hasColumnGroup]="true" (Save) ="onGrillSave($event)" (Delete)="onGrillDelete($event)"
+    [dataKey]="'id'"  [canEdit] ="true"[canDelete]="true" [hasColumnGroup]="true" (Save) ="onGrillSave($event)" (Delete)="onGrillDelete($event)" 
     ></app-grid>
 
       <div class="container">

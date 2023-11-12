@@ -10,17 +10,17 @@
 
             <ng-container *ngFor="let col of gridcol.gridColumnOptions">
 
-                <th *ngIf="col.isSortable" [pSortableColumn]="col.field" [ngStyle]="{'width':col.width}"
+                <th *ngIf="col.isSortable" [pSortableColumn]="col.field!" [ngStyle]="{'width':col.width}"
                     [attr.rowspan]="col.rowspan" [attr.colspan]="col.colspan">
                     {{ col.header }}
-                    <p-sortIcon *ngIf="col.isSortable" [field]="col.field"></p-sortIcon>
-                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" type="text" [showAddButton]="false"
+                    <p-sortIcon *ngIf="col.isSortable" [field]="col.field!"></p-sortIcon>
+                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field!" type="text" [showAddButton]="false"
                         [showOperator]="false" display="menu"></p-columnFilter>
                 </th>
 
                 <th *ngIf="!col.isSortable" [attr.rowspan]="col.rowspan" [attr.colspan]="col.colspan">
                     {{ col.header }}
-                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" display="menu" [showAddButton]="false"
+                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field!" display="menu" [showAddButton]="false"
                         [showOperator]="false"></p-columnFilter>
                 </th>
             </ng-container>
@@ -34,16 +34,16 @@
 
             <ng-container *ngFor="let col of columns">
 
-                <th *ngIf="col.isSortable" [pSortableColumn]="col.field" [ngStyle]="{'width':col.width}">
+                <th *ngIf="col.isSortable" [pSortableColumn]="col.field!" [ngStyle]="{'width':col.width}">
                     {{ col.header }}
-                    <p-sortIcon *ngIf="col.isSortable" [field]="col.field"></p-sortIcon>
-                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" type="text" [showAddButton]="false"
+                    <p-sortIcon *ngIf="col.isSortable" [field]="col.field!"></p-sortIcon>
+                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field!" type="text" [showAddButton]="false"
                         [showOperator]="false" display="menu"></p-columnFilter>
                 </th>
 
                 <th *ngIf="!col.isSortable" rowspan="col.rowspan" colspan="col.colspan">
                     {{ col.header }}
-                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field" display="menu" [showAddButton]="false"
+                    <p-columnFilter *ngIf="col.hasFilter" [field]="col.field!" display="menu" [showAddButton]="false"
                         [showOperator]="false"></p-columnFilter>
                 </th>
             </ng-container>
@@ -61,14 +61,14 @@
                 <p-cellEditor>
                     <ng-template pTemplate="input">
                         <div class="form-group">
-                            <input pInputText type="text" class="form-control" [(ngModel)]="rowData[col.field]">
+                            <input *ngIf="col.isEditable" pInputText type="text" class="form-control" [(ngModel)]="rowData[col.field!]">
                         </div>
                     </ng-template>
                     <ng-template *ngIf="!col.hasRouterLink" class="" pTemplate="output">
-                        {{rowData[col.field]}}
+                        {{rowData[col.field!!]}}
                     </ng-template>
                     <ng-template *ngIf="col.hasRouterLink" pTemplate="output">
-                        <a routerLink="col.routerLink +'/' + rowData[dataKey] + '/view'">{{rowData[col.field]}}</a>
+                        <a routerLink="col.routerLink +'/' + rowData[dataKey] + '/view'">{{rowData[col.field!]}}</a>
                     </ng-template>
                 </p-cellEditor>
             </td>
@@ -101,13 +101,13 @@
             <td *ngFor="let col of columns">
                 <p-cellEditor>
                     <ng-template pTemplate="input">
-                        <input pInputText type="text" class="form-control" [(ngModel)]="rowData[col.field]">
+                        <input pInputText type="text" class="form-control" [(ngModel)]="rowData[col.field!]">
                     </ng-template>
                     <ng-template *ngIf="!col.hasRouterLink" pTemplate="output">
-                        {{rowData[col.field]}}
+                        {{rowData[col.field!]}}
                     </ng-template>
                     <ng-template *ngIf="col.hasRouterLink" pTemplate="output">
-                        <a routerLink="col.routerLink +'/' + rowData[dataKey] + '/view'">{{rowData[col.field]}}</a>
+                        <a routerLink="col.routerLink +'/' + rowData[dataKey] + '/view'">{{rowData[col.field!]}}</a>
                     </ng-template>
                 </p-cellEditor>
             </td>

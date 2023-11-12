@@ -9,6 +9,8 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DynamicDialogConfig, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ToastModule } from 'primeng/toast';
+import { RoomGrill } from 'src/Models/room-grill.Model';
+import { Room } from 'src/Models/room.Model';
 import { InstrumentService } from 'src/Services/Instrument.service';
 import { BaseHttpClientServiceService } from 'src/Services/Shared/base-http-client-service.service';
 import { GridComponent } from 'src/app/theme/shared/components/grid/grid.component';
@@ -26,6 +28,7 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
 export class AcphRoomGrillsComponent implements OnInit {
 
   acphRoomsFormGroup: FormGroup;
+  roomModel?: Room;
   onCloseEventFire: EventEmitter<any> = new EventEmitter<any>();
   tempGrillsList: any[] = []
   list: any[] = []
@@ -34,24 +37,24 @@ export class AcphRoomGrillsComponent implements OnInit {
   groupedColumnOptions: GroupedColumnOptions[] = [
     {
       gridColumnOptions: [
-        { field: 'GrillNo', header: 'Grill/Filter Reference No.', rowspan: '2', hasTableValue: true, isStandalone: false },
-        { field: 'FilterArea', header: 'Filter Area', colspan: '1', hasTableValue: false, isStandalone: false },
-        { field: 'AirVelocityInFPM', header: 'Air Velociy Reading in FPM', colspan: '5', hasTableValue: false, isStandalone: false },
-        { field: 'AvgVelocityInFPM', header: 'Avg Velocity FPM', rowspan: '2', hasTableValue: true, isStandalone: false },
-        { field: 'AirFlowCFM', header: 'Air Flow CFM', rowspan: '2', hasTableValue: true, isStandalone: false },
-        { field: 'TotalAirFlowCFM', header: 'Total Air Flow CFM', rowspan: '2', hasTableValue: true, isStandalone: true },
-        { field: 'RoomVolCFM', header: 'Room Volume CFT', rowspan: '2', hasTableValue: true, isStandalone: true },
-        { field: 'AirChanges', header: 'Air Changes per hour', rowspan: '2', hasTableValue: true, isStandalone: true }
+        { field: 'grillNo', header: 'Grill/Filter Reference No.', rowspan: '2', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
+        { field: 'filterArea', header: 'Filter Area', colspan: '1', hasTableValue: false, isStandalone: false },
+        { field: 'airVelocityreadingInFPM', header: 'Air Velociy Reading in FPM', colspan: '5', hasTableValue: false, isStandalone: false },
+        { field: 'avgVelocityInFPM', header: 'Avg Velocity FPM', rowspan: '2', hasTableValue: true, isStandalone: false, orderNo: 8 },
+        { field: 'airFlowCFM', header: 'Air Flow CFM', rowspan: '2', hasTableValue: true, isStandalone: false, orderNo: 9 },
+        { field: 'totalAirFlowCFM', header: 'Total Air Flow CFM', rowspan: '2', hasTableValue: true, isStandalone: true, orderNo: 10 },
+        { field: 'toomVolCFM', header: 'Room Volume CFT', rowspan: '2', hasTableValue: true, isStandalone: true, orderNo: 11 },
+        { field: 'airChanges', header: 'Air Changes per hour', rowspan: '2', hasTableValue: true, isStandalone: true, orderNo: 12 }
       ]
     },
     {
       gridColumnOptions: [
-        { field: 'sqrt', header: 'Sqrt', hasTableValue: true, isStandalone: false },
-        { field: '1', header: '1', hasTableValue: true, isStandalone: false },
-        { field: '2', header: '2', hasTableValue: true, isStandalone: false },
-        { field: '3', header: '3', hasTableValue: true, isStandalone: false },
-        { field: '4', header: '4', hasTableValue: true, isStandalone: false },
-        { field: '5', header: '5', hasTableValue: true, isStandalone: false }
+        { field: 'sqrt', header: 'Sqrt', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 2 },
+        { field: 'one', header: '1', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 3 },
+        { field: 'two', header: '2', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 4 },
+        { field: 'three', header: '3', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 5 },
+        { field: 'four', header: '4', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 6 },
+        { field: 'five', header: '5', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 7 }
       ]
     }
   ]
@@ -71,39 +74,60 @@ export class AcphRoomGrillsComponent implements OnInit {
 
   onSubmit() {
     console.log(this.acphRoomsFormGroup.value);
+    console.warn(this.list);
+
+    this.mapFormtoRoomObject();
+    console.log(this.roomModel);
 
   }
 
 
-  addGrills() { this.addNewRowEvent.emit(true);}
+  addGrills() { this.addNewRowEvent.emit(true); }
 
   onGrillSave(event: any) {
-    if (!this.tempGrillsList.includes(event.id)) {
-      this.tempGrillsList.push(event.id);
+    if (this.tempGrillsList.find(e => e.id === event.id) === undefined) {
+      this.tempGrillsList.push(event);
     }
-    console.log(this.tempGrillsList);
     this.acphRoomsFormGroup.controls['noOfGrills'].patchValue(this.tempGrillsList.length)
 
   }
   onGrillDelete(event: any) {
-    if (this.tempGrillsList.includes(event.id)) {
-      this.tempGrillsList = this.tempGrillsList.filter(e => e !== event.id);
+    if (this.tempGrillsList.find(e => e.id === event.id) !== undefined) {
+      this.tempGrillsList = this.tempGrillsList.filter(e => e.id !== event.id);
     }
     this.acphRoomsFormGroup.controls['noOfGrills'].patchValue(this.tempGrillsList.length)
-    console.log(this.tempGrillsList);
 
   }
 
 
-  onClear() { 
-    this.acphRoomsFormGroup.reset() 
-    this.list =[];
-    this.tempGrillsList =[];
+  onClear() {
+    this.acphRoomsFormGroup.reset()
+    this.tempGrillsList = [];
   }
   addFormControlValidators() {
     this.acphRoomsFormGroup.controls['roomName'].addValidators([Validators.required])
     this.acphRoomsFormGroup.controls['design'].addValidators([Validators.required])
     this.acphRoomsFormGroup.controls['noOfGrills'].addValidators([Validators.required])
     this.acphRoomsFormGroup.controls['roomVolume'].addValidators([Validators.required])
+  }
+
+  mapFormtoRoomObject() {
+    this.roomModel = new Room();
+    this.roomModel.name = this.acphRoomsFormGroup.controls['roomName'].value;
+    this.roomModel.designACPH = this.acphRoomsFormGroup.controls['design'].value;
+    this.roomModel.noOfGrills = this.acphRoomsFormGroup.controls['noOfGrills'].value;
+    this.roomModel.roomVolume = this.acphRoomsFormGroup.controls['roomVolume'].value;
+    this.tempGrillsList.forEach(e => this.roomModel?.grills.push(this.MapToRoomGrill(e)))
+  }
+
+  MapToRoomGrill(grill: any): RoomGrill {
+    const result = new RoomGrill();
+    result.airFlowCFM = grill.airFlowCFM;
+    result.avgVelocityFPM = grill.avgVelocityInFPM;
+    result.filterAreaSqft = grill.sqrt;
+    result.referenceNumber = grill.grillNo;
+    result.airVelocityReadingInFPMO = grill.one + ',' + grill.two + ',' + grill.three + ',' + grill.four + ',' + grill.five
+    return result;
+
   }
 }

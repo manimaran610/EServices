@@ -47,6 +47,7 @@ export class GridComponent implements OnInit, OnChanges {
     @Output() Delete: EventEmitter<any> = new EventEmitter<any>();
     @Output() RadioChanges: EventEmitter<any> = new EventEmitter<any>();
     @Output() LazyLoad: EventEmitter<any> = new EventEmitter<any>();
+    @Output() outList: any[]=this.listOfItems;
 
     firstOffset: number = 0;
     sortField: string | undefined;
@@ -58,7 +59,7 @@ export class GridComponent implements OnInit, OnChanges {
     clonedProducts: { [s: string]: any } = {};
     isNewRowInserted: boolean = false;
 
-    getFilteredColumns = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).filter(option => option.hasTableValue && !option.isStandalone);
+    getFilteredColumns = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).filter(option => option.hasTableValue && !option.isStandalone).sort((obj1, obj2) => obj1.orderNo! - obj2.orderNo!)
 
     getStandaloneColumns = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).filter(option => option.isStandalone);
 
@@ -118,9 +119,16 @@ export class GridComponent implements OnInit, OnChanges {
 
     onRowEditSave(rowData: any, htmlTableRowElement: any) {
         this.Save.emit(rowData);
-       this.getStandaloneColumns().forEach(e=> this.calcList.push(e.field));
-        rowData[this.getStandaloneColumns()[0].field] = 255;
-        console.log(rowData);
+        // if (this.listOfItems.find(e => e[this.dataKey] === rowData[this.dataKey]) === undefined) {
+        //     this.listOfItems=[this.listOfItems,rowData]
+        //     console.log(this.listOfItems);
+        // }
+        // else {
+        //     const index = this.listOfItems.findIndex(e => e[this.dataKey] === rowData[this.dataKey]);
+        //     this.listOfItems[index] = rowData;
+        //     console.log(this.listOfItems);
+
+        // }
         this.singleSelectionTable.saveRowEdit(rowData, htmlTableRowElement);
         delete this.clonedProducts[rowData[this.dataKey]];
     }
@@ -144,10 +152,10 @@ export class GridComponent implements OnInit, OnChanges {
 
     calcList: any[] = [];
     calc(input: any): string {
-       return this.calcList.length.toString();
+        return this.calcList.length.toString();
     }
     calcIf(input: any): boolean {
-        console.log('calcIf'  + !this.calcList.includes(input))
+        console.log('calcIf' + !this.calcList.includes(input))
         console.log(this.calcList)
         return !this.calcList.includes(input);
     }

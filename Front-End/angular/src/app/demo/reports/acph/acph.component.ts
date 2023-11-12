@@ -28,7 +28,7 @@ import { BaseResponse } from 'src/Models/response-models/base-response';
 export class AcphComponent implements OnDestroy, OnInit {
   ref: DynamicDialogRef | undefined;
   instance?: AcphRoomGrillsComponent;
-  customerDetailId: number = 0
+  customerDetailId: number = 2
 
   constructor(private router: Router, public dialogService: DialogService, private messageService: MessageService) { }
 
