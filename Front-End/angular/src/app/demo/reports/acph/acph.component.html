@@ -13,6 +13,6 @@
 <!-- <p-messages  position="top-center" [value]="msgs"></p-messages> -->
 <p-toast position="bottom-right" key="tc"></p-toast>
 
-<app-customer-details></app-customer-details>
+<app-customer-details (customerSave)="onCustomerSave($event)"  (customerError)="onCustomerError($event)"></app-customer-details>
 <!-- <app-acph-room-grills></app-acph-room-grills> -->
 <button class="btn btn-primary"  (click)="show()"> Add Rooms</button>

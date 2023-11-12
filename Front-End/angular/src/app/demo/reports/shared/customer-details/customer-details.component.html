@@ -80,7 +80,7 @@
           <label for="exampleInputPassword1">Instrument SerialNo:</label>
           <select class="form-select" id="inputGroupSelect04" formControlName="instrumentSerialNo">
             <option value="0" selected disabled>Choose Serial No</option>
-            <option *ngFor="let item of filterInstBySNo; let i = index" [value]="item.id" [selected]="i === 0" >
+            <option *ngFor="let item of filterInstBySNo; let i = index" [value]="item.id" >
               {{item.serialNo}}</option>
           </select>
         </div>

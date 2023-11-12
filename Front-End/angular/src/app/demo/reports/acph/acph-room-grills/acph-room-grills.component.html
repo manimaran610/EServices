@@ -35,12 +35,12 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="exampleInputPassword1">No of Grills:</label>
-          <input type="number" class="form-control" id="exampleInputPassword1"   formControlName="noOfGrills"
-            placeholder="Enter No of Grills"
-            [ngClass]="{'is-invalid': acphRoomsFormGroup.controls['noOfGrills'].errors  && (acphRoomsFormGroup.controls['noOfGrills'].touched || acphRoomsFormGroup.controls['noOfGrills'].dirty), 'is-valid':acphRoomsFormGroup.controls['noOfGrills'].valid}" />
+          <input type="number" class="form-control form-control-disabled" id="exampleInputPassword1"   formControlName="noOfGrills"
+            placeholder="Add Grills to count number of Grills" [readOnly]="true">
+            <!-- [ngClass]="{'is-invalid': acphRoomsFormGroup.controls['noOfGrills'].errors  && (acphRoomsFormGroup.controls['noOfGrills'].touched || acphRoomsFormGroup.controls['noOfGrills'].dirty), 'is-valid':acphRoomsFormGroup.controls['noOfGrills'].valid}" />
           <div class="invalid-feedback" *ngIf="acphRoomsFormGroup.controls['noOfGrills'].hasError('required')">
             Required
-          </div>
+          </div> -->
           <div class="invalid-feedback" *ngIf="acphRoomsFormGroup.controls['noOfGrills'].hasError('max')">
             Maximum Limit Reached
           </div>
@@ -62,13 +62,13 @@
     <button class="btn btn-primary m-5"  (click)="addGrills()"> Add Grill Cells</button>
 
     <app-grid [title]="'ACPH Room Grills'" [listOfItems]="list" [groupedColumnOptions]="groupedColumnOptions"  [addNewRow]="addNewRowEvent"
-    [dataKey]="'id'"  [canEdit] ="true"[canDelete]="true" [hasColumnGroup]="true"
+    [dataKey]="'id'"  [canEdit] ="true"[canDelete]="true" [hasColumnGroup]="true" (Save) ="onGrillSave($event)" (Delete)="onGrillDelete($event)"
     ></app-grid>
 
       <div class="container">
         <div class="row">
           <div class="col text-center">
-            <button class="btn btn-primary m-2" type="button" pButton pRipple (click)="onClear()">Clear</button>
+            <button class="btn btn-primary m-2" type="button" pButton pRipple (click)="onClear()" >Clear</button>
             <button class="btn btn-success" type="submit">Save Room</button>
           </div>
         </div>

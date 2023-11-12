@@ -10,21 +10,23 @@ import { environment } from 'src/environments/environment';
 })
 export class BaseHttpClientServiceService {
 
-  private url?: string;
+  private baseUrl?: string;
+  private url?: string = '';
+
 
   constructor(private http: HttpClient) {
-    this.url = environment.apiUrl + '/' + environment.appVersion + '/'
+    this.baseUrl = environment.apiUrl + '/' + environment.appVersion + '/'
   }
 
   mapURLPath(path: string) {
-    this.url += path;
+    this.url = this.baseUrl + path;
   }
 
   public get populateHttpHeaders(): HttpHeaders {
     return new HttpHeaders({
       // Authorization: `Bearer ${this.authentication.getAccessToken()}`,
       'Content-Type': 'application/json',
-      
+
     });
   }
 
