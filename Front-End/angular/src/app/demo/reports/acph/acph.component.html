@@ -14,5 +14,20 @@
 <p-toast position="bottom-right" key="tc"></p-toast>
 
 <app-customer-details (customerSave)="onCustomerSave($event)"  (customerError)="onCustomerError($event)"></app-customer-details>
-<!-- <app-acph-room-grills></app-acph-room-grills> -->
-<button class="btn btn-primary"  (click)="show()"> Add Rooms</button>
+<app-card cardTitle="Rooms">
+<button class="btn btn-primary m-2"  (click)="show()"> Add Room</button>
+<app-grid [title]="'ACPH Room Grills'" [listOfItems]="listOfRooms" [gridColumnOptions]="gridColumnOptions"
+    [dataKey]="'id'"  [sortOrder]="-1" [sortField]="'name'"
+    ></app-grid>
+  </app-card>
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col text-center">
+        <button class="btn btn-primary m-2" type="button"  >Export as Docx <i class="m-1 feather icon-file"></i></button>
+      </div>
+    </div>
+  </div>
+
+ 

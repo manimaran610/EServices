@@ -13,14 +13,19 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { AcphRoomGrillsComponent } from './acph-room-grills/acph-room-grills.component';
 import { BaseResponse } from 'src/Models/response-models/base-response';
+import { GridComponent } from 'src/app/theme/shared/components/grid/grid.component';
+import { Room } from 'src/Models/room.Model';
+import { GridColumnOptions } from 'src/Models/grid-column-options';
+import { RoomService } from 'src/Services/room.service';
+import { RequestParameter } from 'src/Models/request-parameter';
 
 @Component({
   selector: 'app-acph',
   standalone: true,
   imports: [CommonModule, SharedModule, ConfirmDialogModule, MessagesModule,
     HttpClientModule, ToastModule, CustomerDetailsComponent, AcphRoomGrillsComponent,
-    DynamicDialogModule],
-  providers: [ConfirmationService, BaseHttpClientServiceService, MessageService, DialogService],
+    DynamicDialogModule, GridComponent],
+  providers: [ConfirmationService, BaseHttpClientServiceService, MessageService, DialogService, RoomService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './acph.component.html',
   styleUrls: ['./acph.component.css']
@@ -28,9 +33,19 @@ import { BaseResponse } from 'src/Models/response-models/base-response';
 export class AcphComponent implements OnDestroy, OnInit {
   ref: DynamicDialogRef | undefined;
   instance?: AcphRoomGrillsComponent;
-  customerDetailId: number = 2;
+  customerDetailId: number = 1;
+  listOfRooms: Room[] = [];
 
-  constructor(private router: Router, public dialogService: DialogService, private messageService: MessageService) { }
+  constructor(private router: Router, public dialogService: DialogService, private messageService: MessageService, private roomService: RoomService) { }
+
+  gridColumnOptions: GridColumnOptions[] = [
+    { field: 'name', header: 'Room Name',isSortable:true, hasTableValue: true, isStandalone: false },
+    { field: 'designACPH', header: 'Design ACPH', hasTableValue: true, isStandalone: false },
+    { field: 'noOfGrills', header: 'No. of Grills', hasTableValue: true, isStandalone: false },
+    { field: 'roomVolume', header: 'Room Volume', hasTableValue: true, isStandalone: false },
+    { field: 'totalAirFlowCFM', header: 'Total AirFlow CFM', hasTableValue: true, isStandalone: false },
+    { field: 'airChangesPerHour', header: 'Air Changes per hour', hasTableValue: true, isStandalone: false }
+  ]
 
   show() {
     if (this.customerDetailId > 0) {
@@ -52,7 +67,7 @@ export class AcphComponent implements OnDestroy, OnInit {
       });
 
       this.ref.onClose.subscribe((input: any) => {
-        console.log(input);
+        this.getRoomsFromServer();
       });
     } else {
       this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'Please save the Customer First!', life: 4000 });
@@ -77,6 +92,19 @@ export class AcphComponent implements OnDestroy, OnInit {
     this.customerDetailId = 0;
     this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed', detail: message, life: 4000 });
   }
+
+  getRoomsFromServer() {
+    let reqparam = new RequestParameter();
+    reqparam.filter =`customerDetailId:eq:${this.customerDetailId}`
+    this.roomService.getAllPagedResponse(reqparam).subscribe({
+      next: (response: BaseResponse<Room[]>) => {
+        if (response.succeeded) { this.listOfRooms = response.data; }
+      },
+      error: (e) => { console.error(e.error) },
+      complete: () => { },
+    });
+  }
+
 
   ngOnDestroy() {
     if (this.ref) {

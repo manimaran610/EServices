@@ -10,15 +10,16 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ConfirmationService, Message } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DynamicDialogConfig, DynamicDialogModule } from 'primeng/dynamicdialog';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 
 @Component({
   selector: 'app-customer-details',
   standalone: true,
-  imports: [CommonModule, SharedModule, ConfirmDialogModule, HttpClientModule, ReactiveFormsModule, DynamicDialogModule],
+  imports: [CommonModule, SharedModule, ConfirmDialogModule, HttpClientModule, ReactiveFormsModule, DynamicDialogModule,ProgressSpinnerModule ],
   providers: [ConfirmationService, InstrumentService, CustomerDetailService, BaseHttpClientServiceService, DynamicDialogConfig],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './customer-details.component.html',
@@ -33,6 +34,7 @@ export class CustomerDetailsComponent implements OnInit {
   filterInstByType: Instrument[] = [];
   customerDetailModel: CustomerDetail = new CustomerDetail();
   isSaved: boolean = false;
+  isLoading:boolean=false;
   @Output() customerSave: EventEmitter<BaseResponse<number>> = new EventEmitter<BaseResponse<number>>();
   @Output() customerError: EventEmitter<string> = new EventEmitter<string>();
 

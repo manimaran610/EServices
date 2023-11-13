@@ -1,5 +1,13 @@
 <app-card cardTitle="" [options]="false">
-  <h4 class="text-c-blue">Customer Details:</h4>
+  <div class="row">
+    <div class="col text-start">
+      <h4 class="text-c-blue">Customer Details:</h4>
+    </div>
+      <div class="col text-end">
+        <button class="btn btn-danger m-2" *ngIf="!isLoading" type="button" (click)="isLoading=!isLoading" >Export as Docx and Download <i class="m-2 feather icon-file"></i></button>
+        <p-progressSpinner *ngIf="isLoading" [style]="{'width':'3%','height':'70%'}" strokeWidth="8" fill="var(--surface-ground)" animationDuration="1.5s"></p-progressSpinner>
+      </div>
+    </div>
   <hr />
   <p-confirmDialog [style]="{width: '25vw'}" [baseZIndex]="10000"></p-confirmDialog>
   <form [formGroup]="customerDetailsFormGroup" (ngSubmit)="onSubmit()">
