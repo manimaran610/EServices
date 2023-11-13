@@ -61,7 +61,7 @@
     </div>
     <button class="btn btn-primary m-5" type="button"  (click)="addGrills()"> Add Grill Cells</button>
 
-    <app-grid [title]="'ACPH Room Grills'" [listOfItems]="listOfGrills" [groupedColumnOptions]="groupedColumnOptions"  [addNewRow]="addNewRowEvent"
+    <app-grid [title]="'ACPH Room Grills'" [isBordered]="true" [tableStyle]="{ 'min-width': '90rem'}" [listOfItems]="listOfGrills" [groupedColumnOptions]="groupedColumnOptions"  [addNewRow]="addNewRowEvent"
     [dataKey]="'id'"  [canEdit] ="true"[canDelete]="true" [hasColumnGroup]="true" (Save) ="onGrillSave($event)" (Delete)="onGrillDelete($event)" 
     [sortField]="'grillNo'" [sortOrder]="-1"
     ></app-grid>

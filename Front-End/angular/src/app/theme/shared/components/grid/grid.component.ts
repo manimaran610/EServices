@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, OnChanges, ViewEncapsulation } from '@angular/core';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 import { CommonModule } from '@angular/common';
@@ -8,6 +8,8 @@ import { SharedModule } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { GridColumnOptions } from 'src/Models/grid-column-options';
 import { GroupedColumnOptions } from 'src/Models/grouped-column-options';
+import { group } from 'console';
+import { Action } from 'rxjs/internal/scheduler/Action';
 
 
 @Component({
@@ -15,9 +17,9 @@ import { GroupedColumnOptions } from 'src/Models/grouped-column-options';
     standalone: true,
     imports: [CommonModule, SharedModule, TableModule, FormsModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA],
-     changeDetection: ChangeDetectionStrategy.Default,
+    changeDetection: ChangeDetectionStrategy.Default,
     templateUrl: './grid.component.html',
-    styleUrls: ['./grid.component.css']
+    styleUrls: ['./grid.component.scss']
 })
 export class GridComponent implements OnInit, OnChanges {
 
@@ -25,6 +27,8 @@ export class GridComponent implements OnInit, OnChanges {
     @ViewChild('singleSelectionTable', { static: false }) singleSelectionTable: any;
 
     @Input() title: string = '';
+    @Input() isBordered:boolean =false;
+    @Input() tableStyle: any = { 'min-width': '50rem' };
     @Input() listOfItems: any[] = [];
     @Input() groupedColumnOptions: GroupedColumnOptions[] = [];
     @Input() gridColumnOptions: GridColumnOptions[] = [];
@@ -50,7 +54,7 @@ export class GridComponent implements OnInit, OnChanges {
     @Output() LazyLoad: EventEmitter<any> = new EventEmitter<any>();
 
     firstOffset: number = 0;
-    @Input() sortField: string | undefined ;
+    @Input() sortField: string | undefined;
     @Input() sortOrder: number = 1;
 
 
@@ -59,6 +63,7 @@ export class GridComponent implements OnInit, OnChanges {
     clonedProducts: { [s: string]: any } = {};
     isNewRowInserted: boolean = false;
 
+    getRowSpan = () => this.groupedColumnOptions.flatMap(group =>group.gridColumnOptions).sort((obj1, obj2) => parseInt(obj1.rowspan!) - parseInt(obj2.rowspan!))[0].rowspan;
     getFilteredColumns = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).filter(option => option.hasTableValue && !option.isStandalone).sort((obj1, obj2) => obj1.orderNo! - obj2.orderNo!)
 
     getStandaloneColumns = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).filter(option => option.isStandalone);
@@ -67,18 +72,22 @@ export class GridComponent implements OnInit, OnChanges {
 
     public ngOnInit() {
         this.selectedRow = this.selected;
-    }
-
-    ngOnChanges() {
-        console.log('changes detected')
         this.addNewRow.subscribe((e) => {
             if (e == true) {
                 this.addNewEditableRow()
             }
         })
-        
 
     }
+
+    ngOnChanges() {
+        console.log('changes detected')
+       
+
+    }
+    get $applyStyles(): boolean {
+        return true;
+      }
 
     onRadioSelected() { this.RadioChanges.emit(this.selectedRow); }
 

@@ -1,12 +1,12 @@
-<p-table #singleSelectionTable id="singleSelectionTable" [value]="listOfItems" [paginator]="hasPagination" [rows]="rows"
+<p-table #singleSelectionTable id="singleSelectionTable" [ngClass]="{'bordered': isBordered}"  [tableStyle]="tableStyle" [value]="listOfItems" [paginator]="hasPagination" [rows]="rows" 
     selectionMode="single" [(selection)]="selectedRow" [dataKey]="dataKey" [rowsPerPageOptions]="rowsPerPageOptions"
     [columns]="hasColumnGroup ? groupedColumnOptions : gridColumnOptions" editMode="row" [lazy]="hasLazyLoading"
     [totalRecords]="totalRecords" [loading]="loadingSpinner" (onRowSelect)="onRowSelected($event)"
     (onLazyLoad)="onLazyLoadEvent($event)" [(first)]="firstOffset" [sortField]="sortField!" [sortOrder]="sortOrder">
 
     <ng-template *ngIf="hasColumnGroup" pTemplate="header" let-columns>
-        <tr *ngFor="let gridcol of columns">
-            <th *ngIf="hasradioButton" style="width: 4rem"></th>
+        <tr *ngFor="let gridcol of columns" >
+            <th *ngIf="hasradioButton" style="width: 4rem" ></th>
 
             <ng-container *ngFor="let col of gridcol.gridColumnOptions">
 
@@ -24,7 +24,6 @@
                         [showOperator]="false"></p-columnFilter>
                 </th>
             </ng-container>
-            <th *ngIf="canEdit || canDelete"></th>
         </tr>
     </ng-template>
 
@@ -47,8 +46,7 @@
                         [showOperator]="false"></p-columnFilter>
                 </th>
             </ng-container>
-            <!-- <th *ngIf="canEdit || canDelete"></th> -->
-
+]
         </tr>
     </ng-template>
 

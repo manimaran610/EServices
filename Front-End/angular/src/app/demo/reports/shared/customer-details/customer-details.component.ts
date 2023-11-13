@@ -32,6 +32,7 @@ export class CustomerDetailsComponent implements OnInit {
   filterInstBySNo: Instrument[] = [];
   filterInstByType: Instrument[] = [];
   customerDetailModel: CustomerDetail = new CustomerDetail();
+  isSaved: boolean = false;
   @Output() customerSave: EventEmitter<BaseResponse<number>> = new EventEmitter<BaseResponse<number>>();
   @Output() customerError: EventEmitter<string> = new EventEmitter<string>();
 
@@ -94,13 +95,14 @@ export class CustomerDetailsComponent implements OnInit {
       next: (response: BaseResponse<number>) => {
         console.log(response)
         this.customerSave.emit(response);
+        this.isSaved = true;
       },
       error: (e) => {
         console.error(e)
         e.error.Message !== undefined ? this.customerError.emit(e.error.Message) : this.customerError.emit(e.error.title)
 
       },
-      complete: () => {},
+      complete: () => { },
     });
   }
 

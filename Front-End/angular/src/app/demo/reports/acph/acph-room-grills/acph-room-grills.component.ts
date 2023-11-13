@@ -45,17 +45,19 @@ export class AcphRoomGrillsComponent implements OnInit {
         { field: 'airFlowCFM', header: 'Air Flow CFM', rowspan: '2', hasTableValue: true, isStandalone: false, orderNo: 9 },
         { field: 'totalAirFlowCFM', header: 'Total Air Flow CFM', rowspan: '2', hasTableValue: true, isStandalone: true, orderNo: 10 },
         { field: 'roomVolCFM', header: 'Room Volume CFT', rowspan: '2', hasTableValue: true, isStandalone: true, orderNo: 11 },
-        { field: 'airChanges', header: 'Air Changes per hour', rowspan: '2', hasTableValue: true, isStandalone: true, orderNo: 12 }
+        { field: 'airChanges', header: 'Air Changes per hour', rowspan: '2', hasTableValue: true, isStandalone: true, orderNo: 12 },
+        { field: '', header: 'Action', rowspan: '2', hasTableValue: false, isStandalone: false}
+
       ]
     },
     {
       gridColumnOptions: [
-        { field: 'sqrt', header: 'Sqrt', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 2 },
-        { field: 'one', header: '1', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 3 },
-        { field: 'two', header: '2', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 4 },
-        { field: 'three', header: '3', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 5 },
-        { field: 'four', header: '4', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 6 },
-        { field: 'five', header: '5', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 7 }
+        { field: 'sqrt',width:'15%', header: 'Sqrt', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 2 },
+        { field: 'one',width:'15%', header: '1', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 3 },
+        { field: 'two',width:'15%', header: '2', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 4 },
+        { field: 'three',width:'15%', header: '3', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 5 },
+        { field: 'four',width:'15%', header: '4', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 6 },
+        { field: 'five',width:'15%', header: '5', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 7 }
       ]
     }
   ]
@@ -101,9 +103,7 @@ export class AcphRoomGrillsComponent implements OnInit {
       error: (e) => {
         this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed', detail: e.error.title, life: 4000 });
       },
-      complete: () => {
-        // this.router.navigateByUrl("/Home-page")
-      },
+      complete: () => {},
     });
   }
   //#region Grill Rows
