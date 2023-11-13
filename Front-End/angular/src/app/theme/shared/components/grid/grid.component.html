@@ -75,7 +75,7 @@
 
                       
                 <td *ngFor="let col of getStandaloneColumns()"  class="">
-                           <strong> {{ rowIndex===0 ? calc(col) :'' }}</strong>
+                           <strong> {{ rowIndex===0 ? rowData[col.field!]:'' }}</strong>
                 </td>
 
 

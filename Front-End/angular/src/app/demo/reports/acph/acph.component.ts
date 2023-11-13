@@ -28,7 +28,7 @@ import { BaseResponse } from 'src/Models/response-models/base-response';
 export class AcphComponent implements OnDestroy, OnInit {
   ref: DynamicDialogRef | undefined;
   instance?: AcphRoomGrillsComponent;
-  customerDetailId: number = 2
+  customerDetailId: number = 0;
 
   constructor(private router: Router, public dialogService: DialogService, private messageService: MessageService) { }
 
@@ -40,11 +40,16 @@ export class AcphComponent implements OnDestroy, OnInit {
         contentStyle: { overflow: 'auto' },
         baseZIndex: 10000,
         maximizable: true,
+        data: { customerDetailId: this.customerDetailId }
       });
       const dialogRef = this.dialogService.dialogComponentRefMap.get(this.ref);
       dialogRef!.changeDetectorRef.detectChanges();
       this.instance = dialogRef!.instance.componentRef!.instance as AcphRoomGrillsComponent;
-      this.instance.onCloseEventFire.subscribe((e) => { this.ref?.close(e) });
+      this.instance.onCloseEventFire.subscribe((e) => {
+        this.ref?.close(e);
+        this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Room along with Grills saved', life: 4000 });
+
+      });
 
       this.ref.onClose.subscribe((input: any) => {
         console.log(input);

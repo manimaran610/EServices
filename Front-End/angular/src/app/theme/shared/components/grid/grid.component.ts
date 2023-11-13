@@ -50,8 +50,8 @@ export class GridComponent implements OnInit, OnChanges {
     @Output() LazyLoad: EventEmitter<any> = new EventEmitter<any>();
 
     firstOffset: number = 0;
-    sortField: string | undefined;
-    sortOrder: number = 1;
+    @Input() sortField: string | undefined ;
+    @Input() sortOrder: number = 1;
 
 
     selectedRow: any;
@@ -140,15 +140,5 @@ export class GridComponent implements OnInit, OnChanges {
         return result;
 
     };
-
-    calcList: any[] = [];
-    calc(input: any): string {
-        return this.calcList.length.toString();
-    }
-    calcIf(input: any): boolean {
-        console.log('calcIf' + !this.calcList.includes(input))
-        console.log(this.calcList)
-        return !this.calcList.includes(input);
-    }
 
 }
