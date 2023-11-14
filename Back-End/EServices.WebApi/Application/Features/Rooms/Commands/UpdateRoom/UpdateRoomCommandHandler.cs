@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Behaviours.DomainEvents.RoomGrillsAddRangeEvent;
+using Application.Features.DomainEvents.RoomGrillsAddRangeEvent;
 using Application.Exceptions;
 using Application.Interfaces.Repositories;
 using Application.Wrappers;
@@ -64,7 +64,7 @@ namespace Application.Features.Rooms.Commands.UpdateRoom
                     var roomGrillsUpsertRangeEvent = new RoomGrillsUpsertRangeEvent()
                     {
                         RoomId = room.Id,
-                        Grills = request.Grills
+                        Grills = request.RoomGrills
                     };
                     await _mediator.Publish(roomGrillsUpsertRangeEvent);
                 }

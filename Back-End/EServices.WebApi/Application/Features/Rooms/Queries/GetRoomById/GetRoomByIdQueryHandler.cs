@@ -1,6 +1,7 @@
 
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace Application.Features.Rooms.Queries.GetRoomById
                 CustomerDetailId = e.CustomerDetailId,
                 Name = e.Name,
                 TotalAirFlowCFM = e.TotalAirFlowCFM,
-                RoomGrills = e.RoomGrills
+                RoomGrills = e.RoomGrills.Where(e=>!e.IsDeleted).ToList()
 
             };
             var Room = await _roomRepository.GetByIdAsync(query.Id,selectExpression);

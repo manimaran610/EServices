@@ -37,8 +37,7 @@ namespace Application.Features.Rooms.Queries.GetAllRooms
                 RoomVolume = e.RoomVolume,
                 CustomerDetailId = e.CustomerDetailId,
                 Name = e.Name,
-                TotalAirFlowCFM = e.TotalAirFlowCFM,
-                RoomGrills = e.RoomGrills
+                TotalAirFlowCFM = e.TotalAirFlowCFM
 
             };
 

@@ -8,7 +8,7 @@ using Domain.Entities;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Application.Behaviours.DomainEvents.RoomGrillsAddRangeEvent
+namespace Application.Features.DomainEvents.RoomGrillsAddRangeEvent
 {
     public class RoomGrillsUpsertRangeEventHandler : INotificationHandler<RoomGrillsUpsertRangeEvent>
     {
@@ -24,14 +24,28 @@ namespace Application.Behaviours.DomainEvents.RoomGrillsAddRangeEvent
         public async Task Handle(RoomGrillsUpsertRangeEvent request, System.Threading.CancellationToken cancellationToken)
         {
 
+            var existingRoomGrills = await _roomGrillRepositoryAsync.GetPagedReponseAsync(0, int.MaxValue, $"RoomId:eq:{request.RoomId}");
+
             foreach (var grill in request.Grills)
             {
-                var actualRoomGrill = await _roomGrillRepositoryAsync.GetByRoomIdAndReferenceNo(request.RoomId, grill.ReferenceNumber);
+                var actualRoomGrill = existingRoomGrills.FirstOrDefault(e => e.ReferenceNumber == grill.ReferenceNumber);
                 var roomGrill = _mapper.Map<RoomGrill>(grill);
                 roomGrill.RoomId = request.RoomId;
 
-                if (actualRoomGrill?.Id > 0) roomGrill.Id = actualRoomGrill.Id;
-                await _roomGrillRepositoryAsync.UpdateAsync(roomGrill);         
+                if (actualRoomGrill?.Id > 0)
+                {
+                    roomGrill.Id = actualRoomGrill.Id;
+                }
+                await _roomGrillRepositoryAsync.UpdateAsync(roomGrill);
+            }
+
+            //Soft Delete existing grills 
+            foreach (var existingGrill in existingRoomGrills)
+            {
+                if (!request.Grills.Any(e => e.ReferenceNumber == existingGrill.ReferenceNumber))
+                {
+                    await _roomGrillRepositoryAsync.SoftDeleteAsync(existingGrill);
+                }
             }
         }
 

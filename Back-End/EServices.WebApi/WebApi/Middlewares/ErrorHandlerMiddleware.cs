@@ -40,15 +40,21 @@ namespace WebApi.Middlewares
                     case Application.Exceptions.ApiException e:
                         // custom application error
                         response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        LogContext.PushProperty("Exception", e);
+                        Serilog.Log.Warning(e.Message);
                         break;
                     case ValidationException e:
                         // custom application error
                         response.StatusCode = (int)HttpStatusCode.BadRequest;
                         responseModel.Errors = e.Errors;
+                        LogContext.PushProperty("Exception", e);
+                        Serilog.Log.Warning(e.Message);
                         break;
                     case KeyNotFoundException e:
                         // not found error
                         response.StatusCode = (int)HttpStatusCode.NotFound;
+                        LogContext.PushProperty("Exception", e);
+                        Serilog.Log.Warning(e.Message);
                         break;
                     default:
                         // unhandled error

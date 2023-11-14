@@ -20,6 +20,6 @@ namespace Application.Features.Rooms.Commands.UpdateRoom
         public int AirChangesPerHour { get; set; }
         public int CustomerDetailId { get; set; }
 
-        public List<GrillDto> Grills { get; set; } = new();
+        public List<GrillDto> RoomGrills { get; set; } = new();
     }
 }

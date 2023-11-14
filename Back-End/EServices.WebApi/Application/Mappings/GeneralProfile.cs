@@ -33,7 +33,7 @@ namespace Application.Mappings
             CreateMap<GetAllCustomerDetailsQuery, RequestParameter>();
 
             CreateMap<Room, GetAllRoomsViewModel>()
-            .ForMember(e=>e.Grills,opt=>opt.MapFrom(entity =>entity.RoomGrills))
+            .ForMember(e=>e.RoomGrills,opt=>opt.MapFrom(entity =>entity.RoomGrills))
             .ReverseMap();
             CreateMap<CreateRoomCommand, Room>();
             CreateMap<GetAllRoomsQuery, RequestParameter>();
