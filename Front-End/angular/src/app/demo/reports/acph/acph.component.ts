@@ -33,13 +33,14 @@ import { RequestParameter } from 'src/Models/request-parameter';
 export class AcphComponent implements OnDestroy, OnInit {
   ref: DynamicDialogRef | undefined;
   instance?: AcphRoomGrillsComponent;
-  customerDetailId: number = 1;
+  customerDetailId: number = 0;
+  roomId?: number;
   listOfRooms: Room[] = [];
 
   constructor(private router: Router, public dialogService: DialogService, private messageService: MessageService, private roomService: RoomService) { }
 
   gridColumnOptions: GridColumnOptions[] = [
-    { field: 'name', header: 'Room Name',isSortable:true, hasTableValue: true, isStandalone: false },
+    { field: 'name', header: 'Room Name', isSortable: true, hasTableValue: true, isStandalone: false },
     { field: 'designACPH', header: 'Design ACPH', hasTableValue: true, isStandalone: false },
     { field: 'noOfGrills', header: 'No. of Grills', hasTableValue: true, isStandalone: false },
     { field: 'roomVolume', header: 'Room Volume', hasTableValue: true, isStandalone: false },
@@ -55,7 +56,7 @@ export class AcphComponent implements OnDestroy, OnInit {
         contentStyle: { overflow: 'auto' },
         baseZIndex: 10000,
         maximizable: true,
-        data: { customerDetailId: this.customerDetailId }
+        data: { customerDetailId: this.customerDetailId, roomId: this.roomId }
       });
       const dialogRef = this.dialogService.dialogComponentRefMap.get(this.ref);
       dialogRef!.changeDetectorRef.detectChanges();
@@ -95,7 +96,7 @@ export class AcphComponent implements OnDestroy, OnInit {
 
   getRoomsFromServer() {
     let reqparam = new RequestParameter();
-    reqparam.filter =`customerDetailId:eq:${this.customerDetailId}`
+    reqparam.filter = `customerDetailId:eq:${this.customerDetailId}`
     this.roomService.getAllPagedResponse(reqparam).subscribe({
       next: (response: BaseResponse<Room[]>) => {
         if (response.succeeded) { this.listOfRooms = response.data; }
