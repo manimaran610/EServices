@@ -1,0 +1,108 @@
+<app-card cardTitle="" [options]="false">
+  <div class="row">
+    <div class="col text-start">
+      <h4 class="text-c-blue">Customer Details:</h4>
+    </div>
+      <div class="col text-end">
+        <button class="btn btn-danger m-2" *ngIf="!isLoading" type="button" (click)="isLoading=!isLoading" >Export as Docx and Download <i class="m-2 feather icon-file"></i></button>
+        <p-progressSpinner *ngIf="isLoading" [style]="{'width':'3%','height':'70%'}" strokeWidth="8" fill="var(--surface-ground)" animationDuration="1.5s"></p-progressSpinner>
+      </div>
+    </div>
+  <hr />
+  <p-confirmDialog [style]="{width: '25vw'}" [baseZIndex]="10000"></p-confirmDialog>
+  <form [formGroup]="customerDetailsFormGroup" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Client:</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="client"
+            placeholder="Enter Client Details"
+            [ngClass]="{'is-invalid': customerDetailsFormGroup.controls['client'].errors  && (customerDetailsFormGroup.controls['client'].touched || customerDetailsFormGroup.controls['client'].dirty), 'is-valid':customerDetailsFormGroup.controls['client'].valid}" />
+          <div class="invalid-feedback" *ngIf="customerDetailsFormGroup.controls['client'].hasError('required')">
+            Required
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Date Of Test:</label>
+          <input type="date" class="form-control" id="exampleInputPassword1" formControlName="dateOfTest"
+            placeholder="Enter Date"
+            [ngClass]="{'is-invalid': customerDetailsFormGroup.controls['dateOfTest'].errors  && (customerDetailsFormGroup.controls['dateOfTest'].touched || customerDetailsFormGroup.controls['dateOfTest'].dirty), 'is-valid':customerDetailsFormGroup.controls['dateOfTest'].valid}" />
+          <div class="invalid-feedback" *ngIf="customerDetailsFormGroup.controls['dateOfTest'].hasError('required')">
+            Required
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Plant:</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="plant"
+            placeholder="Enter Plant Name"
+            [ngClass]="{'is-invalid': customerDetailsFormGroup.controls['plant'].errors  && (customerDetailsFormGroup.controls['plant'].touched || customerDetailsFormGroup.controls['plant'].dirty), 'is-valid':customerDetailsFormGroup.controls['plant'].valid}" />
+          <div class="invalid-feedback" *ngIf="customerDetailsFormGroup.controls['plant'].hasError('required')">Required
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Equipment Id:</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="equipmentId"
+            placeholder="Enter Equipment Id"
+            [ngClass]="{'is-invalid': customerDetailsFormGroup.controls['equipmentId'].errors  && (customerDetailsFormGroup.controls['equipmentId'].touched || customerDetailsFormGroup.controls['equipmentId'].dirty), 'is-valid':customerDetailsFormGroup.controls['equipmentId'].valid}" />
+          <div class="invalid-feedback" *ngIf="customerDetailsFormGroup.controls['equipmentId'].hasError('required')">
+            Required
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Area of Test:</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="areaOfTest"
+            placeholder="Enter area Of test conducted"
+            [ngClass]="{'is-invalid': customerDetailsFormGroup.controls['areaOfTest'].errors  && (customerDetailsFormGroup.controls['areaOfTest'].touched || customerDetailsFormGroup.controls['areaOfTest'].dirty), 'is-valid':customerDetailsFormGroup.controls['areaOfTest'].valid}" />
+          <div class="invalid-feedback" *ngIf="customerDetailsFormGroup.controls['areaOfTest'].hasError('required')">
+            Required
+          </div>
+        </div>
+      </div>
+
+      <h4 class="text-c-blue mt-5"><strong>Instrument Details:</strong></h4>
+      <hr />
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Instrument Type:</label>
+          <select class="form-select" id="inputGroupSelect04" formControlName="instrumentType" (change)="onSelectOptionChange()">
+            <option value="0" selected disabled>Choose type</option>
+            <option *ngFor="let item of filterInstByType" [value]="item.id">{{item.type}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Instrument SerialNo:</label>
+          <select class="form-select" id="inputGroupSelect04" formControlName="instrumentSerialNo">
+            <option value="0" selected disabled>Choose Serial No</option>
+            <option *ngFor="let item of filterInstBySNo; let i = index" [value]="item.id" >
+              {{item.serialNo}}</option>
+          </select>
+        </div>
+      </div>
+
+
+      <div class="container">
+        <div class="row">
+          <div class="col text-center">
+            <button class="btn btn-primary m-2" type="button" pButton pRipple (click)="onClear()">Clear</button>
+            <button class="btn btn-success" type="submit" [disabled]="isSaved">Save Customer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</app-card>

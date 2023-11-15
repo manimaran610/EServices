@@ -1,0 +1,7 @@
+// my-table.component.scss
+.bordered {
+  table, th, td {
+    border: 2px solid black;
+    // Add any other common styles you want to apply to table, th, td here
+  }
+}

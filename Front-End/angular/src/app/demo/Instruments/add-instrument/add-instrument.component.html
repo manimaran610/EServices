@@ -1,0 +1,112 @@
+
+<!-- BreadCrumb -->
+<nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>'">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a (click)="navigateToUrl('Home')" class="text-c-blue"><i class="feather icon-home "></i></a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Instrument</li>
+    <li class="breadcrumb-item active" aria-current="page">Add Instrument</li>
+
+  </ol>
+</nav>
+
+<!-- Toast Messages -->
+<!-- <p-messages  position="top-center" [value]="msgs"></p-messages> -->
+<p-toast position="bottom-right" key="tc"></p-toast>
+
+<!-- <button type="button" class="btn btn-primary mb-5" (click)="toggle()">Add instrument</button> -->
+
+<!-- Add Instrument Form -->
+<app-card cardTitle="Add Instrument" *ngIf="isAddInstrument" [options]="false">
+  <h4 class="text-c-blue">Instrument Details:</h4>
+  <hr />
+  <p-confirmDialog [style]="{width: '25vw'}" [baseZIndex]="10000"></p-confirmDialog>
+  <form [formGroup]="instrumentFormGroup" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Serial No:</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="serialNo"  placeholder="Enter Serial Number" 
+          [ngClass]="{'is-invalid': instrumentFormGroup.controls['serialNo'].errors  && (instrumentFormGroup.controls['serialNo'].touched || instrumentFormGroup.controls['serialNo'].dirty), 'is-valid':instrumentFormGroup.controls['serialNo'].valid}" />
+            <div class="invalid-feedback" *ngIf="instrumentFormGroup.controls['serialNo'].hasError('required')">Required</div>
+
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group ">
+          <label for="exampleCheck1">Calibrated on</label>
+          <input type="date" class="form-control" id="exampleCheck1" formControlName="calibratedOn"
+          [ngClass]="{'is-invalid': instrumentFormGroup.controls['calibratedOn'].errors  && (instrumentFormGroup.controls['calibratedOn'].touched || 
+          instrumentFormGroup.controls['calibratedOn'].dirty), 'is-valid':instrumentFormGroup.controls['calibratedOn'].valid}" />
+          <div class="invalid-feedback" *ngIf="!instrumentFormGroup.controls['calibratedOn'].valid">Required</div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Make</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="make" placeholder="Enter Make" 
+          [ngClass]="{'is-invalid': instrumentFormGroup.controls['make'].errors  && (instrumentFormGroup.controls['make'].touched || 
+          instrumentFormGroup.controls['make'].dirty), 'is-valid':instrumentFormGroup.controls['make'].valid}" />
+          <div class="invalid-feedback" *ngIf="!instrumentFormGroup.controls['make'].valid">Required</div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group ">
+          <label for="exampleCheck1">Calibrated Due on</label>
+          <input type="date" class="form-control" id="exampleCheck1" formControlName="calibratedDueOn"
+          [ngClass]="{'is-invalid': instrumentFormGroup.controls['calibratedDueOn'].errors  && (instrumentFormGroup.controls['calibratedDueOn'].touched || 
+          instrumentFormGroup.controls['calibratedDueOn'].dirty), 'is-valid':instrumentFormGroup.controls['calibratedDueOn'].valid}" />
+          <div class="invalid-feedback" *ngIf="!instrumentFormGroup.controls['calibratedDueOn'].valid">Required</div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Model</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="model" placeholder="Enter Model"
+          [ngClass]="{'is-invalid': instrumentFormGroup.controls['model'].errors  && (instrumentFormGroup.controls['model'].touched || 
+          instrumentFormGroup.controls['model'].dirty), 'is-valid':instrumentFormGroup.controls['model'].valid}" />
+          <div class="invalid-feedback" *ngIf="!instrumentFormGroup.controls['model'].valid">Required</div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Type</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="type" placeholder="Enter Type"
+          [ngClass]="{'is-invalid': instrumentFormGroup.controls['type'].errors  && (instrumentFormGroup.controls['type'].touched || 
+          instrumentFormGroup.controls['type'].dirty), 'is-valid':instrumentFormGroup.controls['type'].valid}" />
+          <div class="invalid-feedback" *ngIf="!instrumentFormGroup.controls['type'].valid">Required</div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group ">
+          <label for="exampleCheck1">Certificate</label>
+          <input type="file" class="form-control" id="exampleCheck1"  #fileInput (change)="uploadFile($event.target)" formControlName="certificate" placeholder="Select Certificate"
+          [ngClass]="{'is-invalid': instrumentFormGroup.controls['certificate'].errors  && (instrumentFormGroup.controls['certificate'].touched || 
+          instrumentFormGroup.controls['certificate'].dirty), 'is-valid':instrumentFormGroup.controls['certificate'].valid}" />
+          <div class="invalid-feedback" *ngIf="instrumentFormGroup.controls['certificate'].hasError('required')">Required</div>
+          <div class="invalid-feedback" *ngIf="instrumentFormGroup.controls['certificate'].hasError('max')">File size should be less than 5MB</div>
+
+        </div>
+      </div>
+    </div>
+    <hr />
+    <div class="container">
+      <div class="row">
+        <div class="col text-center">
+          <button class="btn btn-primary m-2" type="button"  pButton pRipple  (click)="onClear()">Clear</button>
+         <button class="btn btn-success" type="submit" >Save Instrument</button>
+        </div>
+      </div>
+    </div>
+    </form>
+</app-card>
+
+
+
+
+
+

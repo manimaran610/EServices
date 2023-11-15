@@ -1,0 +1,33 @@
+<!-- BreadCrumb -->
+<nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>'">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a (click)="navigateToUrl('Home')" class="text-c-blue"><i class="feather icon-home "></i></a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Reports</li>
+    <li class="breadcrumb-item active" aria-current="page">ACPH</li>
+  </ol>
+</nav>
+
+<!-- Toast Messages -->
+<!-- <p-messages  position="top-center" [value]="msgs"></p-messages> -->
+<p-toast position="bottom-right" key="tc"></p-toast>
+
+<app-customer-details (customerSave)="onCustomerSave($event)"  (customerError)="onCustomerError($event)"></app-customer-details>
+<app-card cardTitle="Rooms">
+<button class="btn btn-primary m-2"  (click)="show()"> Add Room</button>
+<app-grid [title]="'ACPH Room Grills'" [listOfItems]="listOfRooms" [gridColumnOptions]="gridColumnOptions"
+    [dataKey]="'id'"  [sortOrder]="-1" [sortField]="'name'"
+    ></app-grid>
+  </app-card>
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col text-center">
+        <button class="btn btn-primary m-2" type="button"  >Export as Docx <i class="m-1 feather icon-file"></i></button>
+      </div>
+    </div>
+  </div>
+
+ 

@@ -1,0 +1,119 @@
+<app-card cardTitle="Form Title" [options]="false">
+  <h5>Basic Informations</h5>
+  <hr />
+  <form action="">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputEmail1">Client</label>
+          <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter client" />
+          <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Plant</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Enter Plant" />
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Ref No</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" />
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group ">
+          <label for="exampleCheck1">Date of Test</label>
+          <input type="date" class="form-control" id="exampleCheck1" />
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Area of Test</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" />
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">AHU Number</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" />
+        </div>
+      </div>
+
+      <!-- Instruments Used Section -->
+      <h5 class="mt-5">Instrument Used</h5>
+      <hr />
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Instrument</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Enter Instrument" />
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Make</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" />
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Serial Number</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Enter Serail Number" />
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Model</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" />
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group ">
+          <label for="exampleCheck1">Calibrated on</label>
+          <input type="date" class="form-control" id="exampleCheck1" />
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group ">
+          <label for="exampleCheck1">Calibrated Due on</label>
+          <input type="date" class="form-control" id="exampleCheck1" />
+        </div>
+      </div>
+
+       <!-- Obtained Results -->
+       <h5 class="mt-5">Obtained Test Results</h5>
+       <hr />
+      <div class="col-md-6">
+        <button type="button" class="btn btn-primary mb-5">Add Rooms</button>
+      </div>
+
+      <app-grid [title]="'Calculations'" [listOfItems]="list" [groupedColumnOptions]="groupedOptions" 
+      [dataKey]="'product'"  [canEdit] ="true"[canDelete]="true" [hasColumnGroup]="true"
+      ></app-grid>
+
+
+
+    </div>
+  </form>
+  <hr />
+  <div class="container">
+    <div class="row">
+      <div class="col text-center">
+        <button class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </div>
+
+
+</app-card>

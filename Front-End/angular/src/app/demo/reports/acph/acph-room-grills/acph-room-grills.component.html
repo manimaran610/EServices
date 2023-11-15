@@ -1,0 +1,79 @@
+
+<p-toast position="bottom-right" key="tc"></p-toast>
+
+
+<app-card cardTitle="" [options]="false">
+  <h4 class="text-c-blue">Instrument Details:</h4>
+  <hr />
+  <p-confirmDialog [style]="{width: '25vw'}" [baseZIndex]="10000"></p-confirmDialog>
+  <form [formGroup]="acphRoomsFormGroup" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Room Name:</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="roomName"
+            placeholder="Enter Room Name"
+            [ngClass]="{'is-invalid': acphRoomsFormGroup.controls['roomName'].errors  && (acphRoomsFormGroup.controls['roomName'].touched || acphRoomsFormGroup.controls['roomName'].dirty), 'is-valid':acphRoomsFormGroup.controls['roomName'].valid}" />
+          <div class="invalid-feedback" *ngIf="acphRoomsFormGroup.controls['roomName'].hasError('required')">
+            Required
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Design ACPH:</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="design"
+            placeholder="Enter Design ACPH"
+            [ngClass]="{'is-invalid': acphRoomsFormGroup.controls['design'].errors  && (acphRoomsFormGroup.controls['design'].touched || acphRoomsFormGroup.controls['design'].dirty), 'is-valid':acphRoomsFormGroup.controls['design'].valid}" />
+          <div class="invalid-feedback" *ngIf="acphRoomsFormGroup.controls['design'].hasError('required')">
+            Required
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">No of Grills:</label>
+          <input type="number" class="form-control form-control-disabled" id="exampleInputPassword1"   formControlName="noOfGrills"
+            placeholder="Add Grills to count number of Grills" [readOnly]="true">
+            <!-- [ngClass]="{'is-invalid': acphRoomsFormGroup.controls['noOfGrills'].errors  && (acphRoomsFormGroup.controls['noOfGrills'].touched || acphRoomsFormGroup.controls['noOfGrills'].dirty), 'is-valid':acphRoomsFormGroup.controls['noOfGrills'].valid}" />
+          <div class="invalid-feedback" *ngIf="acphRoomsFormGroup.controls['noOfGrills'].hasError('required')">
+            Required
+          </div> -->
+          <div class="invalid-feedback" *ngIf="acphRoomsFormGroup.controls['noOfGrills'].hasError('max')">
+            Maximum Limit Reached
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Room Volume:</label>
+          <input type="number" class="form-control" id="exampleInputPassword1"  formControlName="roomVolume"
+            placeholder="Enter Room Volumne"
+            [ngClass]="{'is-invalid': acphRoomsFormGroup.controls['roomVolume'].errors  && (acphRoomsFormGroup.controls['roomVolume'].touched || acphRoomsFormGroup.controls['roomVolume'].dirty), 'is-valid':acphRoomsFormGroup.controls['roomVolume'].valid}" />
+          <div class="invalid-feedback" *ngIf="acphRoomsFormGroup.controls['roomVolume'].hasError('required')">
+            Required
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary m-5" type="button"  (click)="addGrills()"> Add Grill Cells</button>
+
+    <app-grid [title]="'ACPH Room Grills'" [isBordered]="true" [tableStyle]="{ 'min-width': '90rem'}" [listOfItems]="listOfGrills" [groupedColumnOptions]="groupedColumnOptions"  [addNewRow]="addNewRowEvent"
+    [dataKey]="'id'"  [canEdit] ="true"[canDelete]="true" [hasColumnGroup]="true" (Save) ="onGrillSave($event)" (Delete)="onGrillDelete($event)" 
+    [sortField]="'grillNo'" [sortOrder]="-1"
+    ></app-grid>
+
+      <div class="container">
+        <div class="row">
+          <div class="col text-center">
+            <button class="btn btn-primary m-2" type="button" pButton pRipple (click)="onClear()" >Clear</button>
+            <button class="btn btn-success" type="submit">Save Room</button>
+          </div>
+        </div>
+      </div>
+  </form>
+</app-card>
+
