@@ -3,7 +3,7 @@ version: "3.4"
 services:
     api:
         build:
-          context: ./Back-End/EServices.WebApi/ 
+          context: Back-End/EServices.WebApi/ 
           dockerfile: Dockerfile
         ports:
           - "9000:9000"
@@ -21,7 +21,7 @@ services:
 
     ui:
         build:
-          context: ./Front-End/angular/ 
+          context: Front-End/angular/ 
           dockerfile: Dockerfile
         ports:
           - "8080:80"
