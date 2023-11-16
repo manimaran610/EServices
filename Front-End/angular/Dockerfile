@@ -1,18 +1,25 @@
-# Define node version
-FROM node:18.4.0-alpine as build
-# Define container directory
-WORKDIR /angular/src/app
-# Copy package*.json for npm install
+# Stage 1: Build the Angular app
+FROM node:18.13.0 AS builder
+
+WORKDIR /usr/src/app
+
 COPY package*.json ./
-# Run npm clean install, including dev dependencies for @angular-devkit
-RUN npm ci
-# Run npm install @angular/cli
-RUN npm install -g @angular/cli
-# Copy all files
+
+# Install dependencies
+RUN npm install
 COPY . .
-# Run ng build through npm to create dist folder
-RUN npm run build --prod
-# Define nginx for front-end server
-FROM nginx:1.15.8-alpine
-# Copy dist from ng build to nginx html folder
-COPY --from=build /angular/src/app/dist /usr/share/nginx/html
+
+RUN npm install -g @angular/cli@latest
+COPY . .
+
+# Run Angular build
+RUN ng build 
+
+# Stage 2: Create a minimal Nginx image with the built Angular app
+FROM nginx:1.21-alpine
+
+COPY --from=builder /usr/src/app/dist /usr/share/nginx/html
+
+# Expose the port that Nginx will run on
+EXPOSE 80
+
