@@ -1,25 +1,21 @@
-# Stage 1: Build the Angular app
-FROM node:18.13.0 AS builder
-
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-COPY . .
-
-RUN npm install -g @angular/cli@latest
-COPY . .
-
-# Run Angular build
-RUN ng build 
-
-# Stage 2: Create a minimal Nginx image with the built Angular app
-FROM nginx:1.21-alpine
-
-COPY --from=builder /usr/src/app/dist /usr/share/nginx/html
-
-# Expose the port that Nginx will run on
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+WORKDIR /app
 EXPOSE 80
 
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+COPY ["WebApi/WebApi.csproj", "WebApi/"]
+RUN dotnet restore "WebApi/WebApi.csproj"
+
+COPY . .
+WORKDIR "/src/WebApi"
+RUN dotnet build "WebApi.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "WebApi.csproj" -c Release -o /app/publish 
+
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "WebApi.dll"]

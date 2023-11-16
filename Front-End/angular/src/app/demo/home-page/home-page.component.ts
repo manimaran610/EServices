@@ -12,29 +12,8 @@ import { Router } from '@angular/router';
   selector: 'app-home-page',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  template:`<div class="col-sm-12">
-  <div>
-    <h2 class="text-center">Welcome to AHU Portal !</h2>
-
-  </div>
-  <hr>
-  <div class="row" *ngFor="let coreService of coreServicesList">
-    <app-card cardTitle="{{coreService.title}}" [options]="false" >
-      <div class="row">
-        <div class="col-ld-3 col-md-4 col-sm-12" *ngFor="let item of coreService.services">
-          <app-card [hidHeader]="true" cardClass="{{ item.background }} order-card" >
-            <a  (click)="navigateToUrl(item.navigateTo)">
-              <h3 class="text-white text-center">{{item.title}}<i class="feather {{ item.icon }} m-2"></i></h3>
-              <h5 class="text-white text-center">{{item.subTitle}}</h5>
-            </a>
-          </app-card>
-        </div>
-      </div>
-    </app-card>
-  </div>
-</div>`
-  // templateUrl: './Home-page.component.html',
- // styleUrls: ['./Home-page.component.scss']
+  templateUrl: './Home-page.component.html',
+  styleUrls: ['./Home-page.component.scss']
 })
 export default class HomePageComponent implements OnInit {
 
