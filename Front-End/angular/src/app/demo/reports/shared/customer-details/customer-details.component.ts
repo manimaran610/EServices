@@ -14,13 +14,14 @@ import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DynamicDialogConfig, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { FileProcessingService } from 'src/Services/Shared/file-processing.service';
 
 
 @Component({
   selector: 'app-customer-details',
   standalone: true,
-  imports: [CommonModule, SharedModule, ConfirmDialogModule, HttpClientModule, ReactiveFormsModule, DynamicDialogModule,ProgressSpinnerModule ],
-  providers: [ConfirmationService, InstrumentService, CustomerDetailService, BaseHttpClientServiceService, DynamicDialogConfig],
+  imports: [CommonModule, SharedModule, ConfirmDialogModule, HttpClientModule, ReactiveFormsModule, DynamicDialogModule, ProgressSpinnerModule],
+  providers: [ConfirmationService, InstrumentService, CustomerDetailService, BaseHttpClientServiceService, FileProcessingService, DynamicDialogConfig],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './customer-details.component.html',
   styleUrls: ['./customer-details.component.css']
@@ -33,14 +34,15 @@ export class CustomerDetailsComponent implements OnInit {
   filterInstBySNo: Instrument[] = [];
   filterInstByType: Instrument[] = [];
   customerDetailModel: CustomerDetail = new CustomerDetail();
+  customerDetailResponse?: BaseResponse<number>;
   isSaved: boolean = false;
-  isLoading:boolean=false;
+  isLoading: boolean = false;
   @Output() customerSave: EventEmitter<BaseResponse<number>> = new EventEmitter<BaseResponse<number>>();
   @Output() customerError: EventEmitter<string> = new EventEmitter<string>();
 
 
 
-  constructor(private instrumentService: InstrumentService, private customerDetailService: CustomerDetailService, public ref: DynamicDialogConfig) {
+  constructor(private instrumentService: InstrumentService, private customerDetailService: CustomerDetailService, private fileService: FileProcessingService, public ref: DynamicDialogConfig) {
 
     this.customerDetailsFormGroup = new FormGroup(
       {
@@ -91,10 +93,28 @@ export class CustomerDetailsComponent implements OnInit {
       complete: () => { },
     });
   }
+
+  getReportFromServer() {
+    if (this.customerDetailResponse !== undefined && this.customerDetailResponse.succeeded) {
+      this.isLoading = true;
+      this.customerDetailService.getReport(this.customerDetailResponse.data.toString()).subscribe({
+        next: (response: BaseResponse<string>) => {
+          if (response.succeeded) {
+            console.log(response)
+            const file = this.fileService.base64ToFile(response.data, "ACPH.docx",'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+            this.fileService.downloadFile(file);
+          }
+        },
+        error: (e) => { console.error(e.error) },
+        complete: () => {  this.isLoading = false;},
+      });
+    }
+  }
   postCustomerToAPIServer() {
     console.log(this.customerDetailModel)
     this.customerDetailService.postCustomerDetail(this.customerDetailModel).subscribe({
       next: (response: BaseResponse<number>) => {
+        this.customerDetailResponse = response;
         console.log(response)
         this.customerSave.emit(response);
         this.isSaved = true;

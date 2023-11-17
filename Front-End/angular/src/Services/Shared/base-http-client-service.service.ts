@@ -87,5 +87,12 @@ export class BaseHttpClientServiceService {
     const headers = this.populateHttpHeaders;
     return this.http.delete<BaseResponse<Res>>(`${this.url}/${id}`, { headers: headers });
   }
+
+  public get<T>(): Observable<BaseResponse<T>> {
+    const headers = this.populateHttpHeaders;
+    return this.http.get<BaseResponse<T>>(`${this.url}`, {
+      headers: headers,
+    });
+  }
 }
 

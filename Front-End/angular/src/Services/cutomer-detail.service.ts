@@ -15,7 +15,7 @@ export class CustomerDetailService {
     // httpService.mapURLPath('CustomerDetail')
   }
 
-  mapURLpath(){
+  mapURLpath() {
     this.httpService.mapURLPath('CustomerDetail')
   }
   postCustomerDetail(data: CustomerDetail): Observable<BaseResponse<number>> {
@@ -46,5 +46,10 @@ export class CustomerDetailService {
     this.mapURLpath();
 
     return this.httpService.put<CustomerDetail, number>(id, data)
+  }
+
+  getReport(id: string): Observable<BaseResponse<string>> {
+    this.httpService.mapURLPath(`CustomerDetail/${id}/Report`)
+    return this.httpService.get();
   }
 }
