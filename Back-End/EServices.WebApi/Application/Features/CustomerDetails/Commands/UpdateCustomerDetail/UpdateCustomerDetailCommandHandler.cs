@@ -26,7 +26,7 @@ namespace Application.Features.CustomerDetails.Commands.UpdateCustomerDetail
             else
             {
                 CustomerDetail.Client = command.Client;
-                CustomerDetail.plant = command.plant;
+                CustomerDetail.Plant = command.plant;
                 CustomerDetail.AreaOfTest = command.AreaOfTest;
                 CustomerDetail.EquipmentId = command.EquipmentId;
                 CustomerDetail.InstrumentId = command.InstrumentId;

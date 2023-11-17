@@ -50,11 +50,11 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             this._keyValuePairs = new();
             string processedFile = string.Empty;
 
-            var customerDetail = await _customerDetailRepositoryAsync.GetByIdAsync(request.CustomerDetailId);
+            var customerDetail = await _customerDetailRepositoryAsync.GetByIdAsync(request.CustomerDetailId, GetCustomerDetailSelectExpression());
             if (customerDetail == null)
                 throw new ApiException($"CustomerDetail does not exists with CustomerDetailId -{request.CustomerDetailId}");
 
-            var rooms = await _roomRepository.GetPagedReponseAsync(0, int.MaxValue, $"CustomerDetailId:eq:{request.CustomerDetailId}", "Created:asc", GetRoomSelectExpression());
+            var rooms = await _roomRepository.GetPagedReponseAsync(0, int.MaxValue, $"CustomerDetailId:eq:{request.CustomerDetailId}", "Name:asc", GetRoomSelectExpression());
             if (customerDetail.FormType == FormType.ACPH)
             {
                 PopulateACPHKeyValuePairs(customerDetail, rooms);
@@ -69,17 +69,18 @@ namespace Application.Features.Rooms.Commands.CreateRoom
         private void PopulateACPHKeyValuePairs(CustomerDetail customerDetail, IReadOnlyList<Room> rooms)
         {
             MapPropertiesToKeyValuePair(customerDetail);
+            MapPropertiesToKeyValuePair(customerDetail.Instrument);
 
-            for (int i = 0; i < rooms.Count; i++)
+            for (int i = 1; i <= rooms.Count; i++)
             {
-                string keyPrefix = $"R[{i}]-";
-                MapPropertiesToKeyValuePair(rooms[i], keyPrefix);
-                rooms[i].RoomGrills.ForEach(grill =>
+                string keyPrefix = $"R{i}-";
+                MapPropertiesToKeyValuePair(rooms[i - 1], keyPrefix);
+                rooms[i - 1].RoomGrills.ForEach(grill =>
                 {
                     var airvelocityRdng = grill.AirVelocityReadingInFPMO.Split(',');
-                    for (int i = 0; i < airvelocityRdng.Length; i++)
+                    for (int j = 0; j < airvelocityRdng.Length; j++)
                     {
-                        this._keyValuePairs.Add(new(keyPrefix + (i + 1), airvelocityRdng[i]));
+                        this._keyValuePairs.Add(new(keyPrefix + (j + 1), airvelocityRdng[j]));
                     }
                     MapPropertiesToKeyValuePair(grill, keyPrefix);
                 });
@@ -100,11 +101,28 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 CustomerDetailId = e.CustomerDetailId,
                 Name = e.Name,
                 TotalAirFlowCFM = e.TotalAirFlowCFM,
-                RoomGrills = e.RoomGrills.Where(e => !e.IsDeleted).ToList()
+                RoomGrills = e.RoomGrills.Where(e => !e.IsDeleted).OrderBy(e => e.ReferenceNumber).ToList()
 
             };
 
             return selectExpression;
+        }
+
+        private Expression<Func<CustomerDetail, CustomerDetail>> GetCustomerDetailSelectExpression()
+        {
+            Expression<Func<CustomerDetail, CustomerDetail>> expression = e => new()
+            {
+                Id = e.Id,
+                Client = e.Client,
+                AreaOfTest = e.AreaOfTest,
+                DateOfTest = e.DateOfTest,
+                EquipmentId = e.EquipmentId,
+                FormType = e.FormType,
+                InstrumentId = e.InstrumentId,
+                Plant = e.Plant,
+                Instrument = e.Instrument
+            };
+            return expression;
         }
 
         private void MapPropertiesToKeyValuePair<T>(T obj, string keyPrefix = "")

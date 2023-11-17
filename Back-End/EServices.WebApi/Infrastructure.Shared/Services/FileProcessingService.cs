@@ -10,7 +10,7 @@ using Domain.Common;
 
 namespace Infrastructure.Shared.Services
 {
-    public class FileProcessingService: IFileProcessingService
+    public class FileProcessingService : IFileProcessingService
     {
 
         public async Task MailMergeWorkDocument(string templatePath, string DestinatePath, List<keyValue> keyValuePairs)
@@ -45,7 +45,7 @@ namespace Infrastructure.Shared.Services
                 }
 
                 // Remove unfilled rows from the document
-                CleanUpUnMergedTemplateFields(allParas);
+               CleanUpUnMergedTemplateFields(allParas);
 
                 // Save the document
                 doc.MainDocumentPart.Document.Save();
@@ -95,27 +95,29 @@ namespace Infrastructure.Shared.Services
 
             void CleanUpUnMergedTemplateFields(IEnumerable<Text> texts)
             {
-
-                while (texts!.Any(e => e.Text.Contains("<") && e.Text.Contains(">")))
-                {
-                    foreach (Text textItem in texts!.Where(e => e.Text.Contains("<") && e.Text.Contains(">")))
+               
+                    while (texts!.Any(e => e.Text.Contains("<") && e.Text.Contains(">")))
                     {
-                        foreach (var paragraph in textItem.Ancestors<Paragraph>())
+                        foreach (Text textItem in texts!.Where(e => e.Text.Contains("<") && e.Text.Contains(">")))
                         {
-                            if (paragraph != null)
+                            foreach (var paragraph in textItem.Ancestors<Paragraph>())
                             {
-                                foreach (var row in paragraph.Ancestors<TableRow>().ToList<TableRow>())
+                                if (paragraph != null)
                                 {
-                                    if (row != null)
+                                    foreach (var row in paragraph.Ancestors<TableRow>().ToList<TableRow>())
                                     {
-                                        row.Remove();
+                                        var parent = paragraph.Ancestors<Table>().FirstOrDefault();
+                                        if (parent != null)
+                                        {
+                                            parent.RemoveChild(row);
+                                        }
+                                        //paragraph.Remove();
                                     }
-                                    paragraph.Remove();
                                 }
                             }
                         }
                     }
-                }
+              
 
             }
         }
