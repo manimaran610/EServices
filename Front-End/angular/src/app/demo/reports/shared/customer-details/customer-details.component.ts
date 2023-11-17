@@ -8,7 +8,7 @@ import { BaseResponse } from './../../../../../Models/response-models/base-respo
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -27,7 +27,7 @@ import { FileProcessingService } from 'src/Services/Shared/file-processing.servi
   styleUrls: ['./customer-details.component.css']
 })
 export class CustomerDetailsComponent implements OnInit {
-
+@Input() formType:number =0;
   customerDetailsFormGroup: FormGroup;
 
   instrumentList: Instrument[] = [];
@@ -39,6 +39,8 @@ export class CustomerDetailsComponent implements OnInit {
   isLoading: boolean = false;
   @Output() customerSave: EventEmitter<BaseResponse<number>> = new EventEmitter<BaseResponse<number>>();
   @Output() customerError: EventEmitter<string> = new EventEmitter<string>();
+  @Output() customerInfo: EventEmitter<string> = new EventEmitter<string>();
+
 
 
 
@@ -68,6 +70,7 @@ export class CustomerDetailsComponent implements OnInit {
       console.log('Form submitted')
       this.customerDetailModel = this.customerDetailsFormGroup.value;
       this.customerDetailModel.instrumentId = this.customerDetailsFormGroup.controls['instrumentSerialNo'].value[0];
+      this.customerDetailModel.formType=this.formType;
       this.postCustomerToAPIServer();
     } else {
       this.customerError.emit("Customer Details Invalid")
@@ -97,17 +100,21 @@ export class CustomerDetailsComponent implements OnInit {
   getReportFromServer() {
     if (this.customerDetailResponse !== undefined && this.customerDetailResponse.succeeded) {
       this.isLoading = true;
-      this.customerDetailService.getReport(this.customerDetailResponse.data.toString()).subscribe({
-        next: (response: BaseResponse<string>) => {
-          if (response.succeeded) {
-            console.log(response)
-            const file = this.fileService.base64ToFile(response.data, "ACPH.docx",'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-            this.fileService.downloadFile(file);
-          }
-        },
-        error: (e) => { console.error(e.error) },
-        complete: () => {  this.isLoading = false;},
-      });
+      this.customerInfo.emit('File started Processing')
+      // this.customerDetailService.getReport(this.customerDetailResponse.data.toString()).subscribe({
+      //   next: (response: BaseResponse<string>) => {
+      //     if (response.succeeded) {
+      //       console.log(response)
+      //       const file = this.fileService.base64ToFile(response.data, "ACPH.docx",'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      //       this.fileService.downloadFile(file);
+      //     }
+      //   },
+      //   error: (e) => { 
+      //     console.error(e.error);
+      //     this.isLoading = false; },
+      //   complete: () => {  this.isLoading = false;},
+      // });
+      this.isLoading=false;
     }
   }
   postCustomerToAPIServer() {

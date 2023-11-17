@@ -94,6 +94,11 @@ export class AcphComponent implements OnDestroy, OnInit {
     this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed', detail: message, life: 4000 });
   }
 
+  onCustomerInfo(message: string) {
+    this.customerDetailId = 0;
+    this.messageService.add({ key: 'tc', severity: 'info', summary: 'Information', detail: message, life: 4000 });
+  }
+
   getRoomsFromServer() {
     let reqparam = new RequestParameter();
     reqparam.filter = `customerDetailId:eq:${this.customerDetailId}`

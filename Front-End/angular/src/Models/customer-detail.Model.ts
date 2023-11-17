@@ -4,7 +4,7 @@ export class CustomerDetail {
     plant: string ='';
     equipmentId: string='';
     areaOfTest: string='';
-    formType: FormType=FormType.ACPH;
+    formType: number=1;
     dateOfTest?: Date;
     instrumentId: number=0;
 }
