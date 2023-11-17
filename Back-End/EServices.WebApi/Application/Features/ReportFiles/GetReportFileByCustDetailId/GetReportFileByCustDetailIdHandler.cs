@@ -16,46 +16,60 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Domain.Common;
+using Application.Interfaces;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace Application.Features.Rooms.Commands.CreateRoom
 {
-    public class GetReportFileByCustDetailIdHandler : IRequestHandler<GetReportFileByCustDetailId, Response<int>>
+    public class GetReportFileByCustDetailIdHandler : IRequestHandler<GetReportFileByCustDetailId, Response<string>>
     {
         private readonly IRoomRepositoryAsync _roomRepository;
         private readonly ICustomerDetailRepositoryAsync _customerDetailRepositoryAsync;
-        private readonly IRoomGrillRepositoryAsync _roomGrillRepositoryAsync;
+        private readonly IFileProcessingService _fileProcessingService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IMediator _mediator;
-        private readonly IMapper _mapper;
         private List<keyValue> _keyValuePairs = new List<keyValue>();
         public GetReportFileByCustDetailIdHandler
         (
             IRoomRepositoryAsync RoomRepository,
             ICustomerDetailRepositoryAsync customerDetailRepositoryAsync,
-            IRoomGrillRepositoryAsync roomGrillRepositoryAsync,
-            IMapper mapper,
-            IMediator mediator
+            IFileProcessingService fileProcessingService,
+            IMediator mediator, IWebHostEnvironment webHostEnvironment
         )
         {
             _roomRepository = RoomRepository;
             _customerDetailRepositoryAsync = customerDetailRepositoryAsync;
-            _roomGrillRepositoryAsync = roomGrillRepositoryAsync;
-            _mapper = mapper;
+            _fileProcessingService = fileProcessingService;
             _mediator = mediator;
+            _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<Response<int>> Handle(GetReportFileByCustDetailId request, CancellationToken cancellationToken)
+        public async Task<Response<string>> Handle(GetReportFileByCustDetailId request, CancellationToken cancellationToken)
         {
             this._keyValuePairs = new();
+            string processedFile = string.Empty;
 
             var customerDetail = await _customerDetailRepositoryAsync.GetByIdAsync(request.CustomerDetailId);
             if (customerDetail == null)
                 throw new ApiException($"CustomerDetail does not exists with CustomerDetailId -{request.CustomerDetailId}");
 
             var rooms = await _roomRepository.GetPagedReponseAsync(0, int.MaxValue, $"CustomerDetailId:eq:{request.CustomerDetailId}", "Created:asc", GetRoomSelectExpression());
+            if (customerDetail.FormType == FormType.ACPH)
+            {
+                PopulateACPHKeyValuePairs(customerDetail, rooms);
+                await _fileProcessingService.MailMergeWorkDocument(TemplatesBasePath + "ACPH.docx", DestinationBasePath + "ACPH-out.docx", _keyValuePairs);
+                processedFile = ConvertFileToBase64(DestinationBasePath + "ACPH-out.docx");
+            }
 
-            // if (customerDetail.FormType == FormType.ACPH)
-            // {
+
+            return new Response<string>(processedFile, "File Processed successfully");
+        }
+
+        private void PopulateACPHKeyValuePairs(CustomerDetail customerDetail, IReadOnlyList<Room> rooms)
+        {
             MapPropertiesToKeyValuePair(customerDetail);
+
             for (int i = 0; i < rooms.Count; i++)
             {
                 string keyPrefix = $"R[{i}]-";
@@ -65,14 +79,13 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                     var airvelocityRdng = grill.AirVelocityReadingInFPMO.Split(',');
                     for (int i = 0; i < airvelocityRdng.Length; i++)
                     {
-                        this._keyValuePairs.Add(new(keyPrefix + (i+1), airvelocityRdng[i]));
+                        this._keyValuePairs.Add(new(keyPrefix + (i + 1), airvelocityRdng[i]));
                     }
                     MapPropertiesToKeyValuePair(grill, keyPrefix);
                 });
             }
-            // }
-            return new Response<int>(1);
         }
+
 
 
         private Expression<Func<Room, Room>> GetRoomSelectExpression()
@@ -104,5 +117,15 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 });
             }
         }
+
+        private string ConvertFileToBase64(string path)
+        {
+            var bytes = File.ReadAllBytes(path);
+            return Convert.ToBase64String(bytes);
+        }
+        private string TemplatesBasePath => _webHostEnvironment.ContentRootPath.Split("\\WebApi")[0] + "\\Application\\Features\\ReportFiles\\WordTemplates\\";
+        private string DestinationBasePath => _webHostEnvironment.ContentRootPath.Split("\\WebApi")[0] + "\\Application\\Features\\ReportFiles\\ProcessedFiles\\";
+
+
     }
 }
