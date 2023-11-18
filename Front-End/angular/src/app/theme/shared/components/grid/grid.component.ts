@@ -27,7 +27,7 @@ export class GridComponent implements OnInit, OnChanges {
     @ViewChild('singleSelectionTable', { static: false }) singleSelectionTable: any;
 
     @Input() title: string = '';
-    @Input() isBordered:boolean =false;
+    @Input() isBordered: boolean = false;
     @Input() tableStyle: any = { 'min-width': '50rem' };
     @Input() listOfItems: any[] = [];
     @Input() groupedColumnOptions: GroupedColumnOptions[] = [];
@@ -37,6 +37,7 @@ export class GridComponent implements OnInit, OnChanges {
     @Input() rowsPerPageOptions: number[] = [20, 50, 100];
     @Input() hasradioButton: boolean = false;
     @Input() canEdit: boolean = false;
+    @Input() canPreview: boolean = false;
     @Input() canDelete: boolean = false;
     @Input() hasPagination: boolean = true;
     @Input() hasLazyLoading: boolean = false;
@@ -52,6 +53,8 @@ export class GridComponent implements OnInit, OnChanges {
     @Output() Delete: EventEmitter<any> = new EventEmitter<any>();
     @Output() RadioChanges: EventEmitter<any> = new EventEmitter<any>();
     @Output() LazyLoad: EventEmitter<any> = new EventEmitter<any>();
+    @Output() Preview: EventEmitter<any> = new EventEmitter<any>();
+
 
     firstOffset: number = 0;
     @Input() sortField: string | undefined;
@@ -63,7 +66,7 @@ export class GridComponent implements OnInit, OnChanges {
     clonedProducts: { [s: string]: any } = {};
     isNewRowInserted: boolean = false;
 
-    getRowSpan = () => this.groupedColumnOptions.flatMap(group =>group.gridColumnOptions).sort((obj1, obj2) => parseInt(obj1.rowspan!) - parseInt(obj2.rowspan!))[0].rowspan;
+    getRowSpan = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).sort((obj1, obj2) => parseInt(obj1.rowspan!) - parseInt(obj2.rowspan!))[0].rowspan;
     getFilteredColumns = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).filter(option => option.hasTableValue && !option.isStandalone).sort((obj1, obj2) => obj1.orderNo! - obj2.orderNo!)
 
     getStandaloneColumns = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).filter(option => option.isStandalone);
@@ -82,16 +85,18 @@ export class GridComponent implements OnInit, OnChanges {
 
     ngOnChanges() {
         console.log('changes detected')
-       
+
 
     }
     get $applyStyles(): boolean {
         return true;
-      }
+    }
 
     onRadioSelected() { this.RadioChanges.emit(this.selectedRow); }
 
-    onRowSelected(event: any) { }
+    onRowSelected(event: any) {}
+
+    onRowPreviewEvent(event: any) {this.Preview.emit(event);}
 
     onLazyLoadEvent(event: any) {
 

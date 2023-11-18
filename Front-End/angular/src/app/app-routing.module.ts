@@ -69,6 +69,10 @@ const routes: Routes = [
         {
           path: 'ACPH',
           component: AcphComponent
+        },
+        {
+          path: 'ACPH/:id',
+          component: AcphComponent
         }
       ]
     }

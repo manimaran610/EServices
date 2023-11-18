@@ -97,8 +97,8 @@
     <div class="container">
       <div class="row">
         <div class="col text-center">
-          <button class="btn btn-primary m-2" type="button"  pButton pRipple  (click)="onClear()">Clear</button>
-         <button class="btn btn-success" type="submit" >Save Instrument</button>
+          <button class="btn btn-primary m-2" type="button"  ngbTooltip='Clear all' pButton pRipple  (click)="onClear()">Clear</button>
+         <button class="btn btn-success" type="submit"  ngbTooltip='Save'><i *ngIf="isSaved" class="feather icon-check-circle me-1"> </i>Save Instrument</button>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 export class CustomerDetail {
-
+    id:number =0;
     client: string ='';
     plant: string ='';
     equipmentId: string='';

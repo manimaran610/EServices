@@ -28,13 +28,15 @@ import { FileProcessingService } from 'src/Services/Shared/file-processing.servi
 })
 export class CustomerDetailsComponent implements OnInit {
 @Input() formType:number =0;
-  customerDetailsFormGroup: FormGroup;
+@Input() customerDetailId:number =0;
+
+ 
+customerDetailsFormGroup: FormGroup;
 
   instrumentList: Instrument[] = [];
   filterInstBySNo: Instrument[] = [];
   filterInstByType: Instrument[] = [];
   customerDetailModel: CustomerDetail = new CustomerDetail();
-  customerDetailResponse?: BaseResponse<number>;
   isSaved: boolean = false;
   isLoading: boolean = false;
   @Output() customerSave: EventEmitter<BaseResponse<number>> = new EventEmitter<BaseResponse<number>>();
@@ -63,15 +65,21 @@ export class CustomerDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.getInstrumentsFromServer();
+    if(this.customerDetailId > 0){
+       this.GetCustomerDetailFromAPIServer();
+    }
   }
 
   onSubmit() {
-    if (this.customerDetailsFormGroup.valid && this.customerDetailsFormGroup.controls['instrumentSerialNo'].value[0] > 0) {
+    console.log(this.customerDetailsFormGroup.value)
+    console.log(this.customerDetailsFormGroup.valid)
+
+    if (this.customerDetailsFormGroup.valid) {
       console.log('Form submitted')
       this.customerDetailModel = this.customerDetailsFormGroup.value;
-      this.customerDetailModel.instrumentId = this.customerDetailsFormGroup.controls['instrumentSerialNo'].value[0];
+      this.customerDetailModel.instrumentId = this.customerDetailsFormGroup.controls['instrumentSerialNo'].value;
       this.customerDetailModel.formType=this.formType;
-      this.postCustomerToAPIServer();
+      this.customerDetailId > 0 ? this.updateCustomerToAPIServer(): this.postCustomerToAPIServer();
     } else {
       this.customerError.emit("Customer Details Invalid")
     }
@@ -82,13 +90,14 @@ export class CustomerDetailsComponent implements OnInit {
     this.customerDetailsFormGroup.reset()
   }
 
-
+//#region  API Server calls
   getInstrumentsFromServer() {
     this.instrumentService.getAllPagedResponse().subscribe({
       next: (response: BaseResponse<Instrument[]>) => {
         if (response.succeeded) {
           this.instrumentList = response.data;
-          this.filterInstByType = this.removeDuplicates(this.instrumentList, 'type')
+          this.filterInstByType = this.removeDuplicates(this.instrumentList, 'type');
+          if(this.customerDetailId > 0) this.mapCustomerDetailToForm();
 
         }
       },
@@ -98,7 +107,7 @@ export class CustomerDetailsComponent implements OnInit {
   }
 
   getReportFromServer() {
-    if (this.customerDetailResponse !== undefined && this.customerDetailResponse.succeeded) {
+    if (this.customerDetailId > 0) {
       this.isLoading = true;
       this.customerInfo.emit('File started Processing')
       // this.customerDetailService.getReport(this.customerDetailResponse.data.toString()).subscribe({
@@ -117,11 +126,43 @@ export class CustomerDetailsComponent implements OnInit {
       this.isLoading=false;
     }
   }
+  GetCustomerDetailFromAPIServer() {
+    this.customerDetailService.getCustomerDetailById(this.customerDetailId.toString()).subscribe({
+      next: (response: BaseResponse<CustomerDetail>) => {
+        this.customerDetailModel = response.data;  
+        this.mapCustomerDetailToForm();  
+      },
+      error: (e) => {
+        console.error(e)
+        e.error.Message !== undefined ? this.customerError.emit(e.error.Message) : this.customerError.emit(e.error.title)
+
+      },
+      complete: () => { },
+    });
+  }
   postCustomerToAPIServer() {
     console.log(this.customerDetailModel)
     this.customerDetailService.postCustomerDetail(this.customerDetailModel).subscribe({
       next: (response: BaseResponse<number>) => {
-        this.customerDetailResponse = response;
+        console.log(response)
+        this.customerSave.emit(response);
+        this.customerDetailId=response.data;
+        this.isSaved = true;
+      },
+      error: (e) => {
+        console.error(e)
+        e.error.Message !== undefined ? this.customerError.emit(e.error.Message) : this.customerError.emit(e.error.title)
+
+      },
+      complete: () => { },
+    });
+  }
+
+  updateCustomerToAPIServer() {
+    console.log(this.customerDetailModel)
+    this.customerDetailModel.id = this.customerDetailId;
+    this.customerDetailService.updateCustomerDetail(this.customerDetailId.toString(),this.customerDetailModel).subscribe({
+      next: (response: BaseResponse<number>) => {
         console.log(response)
         this.customerSave.emit(response);
         this.isSaved = true;
@@ -134,11 +175,11 @@ export class CustomerDetailsComponent implements OnInit {
       complete: () => { },
     });
   }
+//#endregion
 
   onSelectOptionChange() {
-    const id = this.customerDetailsFormGroup.controls['instrumentType'].value;
-    const instrument = this.instrumentList.find(e => e.id == id);
-    this.filterInstBySNo = this.instrumentList.filter(e => e.type == instrument?.type);
+    const type = this.customerDetailsFormGroup.controls['instrumentType'].value;
+    this.filterInstBySNo = this.instrumentList.filter(e => e.type == type);
   }
 
   removeDuplicates(data: any[], key: string): any[] {
@@ -151,7 +192,31 @@ export class CustomerDetailsComponent implements OnInit {
     this.customerDetailsFormGroup.controls['plant'].addValidators([Validators.required])
     this.customerDetailsFormGroup.controls['equipmentId'].addValidators([Validators.required])
     this.customerDetailsFormGroup.controls['areaOfTest'].addValidators([Validators.required])
+    this.customerDetailsFormGroup.controls['instrumentSerialNo'].addValidators([Validators.min(1)])
 
+  }
+
+  mapCustomerDetailToForm(){
+    this.customerDetailsFormGroup.controls['client'].patchValue(this.customerDetailModel.client);
+    this.customerDetailsFormGroup.controls['dateOfTest'].patchValue(this.formatDate(this.customerDetailModel.dateOfTest!));
+    this.customerDetailsFormGroup.controls['plant'].patchValue(this.customerDetailModel.plant);
+    this.customerDetailsFormGroup.controls['equipmentId'].patchValue(this.customerDetailModel.equipmentId);
+    this.customerDetailsFormGroup.controls['areaOfTest'].patchValue(this.customerDetailModel.areaOfTest);
+    this.customerDetailsFormGroup.controls['instrumentType'].patchValue(this.instrumentList.find(e=>e.id== this.customerDetailModel.instrumentId)?.type);
+    this.onSelectOptionChange();
+    this.customerDetailsFormGroup.controls['instrumentSerialNo'].patchValue(this.customerDetailModel.instrumentId);
+
+
+  }
+
+  private formatDate(date:Date) {
+    const d = new Date(date);
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+    const year = d.getFullYear();
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+    return [year, month, day].join('-');
   }
 
 }
