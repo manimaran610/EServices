@@ -30,6 +30,8 @@ export class AddInstrumentComponent implements OnInit {
     instrumentFormGroup: FormGroup;
     msgs: Message[] = [];
     isAddInstrument: boolean = true;
+    isSaved: boolean = false;
+
     tempFileName?: string;
     tempFile?: string;
     instrumentModel: Instrument = new Instrument();
@@ -91,7 +93,8 @@ export class AddInstrumentComponent implements OnInit {
     postInstrumentToAPIServer() {
         this.instrumentService.postInstrument(this.instrumentModel).subscribe({
             next: (response: BaseResponse<number>) => {
-                if (response.succeeded) this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Instrument details saved', life: 4000 });        
+                if (response.succeeded) this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Instrument details saved', life: 4000 }); 
+                this.isSaved=true;      
             },
             error: (e) => {
                 this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed', detail: e.error.title, life: 4000 });

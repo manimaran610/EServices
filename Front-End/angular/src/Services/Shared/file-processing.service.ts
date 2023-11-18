@@ -7,9 +7,10 @@ export class FileProcessingService {
 
 constructor() { }
 
-base64ToFile(base64String: string, filename: string): File {
-  const mimeType = filename.split('.').pop();
-  const byteCharacters = atob(base64String.split(',')[1]);
+base64ToFile(base64String: string, filename: string,mimeType:string): File {
+
+ const byteCharacters=base64String.includes(',') ? atob(base64String.split(',')[1]):atob(base64String);
+ 
   const byteNumbers = new Array(byteCharacters.length);
 
   for (let i = 0; i < byteCharacters.length; i++) {

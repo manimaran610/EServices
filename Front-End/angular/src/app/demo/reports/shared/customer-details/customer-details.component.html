@@ -4,7 +4,7 @@
       <h4 class="text-c-blue">Customer Details:</h4>
     </div>
       <div class="col text-end">
-        <button class="btn btn-danger m-2" *ngIf="!isLoading" type="button" (click)="isLoading=!isLoading" >Export as Docx and Download <i class="m-2 feather icon-file"></i></button>
+        <button class="btn btn-danger m-2" *ngIf="!isLoading" type="button" (click)="getReportFromServer()"[disabled]="customerDetailId < 0" ngbTooltip='Download Report File'>Export as Document<i class="m-2 feather icon-file"></i></button>
         <p-progressSpinner *ngIf="isLoading" [style]="{'width':'3%','height':'70%'}" strokeWidth="8" fill="var(--surface-ground)" animationDuration="1.5s"></p-progressSpinner>
       </div>
     </div>
@@ -78,7 +78,7 @@
           <label for="exampleInputPassword1">Instrument Type:</label>
           <select class="form-select" id="inputGroupSelect04" formControlName="instrumentType" (change)="onSelectOptionChange()">
             <option value="0" selected disabled>Choose type</option>
-            <option *ngFor="let item of filterInstByType" [value]="item.id">{{item.type}}</option>
+            <option *ngFor="let item of filterInstByType" [value]="item.type">{{item.type}}</option>
           </select>
         </div>
       </div>
@@ -98,8 +98,8 @@
       <div class="container">
         <div class="row">
           <div class="col text-center">
-            <button class="btn btn-primary m-2" type="button" pButton pRipple (click)="onClear()">Clear</button>
-            <button class="btn btn-success" type="submit" [disabled]="isSaved">Save Customer</button>
+            <button class="btn btn-primary m-2" type="button" pButton pRipple ngbTooltip='Clear all' (click)="onClear()">Clear</button>
+            <button class="btn btn-success" type="submit" [disabled]="isSaved" ngbTooltip='Save'><i *ngIf="isSaved" class="feather icon-check-circle me-1"> </i>{{customerDetailId > 0 ?'Saved Customer': 'Save Customer'}}</button>
           </div>
         </div>
       </div>

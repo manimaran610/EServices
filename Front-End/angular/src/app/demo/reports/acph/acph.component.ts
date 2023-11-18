@@ -10,7 +10,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ToastModule } from 'primeng/toast';
 import { BaseHttpClientServiceService } from 'src/Services/Shared/base-http-client-service.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AcphRoomGrillsComponent } from './acph-room-grills/acph-room-grills.component';
 import { BaseResponse } from 'src/Models/response-models/base-response';
 import { GridComponent } from 'src/app/theme/shared/components/grid/grid.component';
@@ -37,7 +37,7 @@ export class AcphComponent implements OnDestroy, OnInit {
   roomId?: number;
   listOfRooms: Room[] = [];
 
-  constructor(private router: Router, public dialogService: DialogService, private messageService: MessageService, private roomService: RoomService) { }
+  constructor(private router: Router, private route: ActivatedRoute, public dialogService: DialogService, private messageService: MessageService, private roomService: RoomService) { }
 
   gridColumnOptions: GridColumnOptions[] = [
     { field: 'name', header: 'Room Name', isSortable: true, hasTableValue: true, isStandalone: false },
@@ -48,7 +48,7 @@ export class AcphComponent implements OnDestroy, OnInit {
     { field: 'airChangesPerHour', header: 'Air Changes per hour', hasTableValue: true, isStandalone: false }
   ]
 
-  show() {
+  showDynamicPopup() {
     if (this.customerDetailId > 0) {
       this.ref = this.dialogService.open(AcphRoomGrillsComponent, {
         header: 'Rooms and Grills',
@@ -76,17 +76,27 @@ export class AcphComponent implements OnDestroy, OnInit {
     }
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.route.params.subscribe(params => {
+      if (params['id'] !== undefined) {
+        this.customerDetailId = params['id'];
+        if (this.customerDetailId > 0) {
+          this.getRoomsFromServer();
+        }
+      }
+    });
+  }
 
   navigateToUrl = (url: string | undefined) => {
     this.router.navigateByUrl(url!);
   }
+
+  //#region  Event handlers
   onCustomerSave(response: BaseResponse<number>) {
     if (response.succeeded) {
       this.customerDetailId = response.data;
       this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Customer Details saved', life: 4000 });
     }
-
   }
 
   onCustomerError(message: string) {
@@ -94,17 +104,49 @@ export class AcphComponent implements OnDestroy, OnInit {
     this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed', detail: message, life: 4000 });
   }
 
+  onCustomerInfo(message: string) {
+    this.customerDetailId = 0;
+    this.messageService.add({ key: 'tc', severity: 'info', summary: 'Information', detail: message, life: 4000 });
+  }
+
+  onRoomPreview(event: Room) {
+    this.roomId = event.id;
+    this.showDynamicPopup();
+  }
+
+  onRoomDelete(event:Room){
+    this.roomId = event.id;
+    this.deleteRoomFromServer();
+  }
+  //#endregion
+
   getRoomsFromServer() {
     let reqparam = new RequestParameter();
     reqparam.filter = `customerDetailId:eq:${this.customerDetailId}`
     this.roomService.getAllPagedResponse(reqparam).subscribe({
       next: (response: BaseResponse<Room[]>) => {
-        if (response.succeeded) { this.listOfRooms = response.data; }
+        if (response.succeeded) {
+          this.listOfRooms = response.data;
+          console.log(this.listOfRooms)
+        }
       },
       error: (e) => { console.error(e.error) },
       complete: () => { },
     });
   }
+
+deleteRoomFromServer() {
+    this.roomService.deleteRoomById(this.roomId!.toString()).subscribe({
+      next: (response: BaseResponse<number>) => {
+        if (response.succeeded) {
+          this.messageService.add({ key: 'tc', severity: 'success', summary: 'Deleted', detail: "Room deleted", life: 4000 });
+        }
+      },
+      error: (e) => { console.error(e.error) },
+      complete: () => { },
+    });
+  }
+
 
 
   ngOnDestroy() {
