@@ -7,6 +7,7 @@ namespace Application.Features.Rooms.Queries.GetAllRooms
 {
     public class GetAllRoomsViewModel
     {
+        public int Id { get; set; }
        public string Name { get; set; }
         public string DesignACPH { get; set; }
         public int NoOfGrills { get; set; }
