@@ -44,7 +44,7 @@ namespace Application.Features.DomainEvents.RoomGrillsAddRangeEvent
             {
                 if (!request.Grills.Any(e => e.ReferenceNumber == existingGrill.ReferenceNumber))
                 {
-                    await _roomGrillRepositoryAsync.SoftDeleteAsync(existingGrill);
+                     _roomGrillRepositoryAsync.SoftDeleteAsync(existingGrill).ConfigureAwait(true);
                 }
             }
         }
