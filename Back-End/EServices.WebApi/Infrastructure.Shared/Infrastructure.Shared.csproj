@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="MailKit" Version="2.8.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.DynamicLinq" Version="7.3.5" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
     <PackageReference Include="MimeKit" Version="2.9.1" />
   </ItemGroup>

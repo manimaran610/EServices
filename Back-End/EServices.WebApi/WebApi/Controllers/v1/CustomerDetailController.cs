@@ -5,7 +5,7 @@ using Application.Features.CustomerDetails.Commands.DeleteCustomerDetail;
 using Application.Features.CustomerDetails.Commands.UpdateCustomerDetail;
 using Application.Features.CustomerDetails.Queries.GetAllCustomerDetails;
 using Application.Features.CustomerDetails.Queries.GetCustomerDetailById;
-
+using Application.Features.ReportFiles.GetReportFileByCustDetailId;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers.v1
@@ -25,6 +25,13 @@ namespace WebApi.Controllers.v1
         public async Task<IActionResult> Get(int id)
         {
             return Ok(await Mediator.Send(new GetCustomerDetailByIdQuery { Id = id }));
+        }
+
+         // GET Report api/<controller>/5
+        [HttpGet("{id}/Report")]
+        public async Task<IActionResult> GenerateReport(int id)
+        {
+            return Ok(await Mediator.Send(new GetReportFileByCustDetailId { CustomerDetailId = id }));
         }
 
         // POST api/<controller>
