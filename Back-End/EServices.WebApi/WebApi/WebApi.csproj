@@ -34,4 +34,10 @@
     <ProjectReference Include="..\Infrastructure.Shared\Infrastructure.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="WordTemplates\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

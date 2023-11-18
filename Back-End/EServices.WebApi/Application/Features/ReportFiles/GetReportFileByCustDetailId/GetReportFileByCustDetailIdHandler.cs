@@ -58,8 +58,8 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             if (customerDetail.FormType == FormType.ACPH)
             {
                 PopulateACPHKeyValuePairs(customerDetail, rooms);
-                await _fileProcessingService.MailMergeWorkDocument(TemplatesBasePath + "ACPH.docx", DestinationBasePath + "ACPH-out.docx", _keyValuePairs);
-                processedFile = ConvertFileToBase64(DestinationBasePath + "ACPH-out.docx");
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("ACPH.docx"), GetFullPath("ACPH-out.docx"), _keyValuePairs);
+                processedFile = ConvertFileToBase64(GetFullPath("ACPH-out.docx"));
             }
 
 
@@ -141,8 +141,8 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             var bytes = File.ReadAllBytes(path);
             return Convert.ToBase64String(bytes);
         }
-        private string TemplatesBasePath => _webHostEnvironment.ContentRootPath.Split("\\WebApi")[0] + "\\Application\\Features\\ReportFiles\\WordTemplates\\";
-        private string DestinationBasePath => _webHostEnvironment.ContentRootPath.Split("\\WebApi")[0] + "\\Application\\Features\\ReportFiles\\ProcessedFiles\\";
+      
+      private string GetFullPath(string filename) =>Path.Combine("WordTemplates\\",filename);
 
 
     }
