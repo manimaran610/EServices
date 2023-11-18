@@ -48,7 +48,7 @@ export class AcphComponent implements OnDestroy, OnInit {
     { field: 'airChangesPerHour', header: 'Air Changes per hour', hasTableValue: true, isStandalone: false }
   ]
 
-  showDynamicPopup() {
+  showDynamicPopup(roomId:number) {
     if (this.customerDetailId > 0) {
       this.ref = this.dialogService.open(AcphRoomGrillsComponent, {
         header: 'Rooms and Grills',
@@ -56,7 +56,7 @@ export class AcphComponent implements OnDestroy, OnInit {
         contentStyle: { overflow: 'auto' },
         baseZIndex: 10000,
         maximizable: true,
-        data: { customerDetailId: this.customerDetailId, roomId: this.roomId }
+        data: { customerDetailId: this.customerDetailId, roomId: roomId }
       });
       const dialogRef = this.dialogService.dialogComponentRefMap.get(this.ref);
       dialogRef!.changeDetectorRef.detectChanges();
@@ -78,7 +78,7 @@ export class AcphComponent implements OnDestroy, OnInit {
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-      if (params['id'] !== undefined) {
+      if (params['id'] !== undefined && params['id'] > 0) {
         this.customerDetailId = params['id'];
         if (this.customerDetailId > 0) {
           this.getRoomsFromServer();
@@ -110,8 +110,7 @@ export class AcphComponent implements OnDestroy, OnInit {
   }
 
   onRoomPreview(event: Room) {
-    this.roomId = event.id;
-    this.showDynamicPopup();
+    this.showDynamicPopup(event.id);
   }
 
   onRoomDelete(event:Room){
