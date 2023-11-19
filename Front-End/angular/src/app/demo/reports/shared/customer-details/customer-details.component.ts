@@ -66,6 +66,7 @@ customerDetailsFormGroup: FormGroup;
   ngOnInit() {
     this.getInstrumentsFromServer();
     if(this.customerDetailId > 0){
+      this.isSaved =true;
        this.GetCustomerDetailFromAPIServer();
     }
   }
@@ -109,20 +110,19 @@ customerDetailsFormGroup: FormGroup;
   getReportFromServer() {
     if (this.customerDetailId > 0) {
       this.isLoading = true;
-      this.customerInfo.emit('File started Processing')
-      this.customerDetailService.getReport(this.customerDetailId.toString()).subscribe({
-        next: (response: BaseResponse<string>) => {
-          if (response.succeeded) {
-            console.log(response)
-            const file = this.fileService.base64ToFile(response.data, "ACPH.docx",'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-            this.fileService.downloadFile(file);
-          }
-        },
-        error: (e) => { 
-          console.error(e.error);
-          this.isLoading = false; },
-        complete: () => {  this.isLoading = false;},
-      });
+      // this.customerDetailService.getReport(this.customerDetailId.toString()).subscribe({
+      //   next: (response: BaseResponse<string>) => {
+      //     if (response.succeeded) {
+      //       console.log(response)
+      //       const file = this.fileService.base64ToFile(response.data, "ACPH.docx",'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      //       this.fileService.downloadFile(file);
+      //     }
+      //   },
+      //   error: (e) => { 
+      //     console.error(e.error);
+      //     this.isLoading = false; },
+      //   complete: () => {  this.isLoading = false;},
+      // });
       // this.isLoading=false;
     }
   }

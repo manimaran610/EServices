@@ -124,7 +124,9 @@ export class AcphRoomGrillsComponent implements OnInit {
       },
       error: (e) => {
         console.error(e.error);
-        
+        this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed', 
+        detail: e.error.Message !== undefined ?e.error.Message :e.error.title, life: 4000 });
+
       },
       complete: () => { },
     });
