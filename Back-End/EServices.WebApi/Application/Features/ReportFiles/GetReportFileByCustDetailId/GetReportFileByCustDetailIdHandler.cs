@@ -142,7 +142,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             return Convert.ToBase64String(bytes);
         }
       
-      private string GetFullPath(string filename) =>Path.Combine("WordTemplates\\",filename);
+      private string GetFullPath(string filename) =>Path.Combine("WordTemplates",filename);
 
 
     }
