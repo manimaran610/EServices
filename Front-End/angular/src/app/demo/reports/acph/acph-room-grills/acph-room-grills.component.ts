@@ -33,6 +33,8 @@ export class AcphRoomGrillsComponent implements OnInit {
   tempGrillsList: any[] = []
   listOfGrills: any[] = [];
   roomId: number = 0;
+  isSaveLoading: boolean = false;
+
   onCloseEventFire: EventEmitter<any> = new EventEmitter<any>();
   addNewRowEvent: EventEmitter<any> = new EventEmitter<any>();
 
@@ -103,6 +105,7 @@ export class AcphRoomGrillsComponent implements OnInit {
 
   //#region  API Server
   postRoomToAPIServer() {
+    this.isSaveLoading = true;
     this.roomService.postRoom(this.roomModel!).subscribe({
       next: (response: BaseResponse<number>) => {
         if (response.succeeded) this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Room along with Grills saved', life: 4000 });
@@ -110,13 +113,17 @@ export class AcphRoomGrillsComponent implements OnInit {
       },
       error: (e) => {
         this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed', detail: e.error.title, life: 4000 });
+        this.isSaveLoading = false;
       },
-      complete: () => { },
+      complete: () => {
+        this.isSaveLoading = false;
+      },
     });
   }
 
   updateRoomToAPIServer() {
-    this.roomModel!.id =this.roomId;
+    this.isSaveLoading = true;
+    this.roomModel!.id = this.roomId;
     this.roomService.updateRoom(this.roomId.toString(), this.roomModel!).subscribe({
       next: (response: BaseResponse<number>) => {
         console.log(response);
@@ -124,11 +131,14 @@ export class AcphRoomGrillsComponent implements OnInit {
       },
       error: (e) => {
         console.error(e.error);
-        this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed', 
-        detail: e.error.Message !== undefined ?e.error.Message :e.error.title, life: 4000 });
-
+        this.messageService.add({
+          key: 'tc', severity: 'error', summary: 'Failed',
+          detail: e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
+        });
+        this.isSaveLoading = false;
       },
-      complete: () => { },
+      complete: () => { this.isSaveLoading = false;
+      },
     });
   }
 
@@ -253,10 +263,11 @@ export class AcphRoomGrillsComponent implements OnInit {
   }
 
   reverseMapRoomGrillToGrid(roomGrill: RoomGrill) {
-    const result: any = { 
-      id:0,airFlowCFM: 0, avgVelocityInFPM: 0, sqrt: 0, grillNo: '', one: 0, two: 0, three: 0, four: 0, five: 0 };
+    const result: any = {
+      id: 0, airFlowCFM: 0, avgVelocityInFPM: 0, sqrt: 0, grillNo: '', one: 0, two: 0, three: 0, four: 0, five: 0
+    };
     result.airFlowCFM = roomGrill.airFlowCFM;
-    result.id =roomGrill.id;
+    result.id = roomGrill.id;
     result.avgVelocityInFPM = roomGrill.avgVelocityFPM;
     result.sqrt = roomGrill.filterAreaSqft;
     result.grillNo = roomGrill.referenceNumber;

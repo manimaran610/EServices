@@ -48,7 +48,7 @@ export class AcphComponent implements OnDestroy, OnInit {
     { field: 'airChangesPerHour', header: 'Air Changes per hour', hasTableValue: true, isStandalone: false }
   ]
 
-  showDynamicPopup(roomId:number) {
+  showDynamicPopup(roomId: number) {
     if (this.customerDetailId > 0) {
       this.ref = this.dialogService.open(AcphRoomGrillsComponent, {
         header: 'Rooms and Grills',
@@ -113,7 +113,7 @@ export class AcphComponent implements OnDestroy, OnInit {
     this.showDynamicPopup(event.id);
   }
 
-  onRoomDelete(event:Room){
+  onRoomDelete(event: Room) {
     this.roomId = event.id;
     this.deleteRoomFromServer();
   }
@@ -134,14 +134,19 @@ export class AcphComponent implements OnDestroy, OnInit {
     });
   }
 
-deleteRoomFromServer() {
+  deleteRoomFromServer() {
     this.roomService.deleteRoomById(this.roomId!.toString()).subscribe({
       next: (response: BaseResponse<number>) => {
         if (response.succeeded) {
           this.messageService.add({ key: 'tc', severity: 'success', summary: 'Deleted', detail: "Room deleted", life: 4000 });
         }
       },
-      error: (e) => { console.error(e.error) },
+      error: (e) => {
+        this.messageService.add({
+          key: 'tc', severity: 'error', summary: 'Failed',
+          detail: e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
+        });
+      },
       complete: () => { },
     });
   }

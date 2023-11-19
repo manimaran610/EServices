@@ -13,14 +13,13 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DynamicDialogConfig, DynamicDialogModule } from 'primeng/dynamicdialog';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { FileProcessingService } from 'src/Services/Shared/file-processing.service';
 
 
 @Component({
   selector: 'app-customer-details',
   standalone: true,
-  imports: [CommonModule, SharedModule, ConfirmDialogModule, HttpClientModule, ReactiveFormsModule, DynamicDialogModule, ProgressSpinnerModule],
+  imports: [CommonModule, SharedModule, ConfirmDialogModule, HttpClientModule, ReactiveFormsModule, DynamicDialogModule],
   providers: [ConfirmationService, InstrumentService, CustomerDetailService, BaseHttpClientServiceService, FileProcessingService, DynamicDialogConfig],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './customer-details.component.html',
@@ -38,7 +37,9 @@ customerDetailsFormGroup: FormGroup;
   filterInstByType: Instrument[] = [];
   customerDetailModel: CustomerDetail = new CustomerDetail();
   isSaved: boolean = false;
-  isLoading: boolean = false;
+  isFileLoading: boolean = false;
+  isSaveLoading: boolean = false;
+
   @Output() customerSave: EventEmitter<BaseResponse<number>> = new EventEmitter<BaseResponse<number>>();
   @Output() customerError: EventEmitter<string> = new EventEmitter<string>();
   @Output() customerInfo: EventEmitter<string> = new EventEmitter<string>();
@@ -109,7 +110,7 @@ customerDetailsFormGroup: FormGroup;
 
   getReportFromServer() {
     if (this.customerDetailId > 0) {
-      this.isLoading = true;
+      this.isFileLoading = true;
       // this.customerDetailService.getReport(this.customerDetailId.toString()).subscribe({
       //   next: (response: BaseResponse<string>) => {
       //     if (response.succeeded) {
@@ -120,10 +121,11 @@ customerDetailsFormGroup: FormGroup;
       //   },
       //   error: (e) => { 
       //     console.error(e.error);
-      //     this.isLoading = false; },
-      //   complete: () => {  this.isLoading = false;},
+      //e.error.Message !== undefined ? this.customerError.emit(e.error.Message) : this.customerError.emit(e.error.title)
+      //     this.isFileLoading = false; },
+      //   complete: () => {  this.isFileLoading = false;},
       // });
-      // this.isLoading=false;
+      // this.isFileLoading=false;
     }
   }
   GetCustomerDetailFromAPIServer() {
@@ -141,6 +143,7 @@ customerDetailsFormGroup: FormGroup;
     });
   }
   postCustomerToAPIServer() {
+    this.isSaveLoading=true;
     console.log(this.customerDetailModel)
     this.customerDetailService.postCustomerDetail(this.customerDetailModel).subscribe({
       next: (response: BaseResponse<number>) => {
@@ -151,10 +154,11 @@ customerDetailsFormGroup: FormGroup;
       },
       error: (e) => {
         console.error(e)
-        e.error.Message !== undefined ? this.customerError.emit(e.error.Message) : this.customerError.emit(e.error.title)
+        e.error.Message !== undefined ? this.customerError.emit(e.error.Message) : this.customerError.emit(e.error.title);
+        this.isSaveLoading=false 
 
       },
-      complete: () => { },
+      complete: () => {this.isSaveLoading=false },
     });
   }
 
