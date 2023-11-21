@@ -1,6 +1,7 @@
 ﻿using Application.Exceptions;
 using Application.Wrappers;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using Serilog.Context;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using WebApi.Extensions;
 
 namespace WebApi.Middlewares
 {
@@ -50,16 +52,15 @@ namespace WebApi.Middlewares
                     case KeyNotFoundException e:
                         // not found error
                         response.StatusCode = (int)HttpStatusCode.NotFound;
-
                         break;
                     default:
                         // unhandled error
                         response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                        LogContext.PushProperty("Exception", error);
+                        LogContext.PushProperty("Response", JsonConvert.SerializeObject(error));
                         Serilog.Log.Error(error.Message);
                         break;
                 }
-                var result = JsonSerializer.Serialize(responseModel);
+                var result = JsonConvert.SerializeObject(responseModel);
                 await response.WriteAsync(result);
             }
         }
