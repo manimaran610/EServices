@@ -19,7 +19,9 @@ namespace WebApi.Extensions
         }
         public static void UseErrorHandlingMiddleware(this IApplicationBuilder app)
         {
-            app.UseMiddleware<ErrorHandlerMiddleware>();
+            app.UseMiddleware<HttpLoggingMiddleware>();
+             app.UseMiddleware<ErrorHandlerMiddleware>();
+
         }
     }
 }
