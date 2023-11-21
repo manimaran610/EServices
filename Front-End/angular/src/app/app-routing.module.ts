@@ -10,6 +10,7 @@ import HomePageComponent from './demo/home-page/home-page.component';
 import { Form1Component } from './demo/ahu-forms/form1/form1.component';
 import { AddInstrumentComponent } from './demo/Instruments/add-instrument/add-instrument.component';
 import { AcphComponent } from './demo/reports/acph/acph.component';
+import { ParticleCountThreeCycleComponent } from './demo/reports/particle-count/particle-count-three-cycle/particle-count-three-cycle.component';
 
 
 const routes: Routes = [
@@ -64,18 +65,26 @@ const routes: Routes = [
         ]
       },
       {
-      path: 'Reports',
-      children: [
-        {
-          path: 'ACPH',
-          component: AcphComponent
-        },
-        {
-          path: 'ACPH/:id',
-          component: AcphComponent
-        }
-      ]
-    }
+        path: 'Reports',
+        children: [
+          {
+            path: 'ACPH',
+            component: AcphComponent
+          },
+          {
+            path: 'ACPH/:id',
+            component: AcphComponent
+          },
+          {
+            path: 'ParticleCount',
+            children: [
+              {
+                path: 'ThreeCycle',
+                component: ParticleCountThreeCycleComponent
+              }]
+          },
+        ]
+      } 
     ]
   },
   {

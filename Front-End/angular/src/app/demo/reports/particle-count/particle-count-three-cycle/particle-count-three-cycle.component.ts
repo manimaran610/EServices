@@ -1,6 +1,5 @@
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, OnInit } from '@angular/core';
-import { CustomerDetailsComponent } from '../shared/customer-details/customer-details.component';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -10,30 +9,31 @@ import { HttpClientModule } from '@angular/common/http';
 import { ToastModule } from 'primeng/toast';
 import { BaseHttpClientServiceService } from 'src/Services/Shared/base-http-client-service.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { ActivatedRoute, Router } from '@angular/router';
 import { BaseResponse } from 'src/Models/response-models/base-response';
 import { GridComponent } from 'src/app/theme/shared/components/grid/grid.component';
 import { Room } from 'src/Models/room.Model';
 import { GridColumnOptions } from 'src/Models/grid-column-options';
 import { RoomService } from 'src/Services/room.service';
 import { RequestParameter } from 'src/Models/request-parameter';
-import { AcphRoomGrillsComponent } from '../acph-room-grills/acph-room-grills.component';
+import { CustomerDetailsComponent } from '../../shared/customer-details/customer-details.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ParticleRoomLocationsThreeCycleComponent } from '../particle-room-locations-three-cycle/particle-room-locations-three-cycle.component';
 
 @Component({
-  selector: 'app-acph',
+  selector: 'app-particle-count-three-cycle',
   standalone: true,
   imports: [CommonModule, SharedModule, ConfirmDialogModule, MessagesModule,
-    HttpClientModule, ToastModule, CustomerDetailsComponent, AcphRoomGrillsComponent,
+    HttpClientModule, ToastModule, CustomerDetailsComponent, ParticleRoomLocationsThreeCycleComponent,
     DynamicDialogModule, GridComponent],
   providers: [ConfirmationService, BaseHttpClientServiceService, MessageService, DialogService, RoomService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './acph.component.html',
-  styleUrls: ['./acph.component.css']
+  templateUrl: './particle-count-three-cycle.component.html',
+  styleUrls: ['./particle-count-three-cycle.component.css']
 })
-export class AcphComponent implements OnDestroy, OnInit {
+export class ParticleCountThreeCycleComponent implements OnDestroy,OnInit {
   ref: DynamicDialogRef | undefined;
-  instance?: AcphRoomGrillsComponent;
-  customerDetailId: number = 0;
+  instance?: ParticleRoomLocationsThreeCycleComponent;
+  customerDetailId: number = 5;
   roomId?: number;
   listOfRooms: Room[] = [];
 
@@ -50,8 +50,8 @@ export class AcphComponent implements OnDestroy, OnInit {
 
   showDynamicPopup(roomId: number) {
     if (this.customerDetailId > 0) {
-      this.ref = this.dialogService.open(AcphRoomGrillsComponent, {
-        header: 'Rooms and its Grills',
+      this.ref = this.dialogService.open(ParticleRoomLocationsThreeCycleComponent, {
+        header: 'Rooms and its Locations',
         width: '70%',
         contentStyle: { overflow: 'auto' },
         baseZIndex: 10000,
@@ -60,7 +60,7 @@ export class AcphComponent implements OnDestroy, OnInit {
       });
       const dialogRef = this.dialogService.dialogComponentRefMap.get(this.ref);
       dialogRef!.changeDetectorRef.detectChanges();
-      this.instance = dialogRef!.instance.componentRef!.instance as AcphRoomGrillsComponent;
+      this.instance = dialogRef!.instance.componentRef!.instance as ParticleRoomLocationsThreeCycleComponent;
       this.instance.onCloseEventFire.subscribe((e) => {
         this.ref?.close(e);
         this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Room along with Grills saved', life: 4000 });

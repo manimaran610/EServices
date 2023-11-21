@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { GroupedColumnOptions } from './../../../../../Models/grouped-column-options';
+import { GroupedColumnOptions } from '../../../../Models/grouped-column-options';
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
