@@ -9,12 +9,12 @@ using System.Linq;
 
 
 
-namespace Infrastructure.Persistence
+namespace Infrastructure.Persistence.Extensions
 {
     public static class EFCoreDynamicSortExtension
     {
 
-        public static IQueryable<T> GetSortedList<T>(this IQueryable<T> collection, string sort) where T : AuditableBaseEntity
+        public static IQueryable<T> GetSortedList<T>(this IQueryable<T> collection, string sort)
         {
             if (string.IsNullOrEmpty(sort)) return collection;
             var array = sort.Contains(',') ? sort.Split(",") : new string[] { sort };

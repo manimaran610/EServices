@@ -63,7 +63,7 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("plant")
+                    b.Property<string>("Plant")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
