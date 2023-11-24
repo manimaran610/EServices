@@ -14,12 +14,13 @@ import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DynamicDialogConfig, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { FileProcessingService } from 'src/Services/Shared/file-processing.service';
+import { DropdownModule } from 'primeng/dropdown';
 
 
 @Component({
   selector: 'app-customer-details',
   standalone: true,
-  imports: [CommonModule, SharedModule, ConfirmDialogModule, HttpClientModule, ReactiveFormsModule, DynamicDialogModule],
+  imports: [CommonModule, SharedModule, ConfirmDialogModule, HttpClientModule, ReactiveFormsModule, DynamicDialogModule,DropdownModule],
   providers: [ConfirmationService, InstrumentService, CustomerDetailService, BaseHttpClientServiceService, FileProcessingService, DynamicDialogConfig],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './customer-details.component.html',
@@ -57,7 +58,7 @@ customerDetailsFormGroup: FormGroup;
         equipmentId: new FormControl(),
         areaOfTest: new FormControl(),
         instrumentType: new FormControl(['0']),
-        instrumentSerialNo: new FormControl(['0'])
+        instrumentSerialNo: new FormControl()
 
       });
     this.addFormControlValidators();

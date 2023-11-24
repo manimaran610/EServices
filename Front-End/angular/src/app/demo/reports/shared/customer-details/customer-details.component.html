@@ -91,11 +91,19 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="exampleInputPassword1">Instrument SerialNo:</label>
-          <select class="form-select" id="inputGroupSelect04" formControlName="instrumentSerialNo">
+          <!-- <select class="form-select"  id="inputGroupSelect04" formControlName="instrumentSerialNo">
             <option value="0" selected disabled>Choose Serial No</option>
             <option *ngFor="let item of filterInstBySNo; let i = index" [value]="item.id">
               {{item.serialNo}}</option>
-          </select>
+          </select> -->
+          <br>
+          <p-dropdown
+          formControlName="instrumentSerialNo" [style]="{'background-color': '#f4f6f8','width': '100%'}"
+          [options]="filterInstBySNo" 
+          optionLabel="serialNo" optionValue="id"
+          [filter]="true" filterBy="serialNo" [showClear]="false"
+          placeholder="Select a Serial Number"
+        ></p-dropdown>
         </div>
       </div>
 
