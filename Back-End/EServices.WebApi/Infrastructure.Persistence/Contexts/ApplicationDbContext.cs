@@ -78,6 +78,13 @@ namespace Infrastructure.Persistence.Contexts
            .HasForeignKey(e => e.RoomId)
           .HasPrincipalKey(e => e.Id);
 
+          
+            builder.Entity<RoomLocation>()
+           .HasOne(e => e.Room)
+           .WithMany(e => e.RoomLocations)
+           .HasForeignKey(e => e.RoomId)
+          .HasPrincipalKey(e => e.Id);
+
             builder.Entity<Log>()
                 .ToTable("Logs", t => t.ExcludeFromMigrations());
 

@@ -1,7 +1,7 @@
 
 namespace Application.Features.Rooms.Seeds
 {
-    public class GrillDto
+    public class GrillDTO
     {
         public string ReferenceNumber { get; set; }
         public float FilterAreaSqft { get; set; }

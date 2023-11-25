@@ -3,8 +3,9 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Features.DomainEvents.RoomGrillsAddRangeEvent;
 using Application.Exceptions;
+using Application.Features.DomainEvents.RoomGrillsAddRangeEvent;
+using Application.Features.DomainEvents.RoomLocationsAddRangeEvent;
 using Application.Interfaces.Repositories;
 using Application.Wrappers;
 using AutoMapper;
@@ -25,7 +26,7 @@ namespace Application.Features.Rooms.Commands.UpdateRoom
         (IRoomRepositoryAsync roomRepository,
         ICustomerDetailRepositoryAsync customerDetailRepositoryAsync,
         IRoomGrillRepositoryAsync roomGrillRepositoryAsync,
-        IMapper mapper, 
+        IMapper mapper,
         IMediator mediator
         )
         {
@@ -37,6 +38,7 @@ namespace Application.Features.Rooms.Commands.UpdateRoom
         }
         public async Task<Response<int>> Handle(UpdateRoomCommand request, CancellationToken cancellationToken)
         {
+            string message = string.Empty;
             var customerDetail = await _customerDetailRepositoryAsync.GetByIdAsync(request.CustomerDetailId);
             if (customerDetail == null)
                 throw new ApiException($"CustomerDetail does not exists with CustomerDetailId -{request.CustomerDetailId}");
@@ -55,22 +57,37 @@ namespace Application.Features.Rooms.Commands.UpdateRoom
                 room.TotalAirFlowCFM = request.TotalAirFlowCFM;
                 room.RoomVolume = request.RoomVolume;
                 room.CustomerDetailId = request.CustomerDetailId;
+                room.NoOfLocations = request.NoOfLocations;
+                room.ClassType = request.ClassType;
+                room.AreaM2 = request.AreaM2;
 
                 await _roomRepository.UpdateAsync(room);
 
 
                 if (customerDetail.FormType == FormType.ACPH)
                 {
-                    var roomGrillsUpsertRangeEvent = new RoomGrillsUpsertRangeEvent()
+                    var domainEvent = new RoomGrillsUpsertRangeEvent()
                     {
                         RoomId = room.Id,
                         Grills = request.RoomGrills
                     };
-                    await _mediator.Publish(roomGrillsUpsertRangeEvent);
+                    await _mediator.Publish(domainEvent);
+                    message = $"Room updated along with Grills";
                 }
-                return new Response<int>(room.Id, $"Room updated along with Grills");
-            }
-        }
+                else if (customerDetail.FormType == FormType.ParticleCountThreeCycle)
+                {
+                    var domainEvent = new RoomLocationsUpsertRangeEvent()
+                    {
+                        RoomId = room.Id,
+                        Locations = request.RoomLocations
+                    };
+                    await _mediator.Publish(domainEvent);
+                    message = $"Room updated along with Locations";
 
+                }
+                return new Response<int>(room.Id, message);
+            }
+
+        }
     }
 }
