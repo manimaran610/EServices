@@ -75,7 +75,7 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
         roomName: new FormControl(),
         areaM2: new FormControl(),
         noOfLocations: new FormControl(),
-        classType: new FormControl(['0']),
+        classType: new FormControl('0'),
       });
     this.addFormControlValidators();
 
@@ -85,16 +85,18 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
       console.log(this.ref.data)
       this.roomId = this.ref.data.roomId;
       this.getRoomByIdFromServer();
-      
+
     }
   }
 
   //#region Forms controls
   onSubmit() {
     if (this.roomsFormGroup.valid && this.listOflocations.length > 0) {
-      this.mapFormToRoomObject();
-      console.log(this.roomModel);
-      this.roomId > 0 ? this.updateRoomToAPIServer() : this.postRoomToAPIServer();
+      if (this.hasMinimumCleanRoomSampling()) {
+        this.mapFormToRoomObject();
+        console.log(this.roomModel);
+        this.roomId > 0 ? this.updateRoomToAPIServer() : this.postRoomToAPIServer();
+      }
     } else if (this.listOflocations.length <= 0) {
       this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Please Add the Locations", life: 4000 });
     }
@@ -116,11 +118,42 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
   reEvaluateCalcResults() {
     this.listOflocations.forEach(e => e = this.evaluateFinalResult(e));
   }
+
+  hasMinimumCleanRoomSampling(): boolean {
+    console.log('hasMinimumCleanRoomSampling')
+    let result: boolean = false;
+    const areaM2 = parseInt(this.roomsFormGroup.controls['areaM2'].value);
+    const noOfLocation = parseInt(this.roomsFormGroup.controls['noOfLocations'].value);
+
+    let cleanRoomSample = BusinessConstants.ISO14644_Clean_Room_Samples.find(e => e.cleanroomArea == areaM2);
+    if (cleanRoomSample !== undefined) {
+      const minimumSample = parseInt(cleanRoomSample.minimumSample);
+      if (minimumSample > noOfLocation) {
+        this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: `${minimumSample} Minimum samples required for Area ${areaM2}`, life: 4000 });
+      } else result = true;
+    }
+    else {
+      cleanRoomSample = BusinessConstants.ISO14644_Clean_Room_Samples.filter(e => parseInt(e.cleanroomArea) > areaM2)[0];
+      if (cleanRoomSample !== undefined) {
+        const minimumSample = parseInt(cleanRoomSample.minimumSample);
+        if (minimumSample > noOfLocation) {
+          this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: `${minimumSample} Minimum samples required for Area ${areaM2}`, life: 4000 });
+        } else result = true;
+      }
+      else {
+        const minimumSample = 27 * Math.round(areaM2 / 1000);
+        if (minimumSample > noOfLocation) {
+          this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: `${minimumSample} Minimum samples required for Area ${areaM2}`, life: 4000 });
+        } else result = true;
+      }
+    }
+    return result;
+  }
   //#endregion
 
   //#region Grill Rows
   addGridRow() {
-    this.roomsFormGroup.valid ? this.addNewRowEvent.emit(true) :
+    this.roomsFormGroup.valid && this.roomsFormGroup.controls['classType'].value !== '0'? this.addNewRowEvent.emit(true) :
       this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Room Details Invalid", life: 4000 });
   }
 
