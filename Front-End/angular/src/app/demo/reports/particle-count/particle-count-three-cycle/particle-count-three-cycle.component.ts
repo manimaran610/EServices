@@ -15,7 +15,7 @@ import { Room } from 'src/Models/room.Model';
 import { GridColumnOptions } from 'src/Models/grid-column-options';
 import { RoomService } from 'src/Services/room.service';
 import { RequestParameter } from 'src/Models/request-parameter';
-import { CustomerDetailsComponent } from '../../shared/customer-details/customer-details.component';
+import { CustomerDetailsComponent } from '../../shared/Components/customer-details/customer-details.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParticleRoomLocationsThreeCycleComponent } from '../particle-room-locations-three-cycle/particle-room-locations-three-cycle.component';
 
@@ -41,11 +41,11 @@ export class ParticleCountThreeCycleComponent implements OnDestroy,OnInit {
 
   gridColumnOptions: GridColumnOptions[] = [
     { field: 'name', header: 'Room Name', isSortable: true, hasTableValue: true, isStandalone: false },
-    { field: 'designACPH', header: 'Design ACPH', hasTableValue: true, isStandalone: false },
-    { field: 'noOfGrills', header: 'No. of Grills', hasTableValue: true, isStandalone: false },
-    { field: 'roomVolume', header: 'Room Volume', hasTableValue: true, isStandalone: false },
-    { field: 'totalAirFlowCFM', header: 'Total AirFlow CFM', hasTableValue: true, isStandalone: false },
-    { field: 'airChangesPerHour', header: 'Air Changes per hour', hasTableValue: true, isStandalone: false }
+    { field: 'areaM2', header: 'Area M2', hasTableValue: true, isStandalone: false },
+    { field: 'noOfLocations', header: 'No. of Locations', hasTableValue: true, isStandalone: false },
+    { field: 'classType', header: 'Classification', hasTableValue: true, isStandalone: false },
+    { field: '', header: '', hasTableValue: false, isStandalone: false }
+
   ]
 
   showDynamicPopup(roomId: number) {
@@ -63,7 +63,7 @@ export class ParticleCountThreeCycleComponent implements OnDestroy,OnInit {
       this.instance = dialogRef!.instance.componentRef!.instance as ParticleRoomLocationsThreeCycleComponent;
       this.instance.onCloseEventFire.subscribe((e) => {
         this.ref?.close(e);
-        this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Room along with Grills saved', life: 4000 });
+        this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Room along with Locations saved', life: 4000 });
 
       });
 

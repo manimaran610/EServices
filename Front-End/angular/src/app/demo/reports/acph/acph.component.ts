@@ -1,6 +1,6 @@
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, OnInit } from '@angular/core';
-import { CustomerDetailsComponent } from '../shared/customer-details/customer-details.component';
+import { CustomerDetailsComponent } from '../shared/Components/customer-details/customer-details.component';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -45,7 +45,9 @@ export class AcphComponent implements OnDestroy, OnInit {
     { field: 'noOfGrills', header: 'No. of Grills', hasTableValue: true, isStandalone: false },
     { field: 'roomVolume', header: 'Room Volume', hasTableValue: true, isStandalone: false },
     { field: 'totalAirFlowCFM', header: 'Total AirFlow CFM', hasTableValue: true, isStandalone: false },
-    { field: 'airChangesPerHour', header: 'Air Changes per hour', hasTableValue: true, isStandalone: false }
+    { field: 'airChangesPerHour', header: 'Air Changes per hour', hasTableValue: true, isStandalone: false },
+    { field: '', header: '',hasTableValue: false, isStandalone: false }
+
   ]
 
   showDynamicPopup(roomId: number) {

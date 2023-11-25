@@ -47,18 +47,19 @@
         <div class="form-group">
           <label for="exampleInputPassword1">Classification Type:</label>
           <select class="form-select" id="inputGroupSelect04" formControlName="classType"
-            (change)="onSelectOptionChange()">
+            (change)="reEvaluateCalcResults()">
             <option value="0" selected disabled>Choose type</option>
-            <option *ngFor="let item of classficationList" [value]="item.name">{{item.name}}</option>
+            <option *ngFor="let item of classficationList; let i = index" [value]="item.name">
+              {{item.name}}</option>
           </select>
         </div>
       </div>
     </div>
     <button class="btn btn-primary m-5" type="button"  (click)="addGridRow()"> Add Location Cells</button>
 
-    <app-grid [title]="'ACPH Room Grills'" [isBordered]="true" [tableStyle]="{ 'min-width': '90rem'}" [listOfItems]="listOfGrills" [groupedColumnOptions]="groupedColumnOptions"  [addNewRow]="addNewRowEvent"
+    <app-grid [title]="'ACPH Room Locations'" [isBordered]="true" [tableStyle]="{ 'min-width': '90rem'}" [listOfItems]="listOflocations" [groupedColumnOptions]="groupedColumnOptions"  [addNewRow]="addNewRowEvent"
     [dataKey]="'id'"  [canEdit] ="true"[canDelete]="true" [hasColumnGroup]="true" (Save) ="onGridRowSave($event)" (Delete)="onGridRowDelete($event)" 
-    [sortField]="'grillNo'" [sortOrder]="-1"
+    [sortField]="'locationNo'" [sortOrder]="-1"
     ></app-grid>
 
       <div class="container">

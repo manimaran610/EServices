@@ -10,12 +10,13 @@ import { DynamicDialogConfig, DynamicDialogModule } from 'primeng/dynamicdialog'
 import { ToastModule } from 'primeng/toast';
 import { GroupedColumnOptions } from 'src/Models/grouped-column-options';
 import { BaseResponse } from 'src/Models/response-models/base-response';
-import { RoomGrill } from 'src/Models/room-grill.Model';
+import { RoomLocation } from 'src/Models/room-Location.Model';
 import { Room } from 'src/Models/room.Model';
 import { BaseHttpClientServiceService } from 'src/Services/Shared/base-http-client-service.service';
 import { RoomService } from 'src/Services/room.service';
 import { GridComponent } from 'src/app/theme/shared/components/grid/grid.component';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
+import { BusinessConstants } from '../../shared/Constants/business-constants';
 
 @Component({
   selector: 'app-particle-room-locations-three-cycle',
@@ -30,8 +31,8 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
   roomsFormGroup: FormGroup;
   roomModel?: Room;
   tempGrillsList: any[] = []
-  classficationList:any[]=[];
-  listOfGrills: any[] = [];
+  classficationList: any[] = BusinessConstants.ClassificationTypes;
+  listOflocations: any[] = [];
   roomId: number = 0;
   isSaveLoading: boolean = false;
 
@@ -41,24 +42,24 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
   groupedColumnOptions: GroupedColumnOptions[] = [
     {
       gridColumnOptions: [
-        { field: 'locationNo', header: 'Location No.', rowspan: '2',isEditable:true,  hasTableValue: true, isStandalone: false,orderNo:1},
+        { field: 'locationNo', header: 'Location No.', rowspan: '2', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
         { field: 'pointFive', header: '0.5 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
         { field: 'five', header: '5 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
-        { field: 'Result', header: 'Result', rowspan: '2',  isEditable:false,hasTableValue: true, isStandalone: false,orderNo:10},
-        { field: '', header: 'Action', rowspan: '2',  isEditable:false,hasTableValue: false, isStandalone: false}
+        { field: 'result', header: 'Result', rowspan: '2', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 10 },
+        { field: '', header: 'Action', rowspan: '2', isEditable: false, hasTableValue: false, isStandalone: false }
 
       ]
     },
     {
       gridColumnOptions: [
-        { field: 'ptOne', width: '15%', header: '1st Cycle',isEditable:true, hasTableValue: true, isStandalone: false, orderNo: 2 },
-        { field: 'ptTwo', width: '15%', header: '2nd Cycle', isEditable:true,hasTableValue: true, isStandalone: false, orderNo: 3 },
-        { field: 'ptThree', width: '15%', header: '3rd Cycle',isEditable:true, hasTableValue: true, isStandalone: false, orderNo: 4 },
-        { field: 'ptAverage', width: '15%', header: 'Average',isEditable:false, hasTableValue: true, isStandalone: false ,orderNo: 5},
-        { field: 'one', width: '15%', header: '1st Cycle',isEditable:true, hasTableValue: true, isStandalone: false, orderNo: 6},
-        { field: 'two', width: '15%', header: '2nd Cycle',isEditable:true, hasTableValue: true, isStandalone: false, orderNo: 7 },
-        { field: 'three', width: '15%', header: '3rd Cycle',isEditable:true, hasTableValue: true, isStandalone: false, orderNo: 8 },
-        { field: 'Average', width: '15%', header: 'Average', isEditable:false,hasTableValue: true, isStandalone: false, orderNo: 9 },
+        { field: 'ptOne', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 2 },
+        { field: 'ptTwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 3 },
+        { field: 'ptThree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 4 },
+        { field: 'ptAverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 5 },
+        { field: 'one', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 6 },
+        { field: 'two', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 7 },
+        { field: 'three', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 8 },
+        { field: 'average', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 9 },
       ]
     }
   ]
@@ -74,7 +75,7 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
         roomName: new FormControl(),
         areaM2: new FormControl(),
         noOfLocations: new FormControl(),
-        classType: new FormControl(),
+        classType: new FormControl(['0']),
       });
     this.addFormControlValidators();
 
@@ -84,16 +85,17 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
       console.log(this.ref.data)
       this.roomId = this.ref.data.roomId;
       this.getRoomByIdFromServer();
+      
     }
   }
 
-   //#region Forms controls
+  //#region Forms controls
   onSubmit() {
-    if (this.roomsFormGroup.valid && this.listOfGrills.length > 0) {
+    if (this.roomsFormGroup.valid && this.listOflocations.length > 0) {
       this.mapFormToRoomObject();
       console.log(this.roomModel);
       this.roomId > 0 ? this.updateRoomToAPIServer() : this.postRoomToAPIServer();
-    } else if (this.listOfGrills.length <= 0) {
+    } else if (this.listOflocations.length <= 0) {
       this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Please Add the Locations", life: 4000 });
     }
     else {
@@ -102,71 +104,69 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
 
   }
 
-   onClear() {
+  onClear() {
     this.roomsFormGroup.reset()
-    this.listOfGrills = [];
+    this.listOflocations = [];
   }
   addFormControlValidators() {
     this.roomsFormGroup.controls['roomName'].addValidators([Validators.required])
     this.roomsFormGroup.controls['areaM2'].addValidators([Validators.required, Validators.min(1)])
-    // this.roomsFormGroup.controls['classType'].addValidators([Validators.required,])
+    this.roomsFormGroup.controls['classType'].addValidators([Validators.required,])
   }
-  onSelectOptionChange(){}
+  reEvaluateCalcResults() {
+    this.listOflocations.forEach(e => e = this.evaluateFinalResult(e));
+  }
   //#endregion
 
-    //#region Grill Rows
-    addGridRow() {
-      this.roomsFormGroup.valid ? this.addNewRowEvent.emit(true) :
-        this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Room Details Invalid", life: 4000 });
+  //#region Grill Rows
+  addGridRow() {
+    this.roomsFormGroup.valid ? this.addNewRowEvent.emit(true) :
+      this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Room Details Invalid", life: 4000 });
+  }
+
+
+  onGridRowSave(event: any) {
+
+    event = this.performGridCalculations(event);
+
+    if (this.listOflocations.find(e => e.id === event.id) === undefined) {
+      this.listOflocations.push(event);
+    } else {
+      const index = this.listOflocations.findIndex(e => e.id === event.id);
+      this.listOflocations[index] = event;
     }
-  
-  
-    onGridRowSave(event: any) {
-  
-      event = this.performGridCalculations(event);
-  
-      if (this.listOfGrills.find(e => e.id === event.id) === undefined) {
-        this.listOfGrills.push(event);
-      } else {
-        const index = this.listOfGrills.findIndex(e => e.id === event.id);
-        this.listOfGrills[index] = event;
-      }
-      this.roomsFormGroup.controls['noOfLocations'].patchValue(this.listOfGrills.length)
-      this.updateCalculationChanges();
-      this.changeRef.detectChanges();
+    this.roomsFormGroup.controls['noOfLocations'].patchValue(this.listOflocations.length)
+    this.changeRef.detectChanges();
+  }
+
+
+  onGridRowDelete(event: any) {
+    if (this.listOflocations.find(e => e.id === event.id) !== undefined) {
+      this.listOflocations = this.listOflocations.filter(e => e.id !== event.id);
     }
-  
-  
-    onGridRowDelete(event: any) {
-      if (this.listOfGrills.find(e => e.id === event.id) !== undefined) {
-        this.listOfGrills = this.listOfGrills.filter(e => e.id !== event.id);
-      }
-      this.roomsFormGroup.controls['noOfLocations'].patchValue(this.listOfGrills.length);
-      this.updateCalculationChanges();
-      this.changeRef.detectChanges();
-  
-    }
-  
-    performGridCalculations(rowData: any) {
-      rowData.ptAverage = Math.round((parseInt(rowData.ptOne) + parseInt(rowData.ptTwo) + parseInt(rowData.ptThree)) / 3) ; 
-      rowData.Average = Math.round((parseInt(rowData.one) + parseInt(rowData.two) + parseInt(rowData.three)) / 3) ; 
-      return rowData;
-    }
-  
-    updateCalculationChanges() {
-      let totalAirFlowCFM = 0;
-      const classType = parseInt(this.roomsFormGroup.controls['classType'].value);
-      this.listOfGrills.forEach(e => totalAirFlowCFM += parseInt(e.airFlowCFM));
-      this.listOfGrills.forEach(e => {
-        e.totalAirFlowCFM = totalAirFlowCFM;
-        e.roomVolCFM = classType;
-        e.airChanges = Math.round((e.totalAirFlowCFM / e.roomVolCFM) * 60);
-  
-      })
-  
-    }
-    //#endregion
-  
+    this.roomsFormGroup.controls['noOfLocations'].patchValue(this.listOflocations.length);
+    this.changeRef.detectChanges();
+
+  }
+
+  performGridCalculations(rowData: any) {
+    rowData.ptAverage = Math.round((parseInt(rowData.ptOne) + parseInt(rowData.ptTwo) + parseInt(rowData.ptThree)) / 3);
+    rowData.average = Math.round((parseInt(rowData.one) + parseInt(rowData.two) + parseInt(rowData.three)) / 3);
+    this.evaluateFinalResult(rowData);
+    return rowData;
+  }
+  evaluateFinalResult(rowData: any) {
+    const className = this.roomsFormGroup.controls['classType'].value;
+    const classType = this.classficationList.find(e => e.name == className);
+    const isPassed = rowData.ptAverage >= classType.pointFiveMicron && rowData.average >= classType.fiveMicron;
+    rowData.result = isPassed ? 'Congress' : 'Non Congress';
+    rowData.resultClass = isPassed ? 'text-c-green' : 'text-c-red';
+
+  }
+
+
+  //#endregion
+
   //#region  API Server
   postRoomToAPIServer() {
     this.isSaveLoading = true;
@@ -201,7 +201,8 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
         });
         this.isSaveLoading = false;
       },
-      complete: () => { this.isSaveLoading = false;
+      complete: () => {
+        this.isSaveLoading = false;
       },
     });
   }
@@ -211,6 +212,8 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
       next: (response: BaseResponse<Room>) => {
         if (response.succeeded) {
           this.roomModel = response.data;
+          console.log(response)
+          console.log(this.roomModel)
           this.reverseMapRoomObjectToForm();
         }
       },
@@ -219,58 +222,60 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
     });
   }
   //#endregion
- 
+
   //#region mappers
   mapFormToRoomObject() {
     this.roomModel = new Room();
     this.roomModel.name = this.roomsFormGroup.controls['roomName'].value;
-    // this.roomModel.areaM2ACPH = this.roomsFormGroup.controls['areaM2'].value;
-    // this.roomModel.noOfLocations = this.roomsFormGroup.controls['noOfLocations'].value;
-    // this.roomModel.classType = this.roomsFormGroup.controls['classType'].value;
+    this.roomModel.areaM2 = this.roomsFormGroup.controls['areaM2'].value;
+    this.roomModel.noOfLocations = this.roomsFormGroup.controls['noOfLocations'].value;
+    this.roomModel.classType = this.roomsFormGroup.controls['classType'].value;
     this.roomModel.customerDetailId = this.ref.data.customerDetailId;
-    this.listOfGrills.forEach(e => this.roomModel?.roomGrills.push(this.MapToRoomGrill(e)))
+    this.listOflocations.forEach(e => this.roomModel?.roomLocations.push(this.MapToRoomLocation(e)))
   }
 
-  MapToRoomGrill(grill: any): RoomGrill {
-    const result = new RoomGrill();
-    result.airFlowCFM = grill.airFlowCFM;
-    result.avgVelocityFPM = grill.avgVelocityInFPM;
-    result.filterAreaSqft = parseFloat(grill.sqrt);
-    result.referenceNumber = grill.grillNo;
-    result.airVelocityReadingInFPMO = grill.one + ',' + grill.two + ',' + grill.three + ',' + grill.four + ',' + grill.five
+  MapToRoomLocation(location: any): RoomLocation {
+    const result = new RoomLocation();
+    result.referenceNumber = location.locationNo;
+    result.pointFiveMicronCycles = location.ptOne + ',' + location.ptTwo + ',' + location.ptThree;
+    result.fiveMicronCycles = location.one + ',' + location.two + ',' + location.three;
+    result.averagePointFiveMicron = location.ptAverage
+    result.averageFiveMicron = location.average
+    result.result = location.result;
     return result;
 
   }
   reverseMapRoomObjectToForm() {
     this.roomsFormGroup.controls['roomName'].patchValue(this.roomModel!.name);
-    // this.roomsFormGroup.controls['areaM2'].patchValue(this.roomModel!.areaM2ACPH);
-    // this.roomsFormGroup.controls['noOfLocations'].patchValue(this.roomModel!.noOfLocations);
-    // this.roomsFormGroup.controls['classType'].patchValue(this.roomModel!.classType);
-    this.roomModel!.roomGrills.forEach(e => this.reverseMapRoomGrillToGrid(e));
-    this.updateCalculationChanges();
+    this.roomsFormGroup.controls['areaM2'].patchValue(this.roomModel!.areaM2);
+    this.roomsFormGroup.controls['noOfLocations'].patchValue(this.roomModel!.noOfLocations);
+    this.roomsFormGroup.controls['classType'].patchValue(this.roomModel!.classType);
+    this.roomModel!.roomLocations.forEach(e => this.reverseMapRoomLcationToGrid(e));
+    this.reEvaluateCalcResults();
+
     console.log(this.roomsFormGroup.value)
-    console.log(this.listOfGrills)
+    console.log(this.listOflocations)
   }
 
-  reverseMapRoomGrillToGrid(roomGrill: RoomGrill) {
+  reverseMapRoomLcationToGrid(location: RoomLocation) {
     const result: any = {
-      id: 0, airFlowCFM: 0, avgVelocityInFPM: 0, sqrt: 0, grillNo: '', one: 0, two: 0, three: 0, four: 0, five: 0
+      id: 0, locationNo: 0, ptOne: 0, ptTwo: 0, ptThree: 0, ptAverage: 0, one: 0, two: 0, three: 0, Average: 0, result: ''
     };
-    result.airFlowCFM = roomGrill.airFlowCFM;
-    result.id = roomGrill.id;
-    result.avgVelocityInFPM = roomGrill.avgVelocityFPM;
-    result.sqrt = roomGrill.filterAreaSqft;
-    result.grillNo = roomGrill.referenceNumber;
-    result.one = roomGrill.airVelocityReadingInFPMO.split(',')[0],
-      result.two = roomGrill.airVelocityReadingInFPMO.split(',')[1],
-      result.three = roomGrill.airVelocityReadingInFPMO.split(',')[2],
-      result.four = roomGrill.airVelocityReadingInFPMO.split(',')[3],
-      result.five = roomGrill.airVelocityReadingInFPMO.split(',')[4]
-    this.listOfGrills = [...this.listOfGrills, result];
+    result.id = location.id;
+    result.locationNo = location.referenceNumber;
+    result.ptAverage = location.averagePointFiveMicron;
+    result.average = location.averageFiveMicron;
+    result.one = location.fiveMicronCycles.split(',')[0],
+      result.two = location.fiveMicronCycles.split(',')[1],
+      result.three = location.fiveMicronCycles.split(',')[2],
+      result.ptOne = location.pointFiveMicronCycles.split(',')[0],
+      result.ptTwo = location.pointFiveMicronCycles.split(',')[1],
+      result.ptThree = location.pointFiveMicronCycles.split(',')[2],
+      result.result = location.result;
+
+    this.listOflocations = [...this.listOflocations, result];
     this.changeRef.detectChanges();
   }
-
-
 
   //#endregion
 }

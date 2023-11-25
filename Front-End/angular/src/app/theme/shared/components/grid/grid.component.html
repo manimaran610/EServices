@@ -55,7 +55,7 @@
             <td *ngIf="hasradioButton">
                 <p-tableRadioButton [value]="rowData" (click)="onRadioSelected()"></p-tableRadioButton>
             </td>
-            <td *ngFor="let col of getFilteredColumns()">
+            <td *ngFor="let col of getFilteredGroupColumns()" [class]="col.dataClass! +' '+rowData[col.field! +'Class']">
                 <p-cellEditor>
                     <ng-template pTemplate="input">
                         <div class="form-group">
@@ -72,7 +72,7 @@
             </td>
 
                       
-                <td *ngFor="let col of getStandaloneColumns()"  class="">
+                <td *ngFor="let col of getStandaloneColumns()"  [class]="col.dataClass!">
                            <strong> {{ rowIndex===0 ? rowData[col.field!]:'' }}</strong>
                 </td>
 
@@ -98,7 +98,7 @@
             <td *ngIf="hasradioButton"htmlTableRowElement (click)="onRowSelected(rowData)">
                 <p-tableRadioButton [value]="rowData" (click)="onRadioSelected()"></p-tableRadioButton>
             </td>
-            <td *ngFor="let col of columns">
+            <td *ngFor="let col of getFilteredColumns()" [class]="col.dataClass! +' '+rowData[col.field! +'Class']">
                 <p-cellEditor>
                     <ng-template pTemplate="input">
                         <input pInputText type="text" class="form-control" [(ngModel)]="rowData[col.field!]">

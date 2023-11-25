@@ -11,8 +11,9 @@ export class GridColumnOptions {
     public routerLink?: string;
     public hasDropDownOptions?: boolean = false;
     public dropDownOptions?: string[] = [];
-    public hasTableValue: boolean = true;
-    public isStandalone: boolean = false;
+    public hasTableValue?: boolean = true;
+    public isStandalone?: boolean = false;
     public orderNo?: number = 0;
+    public dataClass?: string;
 
 }
