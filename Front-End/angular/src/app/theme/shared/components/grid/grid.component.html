@@ -101,7 +101,7 @@
             <td *ngFor="let col of getFilteredColumns()" [class]="col.dataClass! +' '+rowData[col.field! +'Class']">
                 <p-cellEditor>
                     <ng-template pTemplate="input">
-                        <input pInputText type="text" class="form-control" [(ngModel)]="rowData[col.field!]">
+                        <input *ngIf="col.isEditable"  pInputText type="text" class="form-control" [(ngModel)]="rowData[col.field!]">
                     </ng-template>
                     <ng-template *ngIf="!col.hasRouterLink" pTemplate="output">
                         {{rowData[col.field!]}}
