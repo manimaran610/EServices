@@ -56,7 +56,8 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 await _mediator.Publish(domainEvent);
                 message = $"Room added along with Grills";
             }
-            else if (customerDetail.FormType == FormType.ParticleCountThreeCycle)
+            else if ((customerDetail.FormType == FormType.ParticleCountThreeCycle) || 
+                        (customerDetail.FormType == FormType.ParticleCountSingleCycle))
             {
                 var domainEvent = new RoomLocationsUpsertRangeEvent()
                 {
