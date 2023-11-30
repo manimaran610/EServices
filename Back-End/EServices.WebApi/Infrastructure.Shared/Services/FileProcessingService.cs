@@ -13,7 +13,7 @@ namespace Infrastructure.Shared.Services
     public class FileProcessingService : IFileProcessingService
     {
 
-        public async Task MailMergeWorkDocument(string templatePath, string DestinatePath, List<keyValue> keyValuePairs)
+        public async Task MailMergeWorkDocument(string templatePath, string DestinatePath, List<keyValue> keyValuePairs, List<TemplateRowConfig>? templateRows = null)
         {
             try
             {
@@ -26,12 +26,31 @@ namespace Infrastructure.Shared.Services
 
             using (WordprocessingDocument doc = WordprocessingDocument.Open(DestinatePath, true))
             {
-                var allParas = doc.MainDocumentPart?.Document.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>();
+                if (templateRows != null) CreateDynamicTemplateRows(doc, templateRows);
+
+                var allTextParams = doc.MainDocumentPart?.Document.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>();
+                var allHeaderParams = doc.MainDocumentPart?.HeaderParts.SelectMany(hp => hp.RootElement.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>());
+
 
                 foreach (var keyValue in keyValuePairs)
                 {
                     List<string> addedList = new List<string>();
-                    foreach (Text textItem in allParas ?? new List<Text>())
+                    foreach (Text textItem in allTextParams ?? new List<Text>())
+                    {
+                        if (textItem.Text != null)
+                        {
+                            if (textItem.Text.Contains($"<{keyValue.Key}>") && !addedList.Any(e => e == keyValue.Key))
+                            {
+                                textItem.Text = textItem.Text.Replace($"<{keyValue.Key}>", keyValue.Value);
+                                addedList.Add(keyValue.Key);
+                            }
+                        }
+                    }
+
+                    // allTextParams.FirstOrDefault(e => !string.IsNullOrEmpty(e.Text) && e.Text.Contains($"<{keyValue.Key}>"))?.Text.Replace($"<{keyValue.Key}>", keyValue.Value);
+
+
+                    foreach (Text textItem in allHeaderParams ?? new List<Text>())
                     {
                         if (textItem.Text != null)
                         {
@@ -45,7 +64,7 @@ namespace Infrastructure.Shared.Services
                 }
 
                 // Remove unfilled rows from the document
-               CleanUpUnMergedTemplateFields(allParas);
+                CleanUpUnMergedTemplateFields(allTextParams);
 
                 // Save the document
                 doc.MainDocumentPart.Document.Save();
@@ -95,30 +114,63 @@ namespace Infrastructure.Shared.Services
 
             void CleanUpUnMergedTemplateFields(IEnumerable<Text> texts)
             {
-               
-                    while (texts!.Any(e => e.Text.Contains("<") && e.Text.Contains(">")))
+
+                while (texts!.Any(e => e.Text.Contains("<") && e.Text.Contains(">")))
+                {
+                    foreach (Text textItem in texts!.Where(e => e.Text.Contains("<") && e.Text.Contains(">")))
                     {
-                        foreach (Text textItem in texts!.Where(e => e.Text.Contains("<") && e.Text.Contains(">")))
+                        foreach (var paragraph in textItem.Ancestors<Paragraph>())
                         {
-                            foreach (var paragraph in textItem.Ancestors<Paragraph>())
+                            if (paragraph != null)
                             {
-                                if (paragraph != null)
+                                foreach (var row in paragraph.Ancestors<TableRow>().ToList<TableRow>())
                                 {
-                                    foreach (var row in paragraph.Ancestors<TableRow>().ToList<TableRow>())
+                                    var parent = paragraph.Ancestors<Table>().FirstOrDefault();
+                                    if (parent != null)
                                     {
-                                        var parent = paragraph.Ancestors<Table>().FirstOrDefault();
-                                        if (parent != null)
-                                        {
-                                            parent.RemoveChild(row);
-                                        }
-                                        //paragraph.Remove();
+                                        parent.RemoveChild(row);
                                     }
+                                    //paragraph.Remove();
                                 }
                             }
                         }
                     }
-              
+                }
+            }
 
+            void CreateDynamicTemplateRows(WordprocessingDocument document, List<TemplateRowConfig> templateRows)
+            {
+                var lastChild = templateRows.LastOrDefault();
+                foreach (var templateRow in templateRows)
+                {
+                    Console.WriteLine("Foreach - " + templateRow.OrderNo);
+
+
+                    // Assuming the table is in the first (0-index) body of the document
+                    Table table = document.MainDocumentPart.Document.Body.Elements<Table>().First();
+                    // Clone the row at the specified index
+                    TableRow clonedRow = (TableRow)table.Elements<TableRow>().ElementAt(templateRow.RowIndex).CloneNode(true);
+
+                    // Insert the cloned row into the table 
+                    table.InsertAfter(clonedRow, table.Elements<TableRow>().ElementAt(templateRow.RowInsertAfter));
+                    if (templateRow.OrderNo == lastChild?.OrderNo)
+                    {
+                        Console.WriteLine("If condition");
+                        if (templateRow.NestedRowCount < 2)
+                        {
+                            table.RemoveChild(table.Elements<TableRow>().ElementAt(templateRow.RowInsertAfter));
+                        }
+                        else templateRow.NestedRowCount--;
+                    }
+
+                    for (int i = 1; i < templateRow.NestedRowCount; i++)
+                    {
+                        // Clone the row at the specified index
+                        TableRow clonedNestedRow = (TableRow)table.Elements<TableRow>().ElementAt(templateRow.NestedRowIndex).CloneNode(true);
+                        table.InsertAfter(clonedNestedRow, table.Elements<TableRow>().ElementAt(templateRow.NestedRowInsertAfter));
+
+                    }
+                }
             }
         }
     }
