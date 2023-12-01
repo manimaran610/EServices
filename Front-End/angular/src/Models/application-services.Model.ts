@@ -6,6 +6,7 @@ export class ApplicationServices {
     description?: string = '';
     imgSrc?: string = '';
     background: string = '';
+    accentColor:string=''
     navigateTo?: string = '';
     icon: string = '';
 
