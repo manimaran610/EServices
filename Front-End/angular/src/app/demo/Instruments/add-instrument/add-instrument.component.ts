@@ -30,6 +30,7 @@ export class AddInstrumentComponent implements OnInit {
     instrumentFormGroup: FormGroup;
     msgs: Message[] = [];
     isAddInstrument: boolean = true;
+    isSaveLoading:boolean=false;
     isSaved: boolean = false;
 
     tempFileName?: string;
@@ -91,15 +92,21 @@ export class AddInstrumentComponent implements OnInit {
     }
 
     postInstrumentToAPIServer() {
+        this.isSaveLoading =true;
         this.instrumentService.postInstrument(this.instrumentModel).subscribe({
             next: (response: BaseResponse<number>) => {
                 if (response.succeeded) this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Instrument details saved', life: 4000 }); 
                 this.isSaved=true;      
             },
             error: (e) => {
-                this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed', detail: e.error.title, life: 4000 });
+                console.log(e)
+                this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed',
+                detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000 });
+                this.isSaveLoading =false;
+
             },
             complete: () => {
+                this.isSaveLoading =false;
                 // this.router.navigateByUrl("/Home-page")
             },
         });

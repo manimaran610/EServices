@@ -3,11 +3,15 @@
     <div class="col text-start">
       <h4 class="text-c-blue">Customer Details:</h4>
     </div>
-      <div class="col text-end">
-        <button class="btn btn-danger m-2" *ngIf="!isLoading" type="button" (click)="getReportFromServer()"[disabled]="!isSaved" ngbTooltip='Download Report File'>Export as Document<i class="m-2 feather icon-file"></i></button>
-        <p-progressSpinner *ngIf="isLoading" [style]="{'width':'3%','height':'70%'}" strokeWidth="8" fill="var(--surface-ground)" animationDuration="1.5s"></p-progressSpinner>
-      </div>
+    <div class="col text-end">
+      <button class="btn btn-danger m-2"  type="button" (click)="getReportFromServer()"
+        [disabled]="!isSaved" ngbTooltip='Download Report File'>
+        <span *ngIf="isFileLoading" class="spinner-border spinner-border-sm me-1"></span>
+               Export as Document
+        <i class="m-2 feather icon-file"></i>
+      </button>
     </div>
+  </div>
   <hr />
   <p-confirmDialog [style]="{width: '25vw'}" [baseZIndex]="10000"></p-confirmDialog>
   <form [formGroup]="customerDetailsFormGroup" (ngSubmit)="onSubmit()">
@@ -76,7 +80,8 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="exampleInputPassword1">Instrument Type:</label>
-          <select class="form-select" id="inputGroupSelect04" formControlName="instrumentType" (change)="onSelectOptionChange()">
+          <select class="form-select" id="inputGroupSelect04" formControlName="instrumentType"
+            (change)="onSelectOptionChange()">
             <option value="0" selected disabled>Choose type</option>
             <option *ngFor="let item of filterInstByType" [value]="item.type">{{item.type}}</option>
           </select>
@@ -86,11 +91,19 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="exampleInputPassword1">Instrument SerialNo:</label>
-          <select class="form-select" id="inputGroupSelect04" formControlName="instrumentSerialNo">
+          <!-- <select class="form-select"  id="inputGroupSelect04" formControlName="instrumentSerialNo">
             <option value="0" selected disabled>Choose Serial No</option>
-            <option *ngFor="let item of filterInstBySNo; let i = index" [value]="item.id" >
+            <option *ngFor="let item of filterInstBySNo; let i = index" [value]="item.id">
               {{item.serialNo}}</option>
-          </select>
+          </select> -->
+          <br>
+          <p-dropdown
+          formControlName="instrumentSerialNo" [style]="{'background-color': '#f4f6f8','width': '100%'}"
+          [options]="filterInstBySNo" 
+          optionLabel="serialNo" optionValue="id"
+          [filter]="true" filterBy="serialNo" [showClear]="false"
+          placeholder="Select a Serial Number"
+        ></p-dropdown>
         </div>
       </div>
 
@@ -98,8 +111,12 @@
       <div class="container">
         <div class="row">
           <div class="col text-center">
-            <button class="btn btn-primary m-2" type="button" pButton pRipple ngbTooltip='Clear all' (click)="onClear()">Clear</button>
-            <button class="btn btn-success" type="submit" [disabled]="isSaved" ngbTooltip='Save'><i *ngIf="isSaved" class="feather icon-check-circle me-1"> </i>Save Customer</button>
+            <button class="btn btn-primary m-2" type="button" pButton pRipple ngbTooltip='Clear all'
+              (click)="onClear()">Clear</button>
+            <button class="btn btn-success" type="submit" [disabled]="isSaved" ngbTooltip='Save'>
+              <i *ngIf="isSaved" class="feather icon-check-circle me-1"></i>
+              <span *ngIf="isSaveLoading" class="spinner-border spinner-border-sm me-1"></span>
+              Save Customer</button>
           </div>
         </div>
       </div>

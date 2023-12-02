@@ -5,11 +5,11 @@
   </div>
   <hr>
   <div class="row" *ngFor="let coreService of coreServicesList">
-    <app-card cardTitle="{{coreService.title}}" [options]="false" >
+    <app-card cardTitle="{{coreService.title}}" [options]="false">
       <div class="row">
         <div class="col-ld-3 col-md-4 col-sm-12" *ngFor="let item of coreService.services">
-          <app-card [hidHeader]="true" cardClass="{{ item.background }} order-card" >
-            <a  (click)="navigateToUrl(item.navigateTo)">
+          <app-card [hidHeader]="true" cardClass="{{ item.background }} order-card">
+            <a (click)="navigateToUrl(item.navigateTo)">
               <h3 class="text-white text-center">{{item.title}}<i class="feather {{ item.icon }} m-2"></i></h3>
               <h5 class="text-white text-center">{{item.subTitle}}</h5>
             </a>
@@ -19,3 +19,5 @@
     </app-card>
   </div>
 </div>
+
+

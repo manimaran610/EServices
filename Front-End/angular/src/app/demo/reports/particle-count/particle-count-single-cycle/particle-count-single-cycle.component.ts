@@ -1,6 +1,5 @@
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, OnInit } from '@angular/core';
-import { CustomerDetailsComponent } from '../shared/Components/customer-details/customer-details.component';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -10,30 +9,31 @@ import { HttpClientModule } from '@angular/common/http';
 import { ToastModule } from 'primeng/toast';
 import { BaseHttpClientServiceService } from 'src/Services/Shared/base-http-client-service.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { ActivatedRoute, Router } from '@angular/router';
 import { BaseResponse } from 'src/Models/response-models/base-response';
 import { GridComponent } from 'src/app/theme/shared/components/grid/grid.component';
 import { Room } from 'src/Models/room.Model';
 import { GridColumnOptions } from 'src/Models/grid-column-options';
 import { RoomService } from 'src/Services/room.service';
 import { RequestParameter } from 'src/Models/request-parameter';
-import { AcphRoomGrillsComponent } from '../acph-room-grills/acph-room-grills.component';
+import { CustomerDetailsComponent } from '../../shared/Components/customer-details/customer-details.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ParticleRoomLocationsSingleCycleComponent } from '../particle-room-locations-single-cycle/particle-room-locations-single-cycle.component';
 
 @Component({
-  selector: 'app-acph',
+  selector: 'app-particle-count-single-cycle',
   standalone: true,
   imports: [CommonModule, SharedModule, ConfirmDialogModule, MessagesModule,
-    HttpClientModule, ToastModule, CustomerDetailsComponent, AcphRoomGrillsComponent,
+    HttpClientModule, ToastModule, CustomerDetailsComponent, ParticleRoomLocationsSingleCycleComponent,
     DynamicDialogModule, GridComponent],
   providers: [ConfirmationService, BaseHttpClientServiceService, MessageService, DialogService, RoomService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './acph.component.html',
-  styleUrls: ['./acph.component.css']
+  templateUrl: './particle-count-single-cycle.component.html',
+  styleUrls: ['./particle-count-single-cycle.component.css']
 })
-export class AcphComponent implements OnDestroy, OnInit {
+export class ParticleCountSingleCycleComponent implements OnDestroy,OnInit {
   ref: DynamicDialogRef | undefined;
-  instance?: AcphRoomGrillsComponent;
-  customerDetailId: number = 0;
+  instance?: ParticleRoomLocationsSingleCycleComponent;
+  customerDetailId: number = 5;
   roomId?: number;
   listOfRooms: Room[] = [];
 
@@ -41,19 +41,17 @@ export class AcphComponent implements OnDestroy, OnInit {
 
   gridColumnOptions: GridColumnOptions[] = [
     { field: 'name', header: 'Room Name', isSortable: true, hasTableValue: true, isStandalone: false },
-    { field: 'designACPH', header: 'Design ACPH', hasTableValue: true, isStandalone: false },
-    { field: 'noOfGrills', header: 'No. of Grills', hasTableValue: true, isStandalone: false },
-    { field: 'roomVolume', header: 'Room Volume', hasTableValue: true, isStandalone: false },
-    { field: 'totalAirFlowCFM', header: 'Total AirFlow CFM', hasTableValue: true, isStandalone: false },
-    { field: 'airChangesPerHour', header: 'Air Changes per hour', hasTableValue: true, isStandalone: false },
-    { field: '', header: '',hasTableValue: false, isStandalone: false }
+    { field: 'areaM2', header: 'Area M2', hasTableValue: true, isStandalone: false },
+    { field: 'noOfLocations', header: 'No. of Locations', hasTableValue: true, isStandalone: false },
+    { field: 'classType', header: 'Classification', hasTableValue: true, isStandalone: false },
+    { field: '', header: '', hasTableValue: false, isStandalone: false }
 
   ]
 
   showDynamicPopup(roomId: number) {
     if (this.customerDetailId > 0) {
-      this.ref = this.dialogService.open(AcphRoomGrillsComponent, {
-        header: 'Rooms and its Grills',
+      this.ref = this.dialogService.open(ParticleRoomLocationsSingleCycleComponent, {
+        header: 'Rooms and its Locations',
         width: '70%',
         contentStyle: { overflow: 'auto' },
         baseZIndex: 10000,
@@ -62,14 +60,14 @@ export class AcphComponent implements OnDestroy, OnInit {
       });
       const dialogRef = this.dialogService.dialogComponentRefMap.get(this.ref);
       dialogRef!.changeDetectorRef.detectChanges();
-      this.instance = dialogRef!.instance.componentRef!.instance as AcphRoomGrillsComponent;
+      this.instance = dialogRef!.instance.componentRef!.instance as ParticleRoomLocationsSingleCycleComponent;
       this.instance.onCloseEventFire.subscribe((e) => {
         this.ref?.close(e);
-        this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Room along with Grills saved', life: 4000 });
+        this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Room along with Locations saved', life: 4000 });
 
       });
 
-      this.ref.onClose.subscribe((input: any) => {
+      this.ref.onClose.subscribe(() => {
         this.getRoomsFromServer();
       });
     } else {
@@ -129,10 +127,11 @@ export class AcphComponent implements OnDestroy, OnInit {
           console.log(this.listOfRooms)
         }
       },
-      error: (e) => {
-        this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed',
-        detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000 });
-      },
+      error: (e) => { 
+        this.messageService.add({
+          key: 'tc', severity: 'error', summary: 'Failed',
+          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
+        });      },
       complete: () => { },
     });
   }
@@ -147,8 +146,8 @@ export class AcphComponent implements OnDestroy, OnInit {
       error: (e) => {
         this.messageService.add({
           key: 'tc', severity: 'error', summary: 'Failed',
-          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
-        });
+          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000      
+          });
       },
       complete: () => { },
     });

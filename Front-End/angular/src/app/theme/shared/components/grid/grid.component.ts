@@ -67,8 +67,8 @@ export class GridComponent implements OnInit, OnChanges {
     isNewRowInserted: boolean = false;
 
     getRowSpan = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).sort((obj1, obj2) => parseInt(obj1.rowspan!) - parseInt(obj2.rowspan!))[0].rowspan;
-    getFilteredColumns = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).filter(option => option.hasTableValue && !option.isStandalone).sort((obj1, obj2) => obj1.orderNo! - obj2.orderNo!)
-
+    getFilteredGroupColumns = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).filter(option => option.hasTableValue && !option.isStandalone).sort((obj1, obj2) => obj1.orderNo! - obj2.orderNo!)
+    getFilteredColumns = () => this.gridColumnOptions.filter(option => option.hasTableValue && !option.isStandalone).sort((obj1, obj2) => obj1.orderNo! - obj2.orderNo!)
     getStandaloneColumns = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).filter(option => option.isStandalone);
 
     constructor() { }
@@ -94,9 +94,9 @@ export class GridComponent implements OnInit, OnChanges {
 
     onRadioSelected() { this.RadioChanges.emit(this.selectedRow); }
 
-    onRowSelected(event: any) {}
+    onRowSelected(event: any) { }
 
-    onRowPreviewEvent(event: any) {this.Preview.emit(event);}
+    onRowPreviewEvent(event: any) { this.Preview.emit(event); }
 
     onLazyLoadEvent(event: any) {
 

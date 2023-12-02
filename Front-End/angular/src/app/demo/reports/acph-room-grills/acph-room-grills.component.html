@@ -70,7 +70,9 @@
         <div class="row">
           <div class="col text-center">
             <button class="btn btn-primary m-2" type="button" pButton pRipple (click)="onClear()" >Clear</button>
-            <button class="btn btn-success" type="submit"> {{roomId > 0 ? 'Update Room' :'Save Room'}}</button>
+            <button class="btn btn-success" type="submit"> 
+              <span *ngIf="isSaveLoading" class="spinner-border spinner-border-sm me-1"></span>
+              {{roomId > 0 ? 'Update Room' :'Save Room'}}</button>
           </div>
         </div>
       </div>

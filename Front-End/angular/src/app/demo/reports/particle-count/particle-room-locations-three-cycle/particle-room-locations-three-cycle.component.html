@@ -1,0 +1,77 @@
+
+<p-toast position="bottom-right" key="tc"></p-toast>
+
+
+<app-card cardTitle="" [options]="false">
+  <h4 class="text-c-blue">Instrument Details:</h4>
+  <hr />
+  <p-confirmDialog [style]="{width: '25vw'}" [baseZIndex]="10000"></p-confirmDialog>
+  <form [formGroup]="roomsFormGroup" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Room Name:</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="roomName"
+            placeholder="Enter Room Name"
+            [ngClass]="{'is-invalid': roomsFormGroup.controls['roomName'].errors  && (roomsFormGroup.controls['roomName'].touched || roomsFormGroup.controls['roomName'].dirty), 'is-valid':roomsFormGroup.controls['roomName'].valid}" />
+          <div class="invalid-feedback" *ngIf="roomsFormGroup.controls['roomName'].hasError('required')">
+            Required
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">No of Locations:</label>
+          <input type="number" class="form-control form-control-disabled" id="exampleInputPassword1"   formControlName="noOfLocations"
+            placeholder="Add location to count number of locations" [readOnly]="true">
+          <div class="invalid-feedback" *ngIf="roomsFormGroup.controls['noOfLocations'].hasError('max')">
+            Maximum Limit Reached
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Area (m2):</label>
+          <input type="number" class="form-control" id="exampleInputPassword1" formControlName="areaM2"
+            placeholder="Enter areaM2 ACPH"
+            [ngClass]="{'is-invalid': roomsFormGroup.controls['areaM2'].errors  && (roomsFormGroup.controls['areaM2'].touched || roomsFormGroup.controls['areaM2'].dirty), 'is-valid':roomsFormGroup.controls['areaM2'].valid}" />
+          <div class="invalid-feedback" *ngIf="roomsFormGroup.controls['areaM2'].hasError('required')">
+            Required
+          </div>
+        </div>
+      </div>
+     
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Classification Type:</label>
+          <select class="form-select" id="inputGroupSelect04" formControlName="classType"
+            (change)="reEvaluateCalcResults()">
+            <option value="0" selected disabled>Choose type</option>
+            <option *ngFor="let item of classficationList; let i = index" [value]="item.name">
+              {{item.name}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary m-5" type="button"  (click)="addGridRow()"> Add Location Cells</button>
+
+    <app-grid [title]="'ACPH Room Locations'" [isBordered]="true" [tableStyle]="{ 'min-width': '60rem'}" [listOfItems]="listOflocations" [groupedColumnOptions]="groupedColumnOptions"  [addNewRow]="addNewRowEvent"
+    [dataKey]="'id'"  [canEdit] ="true"[canDelete]="true" [hasColumnGroup]="true" (Save) ="onGridRowSave($event)" (Delete)="onGridRowDelete($event)" 
+    [sortField]="'locationNo'" [sortOrder]="-1"
+    ></app-grid>
+
+      <div class="container">
+        <div class="row">
+          <div class="col text-center">
+            <button class="btn btn-primary m-2" type="button" pButton pRipple (click)="onClear()" >Clear</button>
+            <button class="btn btn-success" type="submit"> 
+              <span *ngIf="isSaveLoading" class="spinner-border spinner-border-sm me-1"></span>
+              {{roomId > 0 ? 'Update Room' :'Save Room'}}</button>
+          </div>
+        </div>
+      </div>
+  </form>
+</app-card>
+
