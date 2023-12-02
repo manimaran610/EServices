@@ -22,12 +22,12 @@ namespace Infrastructure.Persistence
             }
             else
             {
-       
+
                 services.AddDbContext<ApplicationDbContext>(options =>
                options.UseSqlServer(
                    configuration.GetConnectionString("DefaultConnection"),
                    b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)),
-                   ServiceLifetime.Transient,ServiceLifetime.Transient);                   
+                   ServiceLifetime.Transient, ServiceLifetime.Transient);
 
             }
             #region Repositories
@@ -37,6 +37,9 @@ namespace Infrastructure.Persistence
             services.AddTransient<ICustomerDetailRepositoryAsync, CustomerDetailRepositoryAsync>();
             services.AddTransient<IRoomRepositoryAsync, RoomRepositoryAsync>();
             services.AddTransient<IRoomGrillRepositoryAsync, RoomGrillRepositoryAsync>();
+            services.AddTransient<IRoomLocationRepositoryAsync, RoomLocationRepositoryAsync>();
+            services.AddTransient<ILogRepositoryAsync, LogRepositoryAsync>();
+
 
 
 

@@ -1,10 +1,12 @@
-﻿using Application.Features.CustomerDetails.Commands.CreateCustomerDetail;
+﻿using System.Collections.Generic;
+using Application.Features.CustomerDetails.Commands.CreateCustomerDetail;
 using Application.Features.CustomerDetails.Queries.GetAllCustomerDetails;
 using Application.Features.Instruments.Commands.CreateInstrument;
 using Application.Features.Instruments.Queries.GetAllInstruments;
 using Application.Features.Products.Commands.CreateProduct;
 using Application.Features.Products.Queries.GetAllProducts;
 using Application.Features.Rooms.Commands.CreateRoom;
+using Application.Features.Rooms.Commands.UpdateRoom;
 using Application.Features.Rooms.Queries.GetAllRooms;
 using Application.Features.Rooms.Seeds;
 using Application.Filters;
@@ -33,13 +35,30 @@ namespace Application.Mappings
             CreateMap<GetAllCustomerDetailsQuery, RequestParameter>();
 
             CreateMap<Room, GetAllRoomsViewModel>()
-            .ForMember(e=>e.RoomGrills,opt=>opt.MapFrom(entity =>entity.RoomGrills))
+            .ForMember(e => e.RoomGrills, opt => opt.MapFrom(entity => entity.RoomGrills))
+            .ForMember(e => e.RoomLocations, opt => opt.MapFrom(entity => entity.RoomLocations))
             .ReverseMap();
-            CreateMap<CreateRoomCommand, Room>();
+
+            CreateMap<CreateRoomCommand, Room>()
+            .ForMember(e => e.RoomLocations, opt => opt.Ignore())
+            .ForMember(e => e.RoomGrills, opt => opt.Ignore());
+
             CreateMap<GetAllRoomsQuery, RequestParameter>();
 
-            CreateMap<GrillDto, RoomGrill>();
-            CreateMap<RoomGrill, GrillDto>().ReverseMap();
+            CreateMap<UpdateRoomCommand, Room>()
+             .ForMember(e => e.RoomLocations, opt => opt.Ignore())
+             .ForMember(e => e.RoomGrills, opt => opt.Ignore());
+
+            CreateMap<GetAllRoomsQuery, RequestParameter>();
+
+            CreateMap<GrillDTO, RoomGrill>();
+            CreateMap<RoomGrill, GrillDTO>().ReverseMap();
+
+            CreateMap<LocationDTO, RoomLocation>();
+            CreateMap<RoomLocation, LocationDTO>().ReverseMap();
+
+            CreateMap<GetAllLogsQuery, RequestParameter>();
+
 
 
 

@@ -5,11 +5,11 @@ using Domain.Common;
 using Infrastructure.Shared.Extensions.Filters;
 
 
-namespace Infrastructure.Shared.Extensions
+namespace Infrastructure.Persistence.Extensions
 {
     public static class EFCoreDynamicFilterExtension
     {
-        public static System.Linq.IQueryable<T> GetFilteredList<T>(this IQueryable<T> collection, string filterString, string logic = null) where T : AuditableBaseEntity
+        public static System.Linq.IQueryable<T> GetFilteredList<T>(this IQueryable<T> collection, string filterString, string logic = null) 
         {
             Filter filteredResult = new Filter();
             if (!string.IsNullOrEmpty(filterString))

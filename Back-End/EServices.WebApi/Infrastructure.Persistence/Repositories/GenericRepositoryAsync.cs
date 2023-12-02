@@ -1,7 +1,7 @@
 ﻿using Application.Interfaces;
 using Domain.Common;
 using Infrastructure.Persistence.Contexts;
-using Infrastructure.Shared.Extensions;
+using Infrastructure.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq.Dynamic.Core;

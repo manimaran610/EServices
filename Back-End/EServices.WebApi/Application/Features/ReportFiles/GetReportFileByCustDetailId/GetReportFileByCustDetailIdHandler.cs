@@ -57,8 +57,9 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             var rooms = await _roomRepository.GetPagedReponseAsync(0, int.MaxValue, $"CustomerDetailId:eq:{request.CustomerDetailId}", "Name:asc", GetRoomSelectExpression());
             if (customerDetail.FormType == FormType.ACPH)
             {
+                var templateRows = PopulateACPHTemplateRowConfigs(rooms);
                 PopulateACPHKeyValuePairs(customerDetail, rooms);
-                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("ACPH.docx"), GetFullPath("ACPH-out.docx"), _keyValuePairs);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("ACPH.docx"), GetFullPath("ACPH-out.docx"), _keyValuePairs, templateRows);
                 processedFile = ConvertFileToBase64(GetFullPath("ACPH-out.docx"));
             }
 
@@ -73,7 +74,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
 
             for (int i = 1; i <= rooms.Count; i++)
             {
-                string keyPrefix = $"R{i}-";
+                string keyPrefix = $"R-";
                 MapPropertiesToKeyValuePair(rooms[i - 1], keyPrefix);
                 rooms[i - 1].RoomGrills.ForEach(grill =>
                 {
@@ -88,6 +89,20 @@ namespace Application.Features.Rooms.Commands.CreateRoom
         }
 
 
+        private List<TemplateRowConfig> PopulateACPHTemplateRowConfigs(IReadOnlyList<Room> rooms)
+        {
+            List<TemplateRowConfig> result = new();
+            int orderNo = 1;
+            foreach (var room in rooms)
+            {
+               result.Add(new(orderNo, 3, 4, room.RoomGrills.Count()));
+                orderNo++;  
+            }
+
+            return result.OrderByDescending(e => e.OrderNo).ToList();
+
+
+        }
 
         private Expression<Func<Room, Room>> GetRoomSelectExpression()
         {
@@ -141,8 +156,8 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             var bytes = File.ReadAllBytes(path);
             return Convert.ToBase64String(bytes);
         }
-      
-      private string GetFullPath(string filename) =>Path.Combine("WordTemplates",filename);
+
+        private string GetFullPath(string filename) => Path.Combine("WordTemplates", filename);
 
 
     }

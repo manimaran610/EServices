@@ -1,15 +1,15 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Features.DomainEvents.RoomGrillsAddRangeEvent;
+using Application.Features.DomainEvents;
 using Application.Exceptions;
 using Application.Interfaces.Repositories;
 using Application.Wrappers;
 using AutoMapper;
-using Domain.Entities;
 using Domain.Enums;
 using MediatR;
-using Microsoft.AspNetCore.Http;
+using Application.Features.DomainEvents.RoomGrillsAddRangeEvent;
+using Application.Features.DomainEvents.RoomLocationsAddRangeEvent;
 
 namespace Application.Features.Rooms.Commands.CreateRoom
 {
@@ -38,6 +38,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
 
         public async Task<Response<int>> Handle(CreateRoomCommand request, CancellationToken cancellationToken)
         {
+            string message = string.Empty;
             var room = _mapper.Map<Domain.Entities.Room>(request);
             var customerDetail = await _customerDetailRepositoryAsync.GetByIdAsync(request.CustomerDetailId);
             if (customerDetail == null)
@@ -47,16 +48,29 @@ namespace Application.Features.Rooms.Commands.CreateRoom
 
             if (customerDetail.FormType == FormType.ACPH)
             {
-                var roomGrillsUpsertRangeEvent = new RoomGrillsUpsertRangeEvent()
+                var domainEvent = new RoomGrillsUpsertRangeEvent()
                 {
                     RoomId = room.Id,
                     Grills = request.RoomGrills
                 };
-                await _mediator.Publish(roomGrillsUpsertRangeEvent);
+                await _mediator.Publish(domainEvent);
+                message = $"Room added along with Grills";
+            }
+            else if ((customerDetail.FormType == FormType.ParticleCountThreeCycle) || 
+                        (customerDetail.FormType == FormType.ParticleCountSingleCycle))
+            {
+                var domainEvent = new RoomLocationsUpsertRangeEvent()
+                {
+                    RoomId = room.Id,
+                    Locations = request.RoomLocations
+                };
+                await _mediator.Publish(domainEvent);
+                message = $"Room added along with Locations";
 
             }
-            return new Response<int>(room.Id, $"Room added along with Grills");
+            return new Response<int>(room.Id, message);
         }
+
 
     }
 }
