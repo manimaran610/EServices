@@ -99,8 +99,9 @@ export class AddInstrumentComponent implements OnInit {
                 this.isSaved=true;      
             },
             error: (e) => {
+                console.log(e)
                 this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed',
-                detail: e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000 });
+                detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000 });
                 this.isSaveLoading =false;
 
             },

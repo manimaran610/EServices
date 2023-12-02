@@ -120,7 +120,7 @@ export class AcphComponent implements OnDestroy, OnInit {
   //#endregion
 
   getRoomsFromServer() {
-    let reqparam = new RequestParameter();
+    const reqparam = new RequestParameter();
     reqparam.filter = `customerDetailId:eq:${this.customerDetailId}`
     this.roomService.getAllPagedResponse(reqparam).subscribe({
       next: (response: BaseResponse<Room[]>) => {
@@ -129,7 +129,10 @@ export class AcphComponent implements OnDestroy, OnInit {
           console.log(this.listOfRooms)
         }
       },
-      error: (e) => { console.error(e.error) },
+      error: (e) => {
+        this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed',
+        detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000 });
+      },
       complete: () => { },
     });
   }
@@ -144,7 +147,7 @@ export class AcphComponent implements OnDestroy, OnInit {
       error: (e) => {
         this.messageService.add({
           key: 'tc', severity: 'error', summary: 'Failed',
-          detail: e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
+          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
         });
       },
       complete: () => { },

@@ -112,7 +112,9 @@ export class AcphRoomGrillsComponent implements OnInit {
         this.onCloseEventFire.emit(true);
       },
       error: (e) => {
-        this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed', detail: e.error.title, life: 4000 });
+        this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed', 
+        detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000 
+      });
         this.isSaveLoading = false;
       },
       complete: () => {
@@ -133,7 +135,7 @@ export class AcphRoomGrillsComponent implements OnInit {
         console.error(e.error);
         this.messageService.add({
           key: 'tc', severity: 'error', summary: 'Failed',
-          detail: e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
+          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
         });
         this.isSaveLoading = false;
       },
@@ -150,7 +152,11 @@ export class AcphRoomGrillsComponent implements OnInit {
           this.reverseMapRoomObjectToForm();
         }
       },
-      error: (e) => { console.error(e.error) },
+      error: (e) => {
+        this.messageService.add({
+          key: 'tc', severity: 'error', summary: 'Failed',
+          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
+        });        },
       complete: () => { },
     });
   }

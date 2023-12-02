@@ -198,7 +198,7 @@ import { Router } from '@angular/router';
   <hr>
   <div class="row" *ngFor="let coreService of coreServicesList">
   <hr>
-    <div class="m-5">
+    <div class="m-5 ">
       <h4 class="title">{{coreService.title}} :</h4>
       <div class="row content-body">
         <div (click)="navigateToUrl(item.navigateTo)" class="col-ld-3 col-md-4 col-sm-12 li m-5"

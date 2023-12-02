@@ -127,7 +127,11 @@ export class ParticleCountSingleCycleComponent implements OnDestroy,OnInit {
           console.log(this.listOfRooms)
         }
       },
-      error: (e) => { console.error(e.error) },
+      error: (e) => { 
+        this.messageService.add({
+          key: 'tc', severity: 'error', summary: 'Failed',
+          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
+        });      },
       complete: () => { },
     });
   }
@@ -142,8 +146,8 @@ export class ParticleCountSingleCycleComponent implements OnDestroy,OnInit {
       error: (e) => {
         this.messageService.add({
           key: 'tc', severity: 'error', summary: 'Failed',
-          detail: e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
-        });
+          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000      
+          });
       },
       complete: () => { },
     });

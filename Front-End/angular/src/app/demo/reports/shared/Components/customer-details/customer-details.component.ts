@@ -104,7 +104,10 @@ export class CustomerDetailsComponent implements OnInit {
 
         }
       },
-      error: (e) => { console.error(e.error) },
+      error: (e) => {   
+        e.status ==0?  this.customerError.emit('Server connection error'):
+      e.error.Message !== undefined ? this.customerError.emit(e.error.Message) : this.customerError.emit(e.error.title) 
+    },
       complete: () => { },
     });
   }
@@ -122,6 +125,7 @@ export class CustomerDetailsComponent implements OnInit {
         },
         error: (e) => {
           console.error(e.error);
+          e.status ==0?  this.customerError.emit('Server connection error'):
           e.error.Message !== undefined ? this.customerError.emit(e.error.Message) : this.customerError.emit(e.error.title)
           this.isFileLoading = false;
         },
@@ -137,6 +141,7 @@ export class CustomerDetailsComponent implements OnInit {
       },
       error: (e) => {
         console.error(e)
+        e.status ==0?  this.customerError.emit('Server connection error'):
         e.error.Message !== undefined ? this.customerError.emit(e.error.Message) : this.customerError.emit(e.error.title)
 
       },
@@ -155,6 +160,7 @@ export class CustomerDetailsComponent implements OnInit {
       },
       error: (e) => {
         console.error(e)
+        e.status ==0?  this.customerError.emit('Server connection error'): 
         e.error.Message !== undefined ? this.customerError.emit(e.error.Message) : this.customerError.emit(e.error.title);
         this.isSaveLoading = false
 
@@ -174,6 +180,7 @@ export class CustomerDetailsComponent implements OnInit {
       },
       error: (e) => {
         console.error(e)
+        e.status ==0?  this.customerError.emit('Server connection error'):
         e.error.Message !== undefined ? this.customerError.emit(e.error.Message) : this.customerError.emit(e.error.title)
 
       },
