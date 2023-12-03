@@ -9,6 +9,7 @@ namespace Domain.Entities
 {
     public class CustomerDetail : AuditableBaseEntity
     {
+        public string CustomerNo { get; set; }
         public string Client { get; set; }
         public string Plant { get; set; }
         public string EquipmentId { get; set; }

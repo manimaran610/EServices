@@ -7,6 +7,7 @@ namespace Application.Features.CustomerDetails.Queries.GetAllCustomerDetails
     {
         public int Id { get; set; }
         public string Client { get; set; }
+        public string CustomerNo { get; set; }
         public string plant { get; set; }
         public string EquipmentId { get; set; }
         public string AreaOfTest { get; set; }
