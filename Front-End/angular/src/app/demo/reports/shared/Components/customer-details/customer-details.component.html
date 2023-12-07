@@ -53,6 +53,18 @@
 
       <div class="col-md-6">
         <div class="form-group">
+          <label for="exampleInputPassword1">Test Due On:</label>
+          <input type="date" class="form-control" id="exampleInputPassword1" formControlName="dateOfTestDue"
+            placeholder="Enter Date"
+            [ngClass]="{'is-invalid': customerDetailsFormGroup.controls['dateOfTestDue'].errors  && (customerDetailsFormGroup.controls['dateOfTestDue'].touched || customerDetailsFormGroup.controls['dateOfTestDue'].dirty), 'is-valid':customerDetailsFormGroup.controls['dateOfTestDue'].valid}" />
+          <div class="invalid-feedback" *ngIf="customerDetailsFormGroup.controls['dateOfTestDue'].hasError('required')">
+            Required
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
           <label for="exampleInputPassword1">Equipment Id:</label>
           <input type="text" class="form-control" id="exampleInputPassword1" formControlName="equipmentId"
             placeholder="Enter Equipment Id"
@@ -62,6 +74,29 @@
           </div>
         </div>
       </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Test Reference:</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="testReference"
+            placeholder="Enter Test Reference"
+            [ngClass]="{'is-invalid': customerDetailsFormGroup.controls['testReference'].errors  && (customerDetailsFormGroup.controls['testReference'].touched || customerDetailsFormGroup.controls['testReference'].dirty), 'is-valid':customerDetailsFormGroup.controls['testReference'].valid}" />
+          <div class="invalid-feedback" *ngIf="customerDetailsFormGroup.controls['testReference'].hasError('required')">
+            Required
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Test Condition:</label>
+          <select class="form-select" id="inputGroupSelect04" formControlName="classType">
+           <option value="0" selected disabled>Choose type</option>
+            <option *ngFor="let item of classficationList; let i = index" [value]="item.name">
+              {{item.name}}</option>
+          </select>
+        </div>
+      </div>
+    
 
       <div class="col-md-6">
         <div class="form-group">

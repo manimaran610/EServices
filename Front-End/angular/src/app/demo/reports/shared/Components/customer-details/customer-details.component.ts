@@ -2,7 +2,7 @@ import { Instrument } from '../../../../../../Models/instrument.Model';
 import { SharedModule } from '../../../../../theme/shared/shared.module';
 import { InstrumentService } from '../../../../../../Services/Instrument.service';
 import { BaseHttpClientServiceService } from '../../../../../../Services/Shared/base-http-client-service.service';
-import { CustomerDetail, FormType } from '../../../../../../Models/customer-detail.Model';
+import { CustomerDetail } from '../../../../../../Models/customer-detail.Model';
 import { CustomerDetailService } from '../../../../../../Services/cutomer-detail.service';
 import { BaseResponse } from '../../../../../../Models/response-models/base-response';
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
@@ -15,6 +15,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DynamicDialogConfig, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { FileProcessingService } from 'src/Services/Shared/file-processing.service';
 import { DropdownModule } from 'primeng/dropdown';
+import { BusinessConstants } from '../../Constants/business-constants';
 
 
 @Component({
@@ -29,6 +30,7 @@ import { DropdownModule } from 'primeng/dropdown';
 export class CustomerDetailsComponent implements OnInit {
   @Input() formType: number = 0;
   @Input() customerDetailId: number = 0;
+  classficationList: any[] = BusinessConstants.ClassificationTypes;
 
 
   customerDetailsFormGroup: FormGroup;
@@ -54,10 +56,13 @@ export class CustomerDetailsComponent implements OnInit {
       {
         client: new FormControl(),
         dateOfTest: new FormControl(),
+        dateOfTestDue: new FormControl(),
+        classType:new FormControl('0'),
+        testReference:new FormControl(),
         plant: new FormControl(),
         equipmentId: new FormControl(),
         areaOfTest: new FormControl(),
-        instrumentType: new FormControl(['0']),
+        instrumentType: new FormControl('0'),
         instrumentSerialNo: new FormControl()
 
       });
@@ -201,6 +206,9 @@ export class CustomerDetailsComponent implements OnInit {
   addFormControlValidators() {
     this.customerDetailsFormGroup.controls['client'].addValidators([Validators.required])
     this.customerDetailsFormGroup.controls['dateOfTest'].addValidators([Validators.required])
+    this.customerDetailsFormGroup.controls['dateOfTestDue'].addValidators([Validators.required])
+    this.customerDetailsFormGroup.controls['classType'].addValidators([Validators.required])
+    this.customerDetailsFormGroup.controls['testReference'].addValidators([Validators.required])
     this.customerDetailsFormGroup.controls['plant'].addValidators([Validators.required])
     this.customerDetailsFormGroup.controls['equipmentId'].addValidators([Validators.required])
     this.customerDetailsFormGroup.controls['areaOfTest'].addValidators([Validators.required])

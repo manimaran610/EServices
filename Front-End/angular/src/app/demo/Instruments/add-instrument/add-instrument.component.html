@@ -74,10 +74,11 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="exampleInputPassword1">Type</label>
-          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="type" placeholder="Enter Type"
-          [ngClass]="{'is-invalid': instrumentFormGroup.controls['type'].errors  && (instrumentFormGroup.controls['type'].touched || 
-          instrumentFormGroup.controls['type'].dirty), 'is-valid':instrumentFormGroup.controls['type'].valid}" />
-          <div class="invalid-feedback" *ngIf="!instrumentFormGroup.controls['type'].valid">Required</div>
+          <select class="form-select" id="inputGroupSelect04" formControlName="type">
+           <option value="0" selected disabled>Choose type</option>
+            <option *ngFor="let item of instrumentTypes; let i = index" [value]="item">
+              {{item}}</option>
+          </select>
         </div>
       </div>
 

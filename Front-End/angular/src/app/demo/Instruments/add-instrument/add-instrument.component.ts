@@ -29,6 +29,7 @@ export class AddInstrumentComponent implements OnInit {
 
     instrumentFormGroup: FormGroup;
     msgs: Message[] = [];
+    instrumentTypes :string[]=['Type1','Type2','Type3'];
     isAddInstrument: boolean = true;
     isSaveLoading:boolean=false;
     isSaved: boolean = false;
@@ -50,7 +51,7 @@ export class AddInstrumentComponent implements OnInit {
                 serialNo: new FormControl(),
                 make: new FormControl(),
                 model: new FormControl(),
-                type: new FormControl(),
+                type: new FormControl('0'),
                 calibratedOn: new FormControl(),
                 calibratedDueOn: new FormControl(),
                 certificate: new FormControl(),
