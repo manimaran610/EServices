@@ -1,0 +1,70 @@
+
+<!-- BreadCrumb -->
+<nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>'">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a (click)="navigateToUrl('Home')" class="text-c-blue"><i class="feather icon-home "></i></a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Trainees</li>
+    <li class="breadcrumb-item active" aria-current="page">Add Trainee</li>
+
+  </ol>
+</nav>
+
+<!-- Toast Messages -->
+<!-- <p-messages  position="top-center" [value]="msgs"></p-messages> -->
+<p-toast position="bottom-right" key="tc"></p-toast>
+
+<!-- <button type="button" class="btn btn-primary mb-5" (click)="toggle()">Add instrument</button> -->
+
+<!-- Add Instrument Form -->
+<app-card cardTitle="Add Instrument" [options]="false">
+  <h4 class="text-c-blue">Trainee Details:</h4>
+  <hr />
+  <p-confirmDialog [style]="{width: '25vw'}" [baseZIndex]="10000"></p-confirmDialog>
+  <form [formGroup]="traineeFormGroup" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Name :</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="name"  placeholder="Enter Name" 
+          [ngClass]="{'is-invalid': traineeFormGroup.controls['name'].errors  && (traineeFormGroup.controls['name'].touched || traineeFormGroup.controls['name'].dirty), 'is-valid':traineeFormGroup.controls['name'].valid}" />
+            <div class="invalid-feedback" *ngIf="traineeFormGroup.controls['name'].hasError('required')">Required</div>
+
+        </div>
+      </div>
+      
+
+      <div class="col-md-6">
+        <div class="form-group ">
+          <label for="exampleCheck1">Certificate</label>
+          <input type="file" class="form-control" id="exampleCheck1"  accept="application/pdf"  #fileInput (change)="uploadFile($event.target)" formControlName="certificate" placeholder="Select Certificate"
+          [ngClass]="{'is-invalid': traineeFormGroup.controls['certificate'].errors  && (traineeFormGroup.controls['certificate'].touched || 
+          traineeFormGroup.controls['certificate'].dirty), 'is-valid':traineeFormGroup.controls['certificate'].valid}" />
+          <div class="invalid-feedback" *ngIf="traineeFormGroup.controls['certificate'].hasError('required')">Required</div>
+          <div class="invalid-feedback" *ngIf="traineeFormGroup.controls['certificate'].hasError('max')">File size should be less than 5MB</div>
+          <div class="invalid-feedback" *ngIf="traineeFormGroup.controls['certificate'].hasError('min')">File must be in PDF Format</div>
+
+        </div>
+      </div>
+    </div>
+    <hr />
+    <div class="container">
+      <div class="row">
+        <div class="col text-center">
+          <button class="btn btn-primary m-2" type="button"  ngbTooltip='Clear all' pButton pRipple  (click)="onClear()">Clear</button>
+         <button class="btn btn-success" type="submit"  ngbTooltip='Save'>
+          <i *ngIf="isSaved" class="feather icon-check-circle me-1"> </i>
+          <span *ngIf="isSaveLoading" class="spinner-border spinner-border-sm me-1"></span>
+          Save Trainee</button>
+        </div>
+      </div>
+    </div>
+    </form>
+</app-card>
+
+
+
+
+
+

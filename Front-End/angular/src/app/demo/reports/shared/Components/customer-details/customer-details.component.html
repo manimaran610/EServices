@@ -110,6 +110,15 @@
         </div>
       </div>
 
+      <div class="col-md-6">
+      <div class="form-group">
+        <label for="exampleInputPassword1">Tested By:</label>
+        <select class="form-select" id="inputGroupSelect04" formControlName="traineeId">
+          <option value="0" selected disabled>Select Tester</option>
+          <option *ngFor="let item of traineeList" [value]="item.id" >{{item.name}}</option>
+        </select>
+      </div></div>
+
       <h4 class="text-c-blue mt-5"><strong>Instrument Details:</strong></h4>
       <hr />
       <div class="col-md-6">

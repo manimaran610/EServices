@@ -85,11 +85,12 @@
       <div class="col-md-6">
         <div class="form-group ">
           <label for="exampleCheck1">Certificate</label>
-          <input type="file" class="form-control" id="exampleCheck1"  #fileInput (change)="uploadFile($event.target)" formControlName="certificate" placeholder="Select Certificate"
+          <input type="file" class="form-control" id="exampleCheck1"  accept="application/pdf"  #fileInput (change)="uploadFile($event.target)" formControlName="certificate" placeholder="Select Certificate"
           [ngClass]="{'is-invalid': instrumentFormGroup.controls['certificate'].errors  && (instrumentFormGroup.controls['certificate'].touched || 
           instrumentFormGroup.controls['certificate'].dirty), 'is-valid':instrumentFormGroup.controls['certificate'].valid}" />
           <div class="invalid-feedback" *ngIf="instrumentFormGroup.controls['certificate'].hasError('required')">Required</div>
           <div class="invalid-feedback" *ngIf="instrumentFormGroup.controls['certificate'].hasError('max')">File size should be less than 5MB</div>
+          <div class="invalid-feedback" *ngIf="instrumentFormGroup.controls['certificate'].hasError('min')">File must be in PDF Format</div>
 
         </div>
       </div>

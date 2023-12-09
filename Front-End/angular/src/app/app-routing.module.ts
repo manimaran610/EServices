@@ -12,6 +12,7 @@ import { AddInstrumentComponent } from './demo/Instruments/add-instrument/add-in
 import { AcphComponent } from './demo/reports/acph/acph.component';
 import { ParticleCountThreeCycleComponent } from './demo/reports/particle-count/particle-count-three-cycle/particle-count-three-cycle.component';
 import { ParticleCountSingleCycleComponent } from './demo/reports/particle-count/particle-count-single-cycle/particle-count-single-cycle.component';
+import { AddTraineeComponent } from './demo/trainee-details/add-trainee/add-trainee.component';
 
 
 const routes: Routes = [
@@ -62,6 +63,15 @@ const routes: Routes = [
           {
             path: 'Add-Instrument',
             component: AddInstrumentComponent
+          }
+        ]
+      },
+      {
+        path: 'Trainee',
+        children: [
+          {
+            path: 'Add-Trainee',
+            component: AddTraineeComponent
           }
         ]
       },

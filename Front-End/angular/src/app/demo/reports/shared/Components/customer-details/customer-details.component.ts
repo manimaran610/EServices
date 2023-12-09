@@ -16,13 +16,15 @@ import { DynamicDialogConfig, DynamicDialogModule } from 'primeng/dynamicdialog'
 import { FileProcessingService } from 'src/Services/Shared/file-processing.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { BusinessConstants } from '../../Constants/business-constants';
+import { Trainee } from 'src/Models/trainee.Model';
+import { TraineeService } from 'src/Services/trainee.service';
 
 
 @Component({
   selector: 'app-customer-details',
   standalone: true,
   imports: [CommonModule, SharedModule, ConfirmDialogModule, HttpClientModule, ReactiveFormsModule, DynamicDialogModule, DropdownModule],
-  providers: [ConfirmationService, InstrumentService, CustomerDetailService, BaseHttpClientServiceService, FileProcessingService, DynamicDialogConfig],
+  providers: [ConfirmationService, InstrumentService,TraineeService, CustomerDetailService, BaseHttpClientServiceService, FileProcessingService, DynamicDialogConfig],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './customer-details.component.html',
   styleUrls: ['./customer-details.component.css']
@@ -38,6 +40,8 @@ export class CustomerDetailsComponent implements OnInit {
   instrumentList: Instrument[] = [];
   filterInstBySNo: Instrument[] = [];
   filterInstByType: Instrument[] = [];
+  traineeList: Trainee[] = [];
+
   customerDetailModel: CustomerDetail = new CustomerDetail();
   isSaved: boolean = false;
   isFileLoading: boolean = false;
@@ -50,7 +54,7 @@ export class CustomerDetailsComponent implements OnInit {
 
 
 
-  constructor(private instrumentService: InstrumentService, private customerDetailService: CustomerDetailService, private fileService: FileProcessingService, public ref: DynamicDialogConfig) {
+  constructor(private instrumentService: InstrumentService,private traineeService:TraineeService, private customerDetailService: CustomerDetailService, private fileService: FileProcessingService, public ref: DynamicDialogConfig) {
 
     this.customerDetailsFormGroup = new FormGroup(
       {
@@ -63,6 +67,7 @@ export class CustomerDetailsComponent implements OnInit {
         equipmentId: new FormControl(),
         areaOfTest: new FormControl(),
         instrumentType: new FormControl('0'),
+        traineeId:new FormControl('0'),
         instrumentSerialNo: new FormControl()
 
       });
@@ -70,8 +75,9 @@ export class CustomerDetailsComponent implements OnInit {
 
   }
 
-  ngOnInit() {
-    this.getInstrumentsFromServer();
+  async ngOnInit() {
+   await this.getInstrumentsFromServer();
+   await this.getTraineesFromServer();
     if (this.customerDetailId > 0) {
       this.isSaved = true;
       this.GetCustomerDetailFromAPIServer();
@@ -99,14 +105,29 @@ export class CustomerDetailsComponent implements OnInit {
   }
 
   //#region  API Server calls
-  getInstrumentsFromServer() {
-    this.instrumentService.getAllPagedResponse().subscribe({
+  async getInstrumentsFromServer() {
+    await this.instrumentService.getAllPagedResponse().subscribe({
       next: (response: BaseResponse<Instrument[]>) => {
         if (response.succeeded) {
           this.instrumentList = response.data;
           this.filterInstByType = this.removeDuplicates(this.instrumentList, 'type');
           if (this.customerDetailId > 0) this.mapCustomerDetailToForm();
 
+        }
+      },
+      error: (e) => {   
+        e.status ==0?  this.customerError.emit('Server connection error'):
+      e.error.Message !== undefined ? this.customerError.emit(e.error.Message) : this.customerError.emit(e.error.title) 
+    },
+      complete: () => { },
+    });
+  }
+
+ async getTraineesFromServer() {
+   await this.traineeService.getAllPagedResponse().subscribe({
+      next: (response: BaseResponse<Trainee[]>) => {
+        if (response.succeeded) {
+          this.traineeList = response.data;
         }
       },
       error: (e) => {   
@@ -212,6 +233,7 @@ export class CustomerDetailsComponent implements OnInit {
     this.customerDetailsFormGroup.controls['plant'].addValidators([Validators.required])
     this.customerDetailsFormGroup.controls['equipmentId'].addValidators([Validators.required])
     this.customerDetailsFormGroup.controls['areaOfTest'].addValidators([Validators.required])
+    this.customerDetailsFormGroup.controls['traineeId'].addValidators([Validators.required])
     this.customerDetailsFormGroup.controls['instrumentSerialNo'].addValidators([Validators.min(1)])
 
   }

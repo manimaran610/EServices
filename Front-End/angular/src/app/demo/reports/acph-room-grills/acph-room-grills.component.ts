@@ -20,17 +20,25 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
 @Component({
   selector: 'app-acph-room-grills',
   standalone: true,
-  imports: [CommonModule, SharedModule, ConfirmDialogModule, HttpClientModule, ReactiveFormsModule, GridComponent, ToastModule, DynamicDialogModule],
+  imports: [
+    CommonModule,
+    SharedModule,
+    ConfirmDialogModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    GridComponent,
+    ToastModule,
+    DynamicDialogModule
+  ],
   providers: [ConfirmationService, RoomService, BaseHttpClientServiceService, MessageService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './acph-room-grills.component.html',
   styleUrls: ['./acph-room-grills.component.css']
 })
 export class AcphRoomGrillsComponent implements OnInit {
-
   acphRoomsFormGroup: FormGroup;
   roomModel?: Room;
-  tempGrillsList: any[] = []
+  tempGrillsList: any[] = [];
   listOfGrills: any[] = [];
   roomId: number = 0;
   isSaveLoading: boolean = false;
@@ -41,7 +49,16 @@ export class AcphRoomGrillsComponent implements OnInit {
   groupedColumnOptions: GroupedColumnOptions[] = [
     {
       gridColumnOptions: [
-        { field: 'grillNo', header: 'Grill/Filter Reference No.', rowspan: '2', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
+        {
+          field: 'grillNo',
+          header: 'Grill/Filter Reference No.',
+          rowspan: '2',
+          isEditable: true,
+          isSortable: true,
+          hasTableValue: true,
+          isStandalone: false,
+          orderNo: 1
+        },
         { field: 'filterArea', header: 'Filter Area', colspan: '1', hasTableValue: false, isStandalone: false },
         { field: 'airVelocityreadingInFPM', header: 'Air Velociy Reading in FPM', colspan: '5', hasTableValue: false, isStandalone: false },
         { field: 'avgVelocityInFPM', header: 'Avg Velocity FPM', rowspan: '2', hasTableValue: true, isStandalone: false, orderNo: 8 },
@@ -50,7 +67,6 @@ export class AcphRoomGrillsComponent implements OnInit {
         { field: 'roomVolCFM', header: 'Room Volume CFT', rowspan: '2', hasTableValue: true, isStandalone: true, orderNo: 11 },
         { field: 'airChanges', header: 'Air Changes per hour', rowspan: '2', hasTableValue: true, isStandalone: true, orderNo: 12 },
         { field: '', header: 'Action', rowspan: '2', hasTableValue: false, isStandalone: false }
-
       ]
     },
     {
@@ -63,7 +79,7 @@ export class AcphRoomGrillsComponent implements OnInit {
         { field: 'five', width: '15%', header: '5', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 7 }
       ]
     }
-  ]
+  ];
 
   constructor(
     private messageService: MessageService,
@@ -71,19 +87,17 @@ export class AcphRoomGrillsComponent implements OnInit {
     private changeRef: ChangeDetectorRef,
     private roomService: RoomService
   ) {
-    this.acphRoomsFormGroup = new FormGroup(
-      {
-        roomName: new FormControl(),
-        design: new FormControl(),
-        noOfGrills: new FormControl(),
-        roomVolume: new FormControl(),
-      });
+    this.acphRoomsFormGroup = new FormGroup({
+      roomName: new FormControl(),
+      design: new FormControl(),
+      noOfGrills: new FormControl(),
+      roomVolume: new FormControl()
+    });
     this.addFormControlValidators();
-
   }
   ngOnInit() {
     if (this.ref.data!.roomId !== undefined && this.ref.data!.roomId > 0) {
-      console.log(this.ref.data)
+      console.log(this.ref.data);
       this.roomId = this.ref.data.roomId;
       this.getRoomByIdFromServer();
     }
@@ -93,14 +107,12 @@ export class AcphRoomGrillsComponent implements OnInit {
     if (this.acphRoomsFormGroup.valid && this.listOfGrills.length > 0) {
       this.mapFormToRoomObject();
       console.log(this.roomModel);
-      this.roomId > 0 ? this.updateRoomToAPIServer() : this.postRoomToAPIServer();
+      if(this.validateAirChangesByDesign()) this.roomId > 0 ? this.updateRoomToAPIServer() : this.postRoomToAPIServer();
     } else if (this.listOfGrills.length <= 0) {
-      this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Please Add the Grills", life: 4000 });
+      this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'Please Add the Grills', life: 4000 });
+    } else {
+      this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'Room Details Invalid', life: 4000 });
     }
-    else {
-      this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Room Details Invalid", life: 4000 });
-    }
-
   }
 
   //#region  API Server
@@ -108,18 +120,29 @@ export class AcphRoomGrillsComponent implements OnInit {
     this.isSaveLoading = true;
     this.roomService.postRoom(this.roomModel!).subscribe({
       next: (response: BaseResponse<number>) => {
-        if (response.succeeded) this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Room along with Grills saved', life: 4000 });
+        if (response.succeeded)
+          this.messageService.add({
+            key: 'tc',
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Room along with Grills saved',
+            life: 4000
+          });
         this.onCloseEventFire.emit(true);
       },
       error: (e) => {
-        this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed', 
-        detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000 
-      });
+        this.messageService.add({
+          key: 'tc',
+          severity: 'error',
+          summary: 'Failed',
+          detail: e.status == 0 ? 'Server connection error' : e.error.Message !== undefined ? e.error.Message : e.error.title,
+          life: 4000
+        });
         this.isSaveLoading = false;
       },
       complete: () => {
         this.isSaveLoading = false;
-      },
+      }
     });
   }
 
@@ -134,13 +157,17 @@ export class AcphRoomGrillsComponent implements OnInit {
       error: (e) => {
         console.error(e.error);
         this.messageService.add({
-          key: 'tc', severity: 'error', summary: 'Failed',
-          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
+          key: 'tc',
+          severity: 'error',
+          summary: 'Failed',
+          detail: e.status == 0 ? 'Server connection error' : e.error.Message !== undefined ? e.error.Message : e.error.title,
+          life: 4000
         });
         this.isSaveLoading = false;
       },
-      complete: () => { this.isSaveLoading = false;
-      },
+      complete: () => {
+        this.isSaveLoading = false;
+      }
     });
   }
 
@@ -154,55 +181,57 @@ export class AcphRoomGrillsComponent implements OnInit {
       },
       error: (e) => {
         this.messageService.add({
-          key: 'tc', severity: 'error', summary: 'Failed',
-          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
-        });        },
-      complete: () => { },
+          key: 'tc',
+          severity: 'error',
+          summary: 'Failed',
+          detail: e.status == 0 ? 'Server connection error' : e.error.Message !== undefined ? e.error.Message : e.error.title,
+          life: 4000
+        });
+      },
+      complete: () => {}
     });
   }
   //#endregion
 
   //#region Grill Rows
   addGrills() {
-    this.acphRoomsFormGroup.valid ? this.addNewRowEvent.emit(true) :
-      this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Room Details Invalid", life: 4000 });
+    this.acphRoomsFormGroup.valid
+      ? this.addNewRowEvent.emit(true)
+      : this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'Room Details Invalid', life: 4000 });
   }
-
 
   onGrillSave(event: any) {
-
     event = this.performGrillCalculations(event);
 
-    if (this.listOfGrills.find(e => e.id === event.id) === undefined) {
+    if (this.listOfGrills.find((e) => e.id === event.id) === undefined) {
       this.listOfGrills.push(event);
     } else {
-      const index = this.listOfGrills.findIndex(e => e.id === event.id);
+      const index = this.listOfGrills.findIndex((e) => e.id === event.id);
       this.listOfGrills[index] = event;
-    }
-    this.acphRoomsFormGroup.controls['noOfGrills'].patchValue(this.listOfGrills.length)
-    this.updateCalculationChanges();
-    this.changeRef.detectChanges();
-  }
-
-
-  onGrillDelete(event: any) {
-    if (this.listOfGrills.find(e => e.id === event.id) !== undefined) {
-      this.listOfGrills = this.listOfGrills.filter(e => e.id !== event.id);
     }
     this.acphRoomsFormGroup.controls['noOfGrills'].patchValue(this.listOfGrills.length);
     this.updateCalculationChanges();
     this.changeRef.detectChanges();
+  }
 
+  onGrillDelete(event: any) {
+    if (this.listOfGrills.find((e) => e.id === event.id) !== undefined) {
+      this.listOfGrills = this.listOfGrills.filter((e) => e.id !== event.id);
+    }
+    this.acphRoomsFormGroup.controls['noOfGrills'].patchValue(this.listOfGrills.length);
+    this.updateCalculationChanges();
+    this.changeRef.detectChanges();
   }
 
   performGrillCalculations(grill: any) {
-    const avgVelocityInFPM = parseInt(grill.one) + parseInt(grill.two) + parseInt(grill.three) + parseInt(grill.four) + parseInt(grill.five);
+    const avgVelocityInFPM =
+      parseInt(grill.one) + parseInt(grill.two) + parseInt(grill.three) + parseInt(grill.four) + parseInt(grill.five);
     grill.avgVelocityInFPM = Math.round(avgVelocityInFPM / 5);
     grill.airFlowCFM = Math.round(parseFloat(grill.sqrt) * grill.avgVelocityInFPM);
     let totalAirFlowCFM = grill.airFlowCFM;
-    this.listOfGrills.forEach(e => totalAirFlowCFM += parseInt(e.airFlowCFM));
+    this.listOfGrills.forEach((e) => (totalAirFlowCFM += parseInt(e.airFlowCFM)));
     grill.totalAirFlowCFM = totalAirFlowCFM;
-    grill.roomVolCFM = parseInt(this.acphRoomsFormGroup.controls['roomVolume'].value)
+    grill.roomVolCFM = parseInt(this.acphRoomsFormGroup.controls['roomVolume'].value);
     grill.airChanges = Math.round((grill.totalAirFlowCFM / grill.roomVolCFM) * 60);
     console.log(grill);
     return grill;
@@ -211,26 +240,48 @@ export class AcphRoomGrillsComponent implements OnInit {
   updateCalculationChanges() {
     let totalAirFlowCFM = 0;
     const roomVolume = parseInt(this.acphRoomsFormGroup.controls['roomVolume'].value);
-    this.listOfGrills.forEach(e => totalAirFlowCFM += parseInt(e.airFlowCFM));
-    this.listOfGrills.forEach(e => {
+    this.listOfGrills.forEach((e) => (totalAirFlowCFM += parseInt(e.airFlowCFM)));
+    this.listOfGrills.forEach((e) => {
       e.totalAirFlowCFM = totalAirFlowCFM;
       e.roomVolCFM = roomVolume;
       e.airChanges = Math.round((e.totalAirFlowCFM / e.roomVolCFM) * 60);
-
-    })
-
+    });
   }
   //#endregion
+  validateAirChangesByDesign():boolean {
+    let result = false;
+    const designFunc = this.roomModel?.designACPH.split('-')[0];
+    const designVal = parseInt(this.roomModel?.designACPH.split('-')[1] as string);
+    if (designFunc == 'NLT' && (this.roomModel?.airChangesPerHour as number) < designVal) {
+      this.messageService.add({
+        key: 'tc',
+        severity: 'warn',
+        summary: 'Warning',
+        detail: `Air Changes should not be less than ${designVal}`,
+        life: 4000
+      });
+    } else if (designFunc == 'NMT' && (this.roomModel?.airChangesPerHour as number) > designVal) {
+      this.messageService.add({
+        key: 'tc',
+        severity: 'warn',
+        summary: 'Warning',
+        detail: `Air Changes should not be more than ${designVal}`,
+        life: 4000
+      });
+    }
+      else result =true;
+    return result;
+  }
 
   //#region Forms controls
   onClear() {
-    this.acphRoomsFormGroup.reset()
+    this.acphRoomsFormGroup.reset();
     this.listOfGrills = [];
   }
   addFormControlValidators() {
-    this.acphRoomsFormGroup.controls['roomName'].addValidators([Validators.required])
-    this.acphRoomsFormGroup.controls['design'].addValidators([Validators.required])
-    this.acphRoomsFormGroup.controls['roomVolume'].addValidators([Validators.required, Validators.min(1)])
+    this.acphRoomsFormGroup.controls['roomName'].addValidators([Validators.required]);
+    this.acphRoomsFormGroup.controls['design'].addValidators([Validators.required, Validators.pattern(`^(NLT|NMT)-\\d+$`)]);
+    this.acphRoomsFormGroup.controls['roomVolume'].addValidators([Validators.required, Validators.min(1)]);
   }
   //#endregion
 
@@ -242,9 +293,9 @@ export class AcphRoomGrillsComponent implements OnInit {
     this.roomModel.noOfGrills = this.acphRoomsFormGroup.controls['noOfGrills'].value;
     this.roomModel.roomVolume = this.acphRoomsFormGroup.controls['roomVolume'].value;
     this.roomModel.totalAirFlowCFM = this.listOfGrills[0].totalAirFlowCFM !== undefined ? this.listOfGrills[0].totalAirFlowCFM : 0;
-    this.roomModel.airChangesPerHour = this.listOfGrills[0].airChanges !== undefined ? this.listOfGrills[0].airChanges : 0
+    this.roomModel.airChangesPerHour = this.listOfGrills[0].airChanges !== undefined ? this.listOfGrills[0].airChanges : 0;
     this.roomModel.customerDetailId = this.ref.data.customerDetailId;
-    this.listOfGrills.forEach(e => this.roomModel?.roomGrills.push(this.MapToRoomGrill(e)))
+    this.listOfGrills.forEach((e) => this.roomModel?.roomGrills.push(this.MapToRoomGrill(e)));
   }
 
   MapToRoomGrill(grill: any): RoomGrill {
@@ -253,40 +304,46 @@ export class AcphRoomGrillsComponent implements OnInit {
     result.avgVelocityFPM = grill.avgVelocityInFPM;
     result.filterAreaSqft = parseFloat(grill.sqrt);
     result.referenceNumber = grill.grillNo;
-    result.airVelocityReadingInFPMO = grill.one + ',' + grill.two + ',' + grill.three + ',' + grill.four + ',' + grill.five
+    result.airVelocityReadingInFPMO = grill.one + ',' + grill.two + ',' + grill.three + ',' + grill.four + ',' + grill.five;
     return result;
-
   }
   reverseMapRoomObjectToForm() {
     this.acphRoomsFormGroup.controls['roomName'].patchValue(this.roomModel!.name);
     this.acphRoomsFormGroup.controls['design'].patchValue(this.roomModel!.designACPH);
     this.acphRoomsFormGroup.controls['noOfGrills'].patchValue(this.roomModel!.noOfGrills);
     this.acphRoomsFormGroup.controls['roomVolume'].patchValue(this.roomModel!.roomVolume);
-    this.roomModel!.roomGrills.forEach(e => this.reverseMapRoomGrillToGrid(e));
+    this.roomModel!.roomGrills.forEach((e) => this.reverseMapRoomGrillToGrid(e));
     this.updateCalculationChanges();
-    console.log(this.acphRoomsFormGroup.value)
-    console.log(this.listOfGrills)
+    console.log(this.acphRoomsFormGroup.value);
+    console.log(this.listOfGrills);
   }
 
   reverseMapRoomGrillToGrid(roomGrill: RoomGrill) {
     const result: any = {
-      id: 0, airFlowCFM: 0, avgVelocityInFPM: 0, sqrt: 0, grillNo: '', one: 0, two: 0, three: 0, four: 0, five: 0
+      id: 0,
+      airFlowCFM: 0,
+      avgVelocityInFPM: 0,
+      sqrt: 0,
+      grillNo: '',
+      one: 0,
+      two: 0,
+      three: 0,
+      four: 0,
+      five: 0
     };
     result.airFlowCFM = roomGrill.airFlowCFM;
     result.id = roomGrill.id;
     result.avgVelocityInFPM = roomGrill.avgVelocityFPM;
     result.sqrt = roomGrill.filterAreaSqft;
     result.grillNo = roomGrill.referenceNumber;
-    result.one = roomGrill.airVelocityReadingInFPMO.split(',')[0],
-      result.two = roomGrill.airVelocityReadingInFPMO.split(',')[1],
-      result.three = roomGrill.airVelocityReadingInFPMO.split(',')[2],
-      result.four = roomGrill.airVelocityReadingInFPMO.split(',')[3],
-      result.five = roomGrill.airVelocityReadingInFPMO.split(',')[4]
+    (result.one = roomGrill.airVelocityReadingInFPMO.split(',')[0]),
+      (result.two = roomGrill.airVelocityReadingInFPMO.split(',')[1]),
+      (result.three = roomGrill.airVelocityReadingInFPMO.split(',')[2]),
+      (result.four = roomGrill.airVelocityReadingInFPMO.split(',')[3]),
+      (result.five = roomGrill.airVelocityReadingInFPMO.split(',')[4]);
     this.listOfGrills = [...this.listOfGrills, result];
     this.changeRef.detectChanges();
   }
-
-
 
   //#endregion
 }

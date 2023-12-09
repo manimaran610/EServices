@@ -29,6 +29,9 @@
           <div class="invalid-feedback" *ngIf="acphRoomsFormGroup.controls['design'].hasError('required')">
             Required
           </div>
+          <div class="invalid-feedback" *ngIf="acphRoomsFormGroup.controls['design'].hasError('pattern')">
+            Invalid value (eg: NLT-20 / NMT -20)
+          </div>
         </div>
       </div>
 

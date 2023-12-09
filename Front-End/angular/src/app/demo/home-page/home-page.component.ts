@@ -275,6 +275,18 @@ export default class HomePageComponent implements OnInit {
             navigateTo: '/Instrument/Add-Instrument'
           },
         ]
+      },
+      {
+        title: 'Trainee Details',
+        services: [
+          {
+            title: 'Add Trainee',
+            background: 'bg-c-blue',
+            icon: 'icon icon-framer',
+            accentColor: '#0D6EFD',
+            navigateTo: '/Trainee/Add-Trainee'
+          },
+        ]
       }
     ]
   }
