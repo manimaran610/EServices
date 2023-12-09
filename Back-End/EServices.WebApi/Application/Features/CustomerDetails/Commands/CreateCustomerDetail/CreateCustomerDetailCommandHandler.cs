@@ -9,7 +9,6 @@ using Application.Wrappers;
 using AutoMapper;
 using Domain.Enums;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.CustomerDetails.Commands.CreateCustomerDetail
 {
@@ -18,11 +17,14 @@ namespace Application.Features.CustomerDetails.Commands.CreateCustomerDetail
         private readonly ICustomerDetailRepositoryAsync _customerDetailRepository;
         private readonly IInstrumentRepositoryAsync _instrumentRepository;
         private readonly IMapper _mapper;
+        private readonly ITraineeRepositoryAsync _traineeRepositoryAsync;
         public CreateCustomerDetailCommandHandler(
             ICustomerDetailRepositoryAsync customerDetailRepository,
             IInstrumentRepositoryAsync instrumentRepositoryAsync,
-            IMapper mapper)
+            IMapper mapper,
+            ITraineeRepositoryAsync traineeRepositoryAsync)
         {
+            _traineeRepositoryAsync = traineeRepositoryAsync;
             _customerDetailRepository = customerDetailRepository;
             _instrumentRepository = instrumentRepositoryAsync;
             _mapper = mapper;
@@ -34,6 +36,10 @@ namespace Application.Features.CustomerDetails.Commands.CreateCustomerDetail
             var instrument = await _instrumentRepository.GetByIdAsync(request.InstrumentId);
             if (instrument == null)
                 throw new ApiException($"Instrument does not exists with InstrumentId -{request.InstrumentId} ");
+
+            var trainee = await _traineeRepositoryAsync.GetByIdAsync(request.TraineeId);
+            if (trainee == null)
+                throw new ApiException($"Trainee does not exists with TraineeId -{request.TraineeId} ");
 
             customerDetail.CustomerNo = await CreateUniqueCustomerIdentifer(request);
             await _customerDetailRepository.AddAsync(customerDetail);
@@ -52,7 +58,7 @@ namespace Application.Features.CustomerDetails.Commands.CreateCustomerDetail
                 {
                     int existsId = Convert.ToInt32(existsCustNo.Split('-')[4]);
                     id = existsId > 0 && existsId <= 8 ? $"00{existsId + 1}" :
-                    id = existsId >= 9 && existsId <=98 ? $"0{existsId + 1}" : $"{existsId + 1}";
+                    id = existsId >= 9 && existsId <= 98 ? $"0{existsId + 1}" : $"{existsId + 1}";
                 }
             }
             return prefix + id;

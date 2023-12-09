@@ -4,6 +4,7 @@ using Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231209000649_AlterCustomerDetails-renameClassType")]
+    partial class AlterCustomerDetailsrenameClassType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,14 +81,9 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<string>("TestReference")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TraineeId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("InstrumentId");
-
-                    b.HasIndex("TraineeId");
 
                     b.ToTable("CustomerDetails");
                 });
@@ -350,43 +348,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("RoomLocation");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Trainee", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CertificateFile")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CertificateName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Trainees");
-                });
-
             modelBuilder.Entity("Domain.Entities.CustomerDetail", b =>
                 {
                     b.HasOne("Domain.Entities.Instrument", "Instrument")
@@ -395,13 +356,7 @@ namespace Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Trainee", "Trainee")
-                        .WithMany("CustomerDetails")
-                        .HasForeignKey("TraineeId");
-
                     b.Navigation("Instrument");
-
-                    b.Navigation("Trainee");
                 });
 
             modelBuilder.Entity("Domain.Entities.Room", b =>
@@ -452,11 +407,6 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("RoomGrills");
 
                     b.Navigation("RoomLocations");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Trainee", b =>
-                {
-                    b.Navigation("CustomerDetails");
                 });
 #pragma warning restore 612, 618
         }

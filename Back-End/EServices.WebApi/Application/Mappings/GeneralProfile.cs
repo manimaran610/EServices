@@ -9,6 +9,8 @@ using Application.Features.Rooms.Commands.CreateRoom;
 using Application.Features.Rooms.Commands.UpdateRoom;
 using Application.Features.Rooms.Queries.GetAllRooms;
 using Application.Features.Rooms.Seeds;
+using Application.Features.Trainees.Commands.CreateTrainee;
+using Application.Features.Trainees.Queries.GetAllTrainees;
 using Application.Filters;
 using AutoMapper;
 using Domain.Entities;
@@ -59,7 +61,10 @@ namespace Application.Mappings
 
             CreateMap<GetAllLogsQuery, RequestParameter>();
 
-
+            
+            CreateMap<Trainee, GetAllTraineesViewModel>().ReverseMap();
+            CreateMap<CreateTraineeCommand, Trainee>();
+            CreateMap<GetAllTraineesQuery, RequestParameter>();
 
 
 

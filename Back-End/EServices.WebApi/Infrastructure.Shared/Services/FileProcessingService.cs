@@ -29,7 +29,7 @@ namespace Infrastructure.Shared.Services
                 if (templateRows != null) CreateDynamicTemplateRows(doc, templateRows);
 
                 var allTextParams = doc.MainDocumentPart?.Document.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>();
-                var allHeaderParams = doc.MainDocumentPart?.HeaderParts.SelectMany(hp => hp.RootElement.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>());
+                var allHeaderParams = doc.MainDocumentPart?.HeaderParts.SelectMany(hp => hp.Header.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>());
 
 
                 foreach (var keyValue in keyValuePairs)
@@ -143,9 +143,7 @@ namespace Infrastructure.Shared.Services
                 var lastChild = templateRows.LastOrDefault();
                 foreach (var templateRow in templateRows)
                 {
-                    Console.WriteLine("Foreach - " + templateRow.OrderNo);
-
-
+                  
                     // Assuming the table is in the first (0-index) body of the document
                     Table table = document.MainDocumentPart.Document.Body.Elements<Table>().First();
                     // Clone the row at the specified index
@@ -155,7 +153,6 @@ namespace Infrastructure.Shared.Services
                     table.InsertAfter(clonedRow, table.Elements<TableRow>().ElementAt(templateRow.RowInsertAfter));
                     if (templateRow.OrderNo == lastChild?.OrderNo)
                     {
-                        Console.WriteLine("If condition");
                         if (templateRow.NestedRowCount < 2)
                         {
                             table.RemoveChild(table.Elements<TableRow>().ElementAt(templateRow.RowInsertAfter));

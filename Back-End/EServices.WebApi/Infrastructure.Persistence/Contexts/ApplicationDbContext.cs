@@ -24,6 +24,8 @@ namespace Infrastructure.Persistence.Contexts
         public DbSet<Room> Rooms { get; set; }
         public DbSet<RoomGrill> RoomGrills { get; set; }
         public DbSet<Log> Logs { get; set; }
+        public DbSet<Trainee> Trainees { get; set; }
+
 
 
 
@@ -78,7 +80,7 @@ namespace Infrastructure.Persistence.Contexts
            .HasForeignKey(e => e.RoomId)
           .HasPrincipalKey(e => e.Id);
 
-          
+
             builder.Entity<RoomLocation>()
            .HasOne(e => e.Room)
            .WithMany(e => e.RoomLocations)
@@ -87,6 +89,14 @@ namespace Infrastructure.Persistence.Contexts
 
             builder.Entity<Log>()
                 .ToTable("Logs", t => t.ExcludeFromMigrations());
+
+            builder.Entity<CustomerDetail>()
+                .HasOne(e => e.Trainee)
+                .WithMany(e => e.CustomerDetails)
+                .HasForeignKey(e => e.TraineeId)
+                .HasPrincipalKey(e => e.Id);
+
+
 
 
 

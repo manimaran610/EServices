@@ -71,6 +71,8 @@ namespace Application.Features.Rooms.Commands.CreateRoom
         {
             MapPropertiesToKeyValuePair(customerDetail);
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
+             _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
+            if (customerDetail.Trainee != null) _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee.Name));
 
             for (int i = 1; i <= rooms.Count; i++)
             {
@@ -95,8 +97,8 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             int orderNo = 1;
             foreach (var room in rooms)
             {
-               result.Add(new(orderNo, 3, 4, room.RoomGrills.Count()));
-                orderNo++;  
+                result.Add(new(orderNo, 3, 4, room.RoomGrills.Count()));
+                orderNo++;
             }
 
             return result.OrderByDescending(e => e.OrderNo).ToList();
@@ -129,13 +131,18 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             {
                 Id = e.Id,
                 Client = e.Client,
+                CustomerNo=e.CustomerNo,
                 AreaOfTest = e.AreaOfTest,
                 DateOfTest = e.DateOfTest,
                 EquipmentId = e.EquipmentId,
                 FormType = e.FormType,
                 InstrumentId = e.InstrumentId,
                 Plant = e.Plant,
-                Instrument = e.Instrument
+                ClassType = e.ClassType,
+                TestReference = e.TestReference,
+                DateOfTestDue = e.DateOfTestDue,
+                Instrument = e.Instrument,
+                Trainee = e.Trainee
             };
             return expression;
         }
