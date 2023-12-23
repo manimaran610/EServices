@@ -244,7 +244,7 @@ export default class HomePageComponent implements OnInit {
             background: 'bg-c-yellow',
             icon: 'icon icon-codepen',
             accentColor: '#6F42C1',
-            navigateTo: '/form1'
+            navigateTo: '/Reports/ParticleCount/SingleCycle'
           },
           {
             title: 'Particle count',
@@ -252,7 +252,7 @@ export default class HomePageComponent implements OnInit {
             background: 'bg-c-red',
             icon: 'icon icon-codepen',
             accentColor: 'blue',
-            navigateTo: '/form1'
+            navigateTo: '/Reports/ParticleCount/ThreeCycle'
           },
           {
             title: 'Temp. Mapping',

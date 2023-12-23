@@ -127,7 +127,7 @@ export class CustomerDetailsComponent implements OnInit {
    await this.traineeService.getAllPagedResponse().subscribe({
       next: (response: BaseResponse<Trainee[]>) => {
         if (response.succeeded) {
-          this.traineeList = response.data;
+          this.traineeList = this.removeDuplicates( response.data,'employeeId');
         }
       },
       error: (e) => {   

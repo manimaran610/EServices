@@ -33,6 +33,16 @@
 
         </div>
       </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="exampleInputPassword1">Employee Id :</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="employeeId"  placeholder="Enter employee id" 
+          [ngClass]="{'is-invalid': traineeFormGroup.controls['employeeId'].errors  && (traineeFormGroup.controls['employeeId'].touched || traineeFormGroup.controls['employeeId'].dirty), 'is-valid':traineeFormGroup.controls['employeeId'].valid}" />
+            <div class="invalid-feedback" *ngIf="traineeFormGroup.controls['employeeId'].hasError('required')">Required</div>
+
+        </div>
+      </div>
       
 
       <div class="col-md-6">

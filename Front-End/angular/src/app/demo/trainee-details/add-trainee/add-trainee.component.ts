@@ -40,6 +40,7 @@ export class AddTraineeComponent implements OnInit {
   ) {
     this.traineeFormGroup = new FormGroup({
       name: new FormControl(),
+      employeeId: new FormControl(),
       certificate: new FormControl()
     });
     this.addFormControlValidators();
@@ -106,6 +107,7 @@ postTraineeToAPIServer() {
 
 addFormControlValidators() {
     this.traineeFormGroup.controls['name'].addValidators([Validators.required])
+    this.traineeFormGroup.controls['employeeId'].addValidators([Validators.required])
     this.traineeFormGroup.controls['certificate'].addValidators([Validators.required])
 
 }
