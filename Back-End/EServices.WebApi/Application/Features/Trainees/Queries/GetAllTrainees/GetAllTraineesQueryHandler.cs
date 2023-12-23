@@ -32,6 +32,7 @@ namespace Application.Features.Trainees.Queries.GetAllTrainees
             {
                 Id = e.Id,
                 Name = e.Name,
+                EmployeeId=e.EmployeeId,
                 CertificateName=e.CertificateName
             };
 

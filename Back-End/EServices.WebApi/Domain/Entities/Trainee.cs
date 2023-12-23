@@ -9,6 +9,7 @@ namespace Domain.Entities
     public class Trainee: AuditableBaseEntity
     {
         public string Name { get; set; }
+        public string EmployeeId { get; set; }
         public string CertificateName { get; set; }
         public string CertificateFile { get; set; }
 
