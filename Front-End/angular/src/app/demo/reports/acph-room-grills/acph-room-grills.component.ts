@@ -280,7 +280,7 @@ export class AcphRoomGrillsComponent implements OnInit {
   }
   addFormControlValidators() {
     this.acphRoomsFormGroup.controls['roomName'].addValidators([Validators.required]);
-    this.acphRoomsFormGroup.controls['design'].addValidators([Validators.required, Validators.pattern(`^(NLT|NMT)-\\d+$`)]);
+    this.acphRoomsFormGroup.controls['design'].addValidators([Validators.required, Validators.pattern(`^NA$|^(NLT|NMT)-\\d+$`)]);
     this.acphRoomsFormGroup.controls['roomVolume'].addValidators([Validators.required, Validators.min(1)]);
   }
   //#endregion
