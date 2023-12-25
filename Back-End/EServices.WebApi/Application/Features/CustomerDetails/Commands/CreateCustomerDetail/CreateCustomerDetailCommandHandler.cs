@@ -33,12 +33,12 @@ namespace Application.Features.CustomerDetails.Commands.CreateCustomerDetail
         public async Task<Response<int>> Handle(CreateCustomerDetailCommand request, CancellationToken cancellationToken)
         {
             var customerDetail = _mapper.Map<Domain.Entities.CustomerDetail>(request);
-            var instrument = await _instrumentRepository.GetByIdAsync(request.InstrumentId);
-            if (instrument == null)
+            var isInstrumentExists = await _instrumentRepository.IsExistsAsync(request.InstrumentId);
+            if (!isInstrumentExists)
                 throw new ApiException($"Instrument does not exists with InstrumentId -{request.InstrumentId} ");
 
-            var trainee = await _traineeRepositoryAsync.GetByIdAsync(request.TraineeId);
-            if (trainee == null)
+            var isTraineeExists = await _traineeRepositoryAsync.IsExistsAsync(request.TraineeId);
+            if (!isTraineeExists)
                 throw new ApiException($"Trainee does not exists with TraineeId -{request.TraineeId} ");
 
             customerDetail.CustomerNo = await CreateUniqueCustomerIdentifer(request);

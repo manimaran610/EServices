@@ -102,5 +102,12 @@ namespace Infrastructure.Persistence.Repository
          .Count(e => !e.IsDeleted));
         }
 
+         public async Task<bool> IsExistsAsync(int id)
+        {
+            return await _dbContext
+         .Set<T>()
+         .AnyAsync(e => !e.IsDeleted && e.Id == id);
+        }
+
     }
 }
