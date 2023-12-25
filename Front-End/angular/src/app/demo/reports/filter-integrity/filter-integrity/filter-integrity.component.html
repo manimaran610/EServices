@@ -1,0 +1,27 @@
+<!-- BreadCrumb -->
+<nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>'">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a (click)="navigateToUrl('Home')" class="text-c-blue"><i class="feather icon-home "></i></a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Reports</li>
+    <li class="breadcrumb-item active" aria-current="page">Filter-Integrity</li>
+  </ol>
+</nav>
+
+<!-- Toast Messages -->
+<!-- <p-messages  position="top-center" [value]="msgs"></p-messages> -->
+<p-toast position="bottom-right" key="tc"></p-toast>
+
+<app-customer-details [formType]="2" [customerDetailId]="customerDetailId" (customerSave)="onCustomerSave($event)"  (customerError)="onCustomerError($event)" (customerInfo)="onCustomerInfo($event)"></app-customer-details>
+<app-card cardTitle="Rooms">
+<button class="btn btn-primary m-2"  (click)="showDynamicPopup(0)" ngbTooltip='Add new room'> Add Room</button>
+<app-grid [title]="'Filter-Integrity Room Grills'" [listOfItems]="listOfRooms" [gridColumnOptions]="gridColumnOptions" [canPreview]="true"  [canDelete]="true"
+   (Delete)="onRoomDelete($event)" (Preview)="onRoomPreview($event)" [dataKey]="'id'"  [sortOrder]="1" [sortField]="'name'"
+    ></app-grid>
+  </app-card>
+
+
+  
+
+ 

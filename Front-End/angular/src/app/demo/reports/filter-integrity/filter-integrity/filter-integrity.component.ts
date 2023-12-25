@@ -1,6 +1,6 @@
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, OnInit } from '@angular/core';
-import { CustomerDetailsComponent } from '../shared/Components/customer-details/customer-details.component';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core';
+import { CustomerDetailsComponent } from '../../shared/Components/customer-details/customer-details.component';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -10,30 +10,30 @@ import { HttpClientModule } from '@angular/common/http';
 import { ToastModule } from 'primeng/toast';
 import { BaseHttpClientServiceService } from 'src/Services/Shared/base-http-client-service.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { ActivatedRoute, Router } from '@angular/router';
 import { BaseResponse } from 'src/Models/response-models/base-response';
 import { GridComponent } from 'src/app/theme/shared/components/grid/grid.component';
 import { Room } from 'src/Models/room.Model';
 import { GridColumnOptions } from 'src/Models/grid-column-options';
 import { RoomService } from 'src/Services/room.service';
 import { RequestParameter } from 'src/Models/request-parameter';
-import { AcphRoomGrillsComponent } from '../acph-room-grills/acph-room-grills.component';
+import { FilterIntegrityRoomGrillsComponent } from '../filter-integrity-room-grills/filter-integrity-room-grills.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-acph',
+  selector: 'app-filter-integrity',
   standalone: true,
   imports: [CommonModule, SharedModule, ConfirmDialogModule, MessagesModule,
-    HttpClientModule, ToastModule, CustomerDetailsComponent, AcphRoomGrillsComponent,
+    HttpClientModule, ToastModule, CustomerDetailsComponent, FilterIntegrityRoomGrillsComponent,
     DynamicDialogModule, GridComponent],
   providers: [ConfirmationService, BaseHttpClientServiceService, MessageService, DialogService, RoomService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './acph.component.html',
-  styleUrls: ['./acph.component.css']
+  templateUrl: './filter-integrity.component.html',
+  styleUrls: ['./filter-integrity.component.css']
 })
-export class AcphComponent implements OnDestroy, OnInit {
+export class FilterIntegrityComponent implements OnInit {
   ref: DynamicDialogRef | undefined;
-  instance?: AcphRoomGrillsComponent;
-  customerDetailId: number = 0;
+  instance?: FilterIntegrityRoomGrillsComponent;
+  customerDetailId: number = 5;
   roomId?: number;
   listOfRooms: Room[] = [];
 
@@ -41,18 +41,14 @@ export class AcphComponent implements OnDestroy, OnInit {
 
   gridColumnOptions: GridColumnOptions[] = [
     { field: 'name', header: 'Room Name', isSortable: true, hasTableValue: true, isStandalone: false },
-    { field: 'designACPH', header: 'Design ACPH', hasTableValue: true, isStandalone: false },
     { field: 'noOfGrills', header: 'No. of Grills', hasTableValue: true, isStandalone: false },
-    { field: 'roomVolume', header: 'Room Volume', hasTableValue: true, isStandalone: false },
-    { field: 'totalAirFlowCFM', header: 'Total AirFlow CFM', hasTableValue: true, isStandalone: false },
-    { field: 'airChangesPerHour', header: 'Air Changes per hour', hasTableValue: true, isStandalone: false },
     { field: '', header: '',hasTableValue: false, isStandalone: false }
 
   ]
 
   showDynamicPopup(roomId: number) {
     if (this.customerDetailId > 0) {
-      this.ref = this.dialogService.open(AcphRoomGrillsComponent, {
+      this.ref = this.dialogService.open(FilterIntegrityRoomGrillsComponent, {
         header: 'Rooms and its Grills',
         width: '70%',
         contentStyle: { overflow: 'auto' },
@@ -62,7 +58,7 @@ export class AcphComponent implements OnDestroy, OnInit {
       });
       const dialogRef = this.dialogService.dialogComponentRefMap.get(this.ref);
       dialogRef!.changeDetectorRef.detectChanges();
-      this.instance = dialogRef!.instance.componentRef!.instance as AcphRoomGrillsComponent;
+      this.instance = dialogRef!.instance.componentRef!.instance as FilterIntegrityRoomGrillsComponent;
       this.instance.onCloseEventFire.subscribe((e) => {
         this.ref?.close(e);
         this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Room along with Grills saved', life: 4000 });
@@ -164,3 +160,5 @@ export class AcphComponent implements OnDestroy, OnInit {
   }
 
 }
+
+

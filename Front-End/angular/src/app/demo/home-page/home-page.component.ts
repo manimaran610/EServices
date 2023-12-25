@@ -236,7 +236,7 @@ export default class HomePageComponent implements OnInit {
             background: 'bg-c-green',
             icon: 'icon icon-filter',
             accentColor: '#6710F5',
-            navigateTo: '/form1'
+            navigateTo: '/Reports/FilterIntegrity'
           },
           {
             title: 'Particle count',
@@ -259,7 +259,7 @@ export default class HomePageComponent implements OnInit {
             background: 'bg-c-purple',
             icon: 'icon icon-thermometer',
             accentColor: '#0D6EFD',
-            navigateTo: '/form1'
+            navigateTo: ''
           },
 
         ]

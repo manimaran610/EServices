@@ -8,7 +8,6 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DynamicDialogConfig, DynamicDialogModule } from 'primeng/dynamicdialog';
 import { ToastModule } from 'primeng/toast';
-import { GroupedColumnOptions } from 'src/Models/grouped-column-options';
 import { BaseResponse } from 'src/Models/response-models/base-response';
 import { RoomLocation } from 'src/Models/room-Location.Model';
 import { Room } from 'src/Models/room.Model';
@@ -16,18 +15,19 @@ import { BaseHttpClientServiceService } from 'src/Services/Shared/base-http-clie
 import { RoomService } from 'src/Services/room.service';
 import { GridComponent } from 'src/app/theme/shared/components/grid/grid.component';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
-import { BusinessConstants } from '../../shared/Constants/business-constants';
+import { BusinessConstants } from '../../../shared/Constants/business-constants';
+import { GridColumnOptions } from 'src/Models/grid-column-options';
 
 @Component({
-  selector: 'app-particle-room-locations-three-cycle',
+  selector: 'app-particle-room-locations-single-cycle',
   standalone: true,
   imports: [CommonModule, SharedModule, ConfirmDialogModule, HttpClientModule, ReactiveFormsModule, GridComponent, ToastModule, DynamicDialogModule],
   providers: [ConfirmationService, RoomService, BaseHttpClientServiceService, MessageService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './particle-room-locations-three-cycle.component.html',
-  styleUrls: ['./particle-room-locations-three-cycle.component.css']
+  templateUrl: './particle-room-locations-single-cycle.component.html',
+  styleUrls: ['./particle-room-locations-single-cycle.component.css']
 })
-export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
+export class ParticleRoomLocationsSingleCycleComponent implements OnInit {
   roomsFormGroup: FormGroup;
   roomModel?: Room;
   tempGrillsList: any[] = []
@@ -39,35 +39,14 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
   onCloseEventFire: EventEmitter<any> = new EventEmitter<any>();
   addNewRowEvent: EventEmitter<any> = new EventEmitter<any>();
 
-  groupedColumnOptions: GroupedColumnOptions[] = [
-    {
-      gridColumnOptions: [
-        { field: 'locationNo', header: 'Location No.', rowspan: '2', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
-        { field: 'pointFive', header: '0.5 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
-        { field: 'one', header: '1 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
-        { field: 'five', header: '5 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
-        { field: 'result', header: 'Result', rowspan: '2', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 14},
-        { field: '', header: 'Action', rowspan: '2', isEditable: false, hasTableValue: false, isStandalone: false }
+  gridColumnOptions: GridColumnOptions[] = [
 
-      ]
-    },
-    {
-      gridColumnOptions: [
-        { field: 'ptOne', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 2 },
-        { field: 'ptTwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 3 },
-        { field: 'ptThree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 4 },
-        { field: 'ptAverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 5 },
-        { field: 'oneone', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 6 },
-        { field: 'onetwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 7 },
-        { field: 'onethree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 8 },
-        { field: 'oneaverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 9 },
-
-        { field: 'fiveone', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 10 },
-        { field: 'fivetwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 11 },
-        { field: 'fivethree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 12 },
-        { field: 'fiveaverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 13 },
-      ]
-    }
+    { field: 'locationNo', header: 'Location No.', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
+    { field: 'ptAverage', header: '0.5 Micron and above',isEditable: true, hasTableValue: true, isStandalone: false },
+    { field: 'oneAverage', header: '1 Micron and above',isEditable: true,  hasTableValue: true, isStandalone: false },
+    { field: 'fiveAverage', header: '5 Micron and above',isEditable: true,  hasTableValue: true, isStandalone: false },
+    { field: 'result', header: 'Result', isEditable: false, hasTableValue: true, isStandalone: false, },
+    { field: '', header: 'Action', isEditable: false, hasTableValue: false, isStandalone: false }
   ]
 
   constructor(
@@ -122,6 +101,7 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
     this.roomsFormGroup.controls['classType'].addValidators([Validators.required,])
   }
   reEvaluateCalcResults() {
+    console.log(this.listOflocations)
     this.listOflocations.forEach(e => e = this.evaluateFinalResult(e));
   }
 
@@ -159,21 +139,21 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
 
   //#region Grill Rows
   addGridRow() {
-    this.roomsFormGroup.valid && this.roomsFormGroup.controls['classType'].value !== '0'? this.addNewRowEvent.emit(true) :
+    this.roomsFormGroup.valid && this.roomsFormGroup.controls['classType'].value !== '0' ? this.addNewRowEvent.emit(true) :
       this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Room Details Invalid", life: 4000 });
   }
 
 
   onGridRowSave(event: any) {
 
-    event = this.performGridCalculations(event);
-
+    this.evaluateFinalResult(event);
     if (this.listOflocations.find(e => e.id === event.id) === undefined) {
       this.listOflocations.push(event);
     } else {
       const index = this.listOflocations.findIndex(e => e.id === event.id);
       this.listOflocations[index] = event;
     }
+
     this.roomsFormGroup.controls['noOfLocations'].patchValue(this.listOflocations.length)
     this.changeRef.detectChanges();
   }
@@ -188,18 +168,12 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
 
   }
 
-  performGridCalculations(rowData: any) {
-    rowData.ptAverage = Math.round((parseInt(rowData.ptOne) + parseInt(rowData.ptTwo) + parseInt(rowData.ptThree)) / 3);
-    rowData.oneaverage = Math.round((parseInt(rowData.oneone) + parseInt(rowData.onetwo) + parseInt(rowData.onethree)) / 3);
-    rowData.fiveaverage = Math.round((parseInt(rowData.fiveone) + parseInt(rowData.fivetwo) + parseInt(rowData.fivethree)) / 3);
-    this.evaluateFinalResult(rowData);
-    return rowData;
-  }
+
   evaluateFinalResult(rowData: any) {
     const className = this.roomsFormGroup.controls['classType'].value;
     const classType = this.classficationList.find(e => e.name == className);
-    const isPassed = rowData.ptAverage >= classType.pointFiveMicron && rowData.oneaverage >= classType.oneMicron && rowData.fiveaverage >= classType.fiveMicron ;
-    rowData.result = isPassed ? 'Complies' : 'Non Complies';
+    const isPassed = rowData.ptAverage >= classType.pointFiveMicron && rowData.oneAverage >= classType.oneMicron && rowData.fiveAverage >= classType.fiveMicron;
+    rowData.result = isPassed ? 'Congress' : 'Non Congress';
     rowData.resultClass = isPassed ? 'text-c-green' : 'text-c-red';
 
   }
@@ -264,8 +238,7 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
         this.messageService.add({
           key: 'tc', severity: 'error', summary: 'Failed',
           detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000      
-        });
-        },
+        });         },
       complete: () => { },
     });
   }
@@ -285,12 +258,9 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
   MapToRoomLocation(location: any): RoomLocation {
     const result = new RoomLocation();
     result.referenceNumber = location.locationNo;
-    result.pointFiveMicronCycles = location.ptOne + ',' + location.ptTwo + ',' + location.ptThree;
-    result.oneMicronCycles = location.oneone + ',' + location.onetwo + ',' + location.onethree;
-    result.fiveMicronCycles = location.fiveone + ',' + location.fivetwo + ',' + location.fivethree;
     result.averagePointFiveMicron = location.ptAverage
-    result.averageFiveMicron = location.fiveaverage
-    result.averageOneMicron = location.oneaverage
+    result.averageFiveMicron = location.fiveAverage
+    result.averageOneMicron = location.oneAverage
     result.result = location.result;
     return result;
 
@@ -300,33 +270,23 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
     this.roomsFormGroup.controls['areaM2'].patchValue(this.roomModel!.areaM2);
     this.roomsFormGroup.controls['noOfLocations'].patchValue(this.roomModel!.noOfLocations);
     this.roomsFormGroup.controls['classType'].patchValue(this.roomModel!.classType);
-    this.roomModel!.roomLocations.forEach(e => this.reverseMapRoomLocationToGrid(e));
+    this.roomModel!.roomLocations.forEach(e => this.reverseMapRoomLcationToGrid(e));
     this.reEvaluateCalcResults();
 
     console.log(this.roomsFormGroup.value)
     console.log(this.listOflocations)
   }
 
-  reverseMapRoomLocationToGrid(location: RoomLocation) {
+  reverseMapRoomLcationToGrid(location: RoomLocation) {
     const result: any = {
       id: 0, locationNo: 0, ptOne: 0, ptTwo: 0, ptThree: 0, ptAverage: 0, one: 0, two: 0, three: 0, Average: 0, result: ''
     };
     result.id = location.id;
     result.locationNo = location.referenceNumber;
     result.ptAverage = location.averagePointFiveMicron;
-    result.fiveaverage = location.averageFiveMicron;
-    result.oneaverage = location.averageOneMicron;
-
-    result.oneone = location.oneMicronCycles.split(',')[0],
-      result.onetwo = location.oneMicronCycles.split(',')[1],
-      result.onethree = location.oneMicronCycles.split(',')[2],
-      result.fiveone = location.fiveMicronCycles.split(',')[0],
-      result.fivetwo = location.fiveMicronCycles.split(',')[1],
-      result.fivethree = location.fiveMicronCycles.split(',')[2],
-      result.ptOne = location.pointFiveMicronCycles.split(',')[0],
-      result.ptTwo = location.pointFiveMicronCycles.split(',')[1],
-      result.ptThree = location.pointFiveMicronCycles.split(',')[2],
-      result.result = location.result;
+    result.oneAverage = location.averageOneMicron;
+    result.fiveAverage = location.averageFiveMicron;
+    result.result = location.result;
 
     this.listOflocations = [...this.listOflocations, result];
     this.changeRef.detectChanges();

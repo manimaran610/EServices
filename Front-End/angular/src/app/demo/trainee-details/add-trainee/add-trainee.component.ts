@@ -1,3 +1,4 @@
+import { data } from './../../../fack-db/series-data';
 import { TraineeService } from './../../../../Services/trainee.service';
 import { FileProcessingService } from './../../../../Services/Shared/file-processing.service';
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
@@ -13,6 +14,7 @@ import { Router } from '@angular/router';
 import { BaseHttpClientServiceService } from 'src/Services/Shared/base-http-client-service.service';
 import { Trainee } from 'src/Models/trainee.Model';
 import { BaseResponse } from 'src/Models/response-models/base-response';
+import { RequestParameter } from 'src/Models/request-parameter';
 
 @Component({
   selector: 'app-add-trainee',
@@ -64,6 +66,32 @@ export class AddTraineeComponent implements OnInit {
 }
 onClear() { this.traineeFormGroup.reset() }
 
+getTraineeByEmployeeId(){
+  if(this.traineeFormGroup.controls['employeeId'].valid){
+  this.getTraineesFromServer(this.traineeFormGroup.controls['employeeId'].value)
+  }
+}
+
+async getTraineesFromServer(employeeId:string) {
+ const reqParams = new RequestParameter();
+ reqParams.filter=`employeeId:eq:${employeeId}`;
+  await this.traineeService.getAllPagedResponse(reqParams).subscribe({
+     next: (response: BaseResponse<Trainee[]>) => {
+       if (response.succeeded) {
+        if(response.data.length > 0)
+        this.traineeFormGroup.controls['name'].patchValue(response.data[0].name);
+       }
+     },
+     error: (e) => {
+      console.log(e)
+      this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed',
+      detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000 });
+      this.isSaveLoading =false;
+
+  },
+     complete: () => { },
+   });
+ }
 
 postTraineeToAPIServer() {
   this.isSaveLoading =true;
