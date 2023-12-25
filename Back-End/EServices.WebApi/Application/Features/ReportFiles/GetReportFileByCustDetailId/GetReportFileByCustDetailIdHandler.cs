@@ -62,6 +62,14 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 await _fileProcessingService.MailMergeWorkDocument(GetFullPath("ACPH.docx"), GetFullPath("ACPH-out.docx"), _keyValuePairs, templateRows);
                 processedFile = ConvertFileToBase64(GetFullPath("ACPH-out.docx"));
             }
+            else if (customerDetail.FormType == FormType.ParticleCountThreeCycle)
+            {
+
+                var templateRows = PopulatePC3TemplateRowConfigs(rooms);
+                PopulatePC3KeyValuePairs(customerDetail, rooms);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_3_Location.docx"), GetFullPath("PC_3_Location-out.docx"), _keyValuePairs, templateRows);
+                processedFile = ConvertFileToBase64(GetFullPath("PC_3_Location-out.docx"));
+            }
 
 
             return new Response<string>(processedFile, "File Processed successfully");
@@ -71,8 +79,8 @@ namespace Application.Features.Rooms.Commands.CreateRoom
         {
             MapPropertiesToKeyValuePair(customerDetail);
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
-             _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
-            if (customerDetail.Trainee != null) _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee.Name));
+            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
+            _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
 
             for (int i = 1; i <= rooms.Count; i++)
             {
@@ -90,6 +98,45 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             }
         }
 
+        private void PopulatePC3KeyValuePairs(CustomerDetail customerDetail, IReadOnlyList<Room> rooms)
+        {
+            MapPropertiesToKeyValuePair(customerDetail);
+            MapPropertiesToKeyValuePair(customerDetail.Instrument);
+            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
+            _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
+
+            foreach (var room in rooms)
+            {
+                MapPropertiesToKeyValuePair(room);
+                room.RoomLocations.ForEach(location =>
+                {
+                    var pointMicrons = location.PointFiveMicronCycles.Split(',');
+                    for (int j = 1; j <= pointMicrons.Length; j++)
+                    {
+                        this._keyValuePairs.Add(new($"pt-{j}", pointMicrons[j - 1]));
+                    }
+                    _keyValuePairs.Add(new($"pt-Average", location.AveragePointFiveMicron.ToString()));
+
+                    var oneMicrons = location.OneMicronCycles.Split(',');
+                    for (int j = 1; j <= oneMicrons.Length; j++)
+                    {
+                        this._keyValuePairs.Add(new($"1-{j}", pointMicrons[j - 1]));
+                    }
+                    _keyValuePairs.Add(new($"1-Average", location.AverageOneMicron.ToString()));
+
+
+                    var fiveMicrons = location.FiveMicronCycles.Split(',');
+                    for (int j = 1; j <= fiveMicrons.Length; j++)
+                    {
+                        this._keyValuePairs.Add(new($"5-{j}", fiveMicrons[j - 1]));
+                    }
+                    _keyValuePairs.Add(new($"5-Average", location.AverageFiveMicron.ToString()));
+
+                    MapPropertiesToKeyValuePair(location);
+                });
+            }
+        }
+
 
         private List<TemplateRowConfig> PopulateACPHTemplateRowConfigs(IReadOnlyList<Room> rooms)
         {
@@ -97,7 +144,22 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             int orderNo = 1;
             foreach (var room in rooms)
             {
+                Console.WriteLine( room.RoomGrills.Count());
                 result.Add(new(orderNo, 3, 4, room.RoomGrills.Count()));
+                orderNo++;
+            }
+
+            return result.OrderByDescending(e => e.OrderNo).ToList();
+
+
+        }
+        private List<TemplateRowConfig> PopulatePC3TemplateRowConfigs(IReadOnlyList<Room> rooms)
+        {
+            List<TemplateRowConfig> result = new();
+            int orderNo = 1;
+            foreach (var room in rooms)
+            {
+                result.Add(new(orderNo, 4, 5, room.RoomLocations.Count()));
                 orderNo++;
             }
 
@@ -117,8 +179,10 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 RoomVolume = e.RoomVolume,
                 CustomerDetailId = e.CustomerDetailId,
                 Name = e.Name,
+                AreaM2=e.AreaM2,
                 TotalAirFlowCFM = e.TotalAirFlowCFM,
-                RoomGrills = e.RoomGrills.Where(e => !e.IsDeleted).OrderBy(e => e.ReferenceNumber).ToList()
+                RoomGrills = e.RoomGrills.Where(e => !e.IsDeleted).OrderBy(e => e.ReferenceNumber).ToList(),
+                RoomLocations = e.RoomLocations.Where(e => !e.IsDeleted).OrderBy(e => e.ReferenceNumber).ToList()
 
             };
 
@@ -131,7 +195,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             {
                 Id = e.Id,
                 Client = e.Client,
-                CustomerNo=e.CustomerNo,
+                CustomerNo = e.CustomerNo,
                 AreaOfTest = e.AreaOfTest,
                 DateOfTest = e.DateOfTest,
                 EquipmentId = e.EquipmentId,
@@ -142,7 +206,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 TestReference = e.TestReference,
                 DateOfTestDue = e.DateOfTestDue,
                 Instrument = e.Instrument,
-                Trainee = e.Trainee
+                Trainee = new Trainee(){Name=e.Trainee.Name}
             };
             return expression;
         }
