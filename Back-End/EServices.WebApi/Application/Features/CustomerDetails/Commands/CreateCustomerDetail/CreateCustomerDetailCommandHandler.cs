@@ -75,6 +75,12 @@ namespace Application.Features.CustomerDetails.Commands.CreateCustomerDetail
                 case FormType.FilterIntegrity:
                     result = "FI";
                     break;
+                case FormType.ParticleCountThreeCycle:
+                    result = "PC3";
+                    break;
+                case FormType.ParticleCountSingleCycle:
+                    result = "PC1";
+                    break;
             }
             return result;
         }

@@ -69,12 +69,21 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 PopulatePC3KeyValuePairs(customerDetail, rooms);
                 await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_3_Location.docx"), GetFullPath("PC_3_Location-out.docx"), _keyValuePairs, templateRows);
                 processedFile = ConvertFileToBase64(GetFullPath("PC_3_Location-out.docx"));
-            }
+            } 
+            else if (customerDetail.FormType == FormType.ParticleCountSingleCycle)
+            {
 
+                var templateRows = PopulatePC1TemplateRowConfigs(rooms);
+                PopulatePC1KeyValuePairs(customerDetail, rooms);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_1_Location.docx"), GetFullPath("PC_1_Location-out.docx"), _keyValuePairs, templateRows);
+                processedFile = ConvertFileToBase64(GetFullPath("PC_1_Location-out.docx"));
+            }
 
             return new Response<string>(processedFile, "File Processed successfully");
         }
 
+
+        #region  Key value populators
         private void PopulateACPHKeyValuePairs(CustomerDetail customerDetail, IReadOnlyList<Room> rooms)
         {
             MapPropertiesToKeyValuePair(customerDetail);
@@ -137,7 +146,28 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             }
         }
 
+          private void PopulatePC1KeyValuePairs(CustomerDetail customerDetail, IReadOnlyList<Room> rooms)
+        {
+            MapPropertiesToKeyValuePair(customerDetail);
+            MapPropertiesToKeyValuePair(customerDetail.Instrument);
+            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
+            _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
 
+            foreach (var room in rooms)
+            {
+                MapPropertiesToKeyValuePair(room);
+                room.RoomLocations.ForEach(location =>
+                {
+                    _keyValuePairs.Add(new($"pt-Average", location.AveragePointFiveMicron.ToString()));                 
+                    _keyValuePairs.Add(new($"1-Average", location.AverageOneMicron.ToString()));                  
+                    _keyValuePairs.Add(new($"5-Average", location.AverageFiveMicron.ToString()));
+                    MapPropertiesToKeyValuePair(location);
+                });
+            }
+        }
+        #endregion
+
+        #region  TemplateConfigs
         private List<TemplateRowConfig> PopulateACPHTemplateRowConfigs(IReadOnlyList<Room> rooms)
         {
             List<TemplateRowConfig> result = new();
@@ -162,12 +192,24 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 result.Add(new(orderNo, 4, 5, room.RoomLocations.Count()));
                 orderNo++;
             }
-
             return result.OrderByDescending(e => e.OrderNo).ToList();
-
-
         }
 
+        private List<TemplateRowConfig> PopulatePC1TemplateRowConfigs(IReadOnlyList<Room> rooms)
+        {
+            List<TemplateRowConfig> result = new();
+            int orderNo = 1;
+            foreach (var room in rooms)
+            {
+                result.Add(new(orderNo, 3, 4, room.RoomLocations.Count()));
+                orderNo++;
+            }
+            return result.OrderByDescending(e => e.OrderNo).ToList();
+        }
+
+        #endregion
+
+        #region  Select Expressions
         private Expression<Func<Room, Room>> GetRoomSelectExpression()
         {
             Expression<Func<Room, Room>> selectExpression = e => new()
@@ -211,6 +253,9 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             return expression;
         }
 
+        #endregion
+
+        #region  Helpers
         private void MapPropertiesToKeyValuePair<T>(T obj, string keyPrefix = "")
         {
             if (obj != null)
@@ -229,7 +274,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
         }
 
         private string GetFullPath(string filename) => Path.Combine("WordTemplates", filename);
-
+        #endregion
 
     }
 }
