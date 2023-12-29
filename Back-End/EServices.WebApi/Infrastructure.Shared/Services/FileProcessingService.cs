@@ -2,17 +2,65 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Application.Interfaces;
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Domain.Common;
+using Mammoth;
+using OpenXmlPowerTools;
+using Table = DocumentFormat.OpenXml.Wordprocessing.Table;
+using TableRow = DocumentFormat.OpenXml.Wordprocessing.TableRow;
+using Word = Microsoft.Office.Interop.Word;
+
 
 namespace Infrastructure.Shared.Services
 {
     public class FileProcessingService : IFileProcessingService
     {
+public Task<string> ConvertDocToHtml(string path, byte[] byteArray)
+    {
+        using (MemoryStream memoryStream = new MemoryStream(byteArray))
+        {
+            using (WordprocessingDocument doc = WordprocessingDocument.Open(memoryStream, true))
+            {
+                // Iterate through header parts and copy content to the main document
+                foreach (var headerPart in doc.MainDocumentPart.HeaderParts)
+                {
+                    CopyContentFromHeaderToBody(doc.MainDocumentPart.Document, headerPart.Header);
+                }
 
+                var settings = new HtmlConverterSettings()
+                {
+                    PageTitle = "My Page Title"
+                };
+
+                // Convert main document to HTML
+                var mainHtml = OpenXmlPowerTools.HtmlConverter.ConvertToHtml(doc, settings);
+
+                // Write the HTML to the specified path
+                File.WriteAllText(path, mainHtml.ToString());
+            }
+
+            return Task.FromResult("Success");
+        }
+    }
+
+    private void CopyContentFromHeaderToBody(Document mainDocument, Header header)
+    {
+        // Iterate through paragraphs in the header and copy to the body
+        foreach (var headerParagraph in header.Descendants<Paragraph>())
+        {
+            // Clone the paragraph to avoid modifying the original
+            var clonedParagraph = new Paragraph(headerParagraph.OuterXml);
+
+            // Append the cloned paragraph to the main document body
+            mainDocument.Body.AppendChild(clonedParagraph.CloneNode(true));
+        }
+    }
         public async Task MailMergeWorkDocument(string templatePath, string DestinatePath, List<keyValue> keyValuePairs, List<TemplateRowConfig>? templateRows = null)
         {
             try
@@ -138,12 +186,14 @@ namespace Infrastructure.Shared.Services
                 }
             }
 
+
+
             void CreateDynamicTemplateRows(WordprocessingDocument document, List<TemplateRowConfig> templateRows)
             {
                 var lastChild = templateRows.LastOrDefault();
                 foreach (var templateRow in templateRows)
                 {
-                  
+
                     // Assuming the table is in the first (0-index) body of the document
                     Table table = document.MainDocumentPart.Document.Body.Elements<Table>().First();
                     // Clone the row at the specified index
