@@ -136,7 +136,6 @@ export class CustomerDetailsComponent implements OnInit {
   downloadReport(){
     this.isDownloading=true;
     this.getReportFromServer();
-    this.fileService.downloadFile(this.documentFile!);
   }
 
   reportRefresh(){
@@ -197,6 +196,7 @@ export class CustomerDetailsComponent implements OnInit {
               `${this.getFormName(this.formType)}.docx`,
               'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
             );
+            if(this.isDownloading) this.fileService.downloadFile(this.documentFile!);
             this.changeRef.detectChanges();
           }
         },

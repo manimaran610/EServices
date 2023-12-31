@@ -33,7 +33,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class FilterIntegrityComponent implements OnInit {
   ref: DynamicDialogRef | undefined;
   instance?: FilterIntegrityRoomGrillsComponent;
-  customerDetailId: number = 5;
+  customerDetailId: number = 1406;
   roomId?: number;
   listOfRooms: Room[] = [];
 

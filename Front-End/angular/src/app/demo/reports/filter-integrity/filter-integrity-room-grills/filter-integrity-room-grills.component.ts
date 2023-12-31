@@ -177,7 +177,7 @@ export class FilterIntegrityRoomGrillsComponent implements OnInit {
 
   onGrillSave(event: any) {
     // event = this.performGrillCalculations(event);
-
+ console.log(event);
     if (this.listOfGrills.find((e) => e.id === event.id) === undefined) {
       this.listOfGrills.push(event);
     } else {
@@ -221,7 +221,7 @@ export class FilterIntegrityRoomGrillsComponent implements OnInit {
 
   MapToRoomGrill(grill: any): RoomGrill {
     const result = new RoomGrill();
-    result.size = grill.size;
+    result.size = parseInt(grill.size);
     result.upStreamConcat = grill.upStreamConcat;
     result.penetration = grill.penetration;
     result.referenceNumber = grill.grillNo;
@@ -245,10 +245,11 @@ export class FilterIntegrityRoomGrillsComponent implements OnInit {
       grillNo: '',
       effective: 0,
     };
+    gridResult.id =roomGrill.id;
     gridResult.size = roomGrill.size;
     gridResult.upStreamConcat = roomGrill.upStreamConcat;
     gridResult.penetration = roomGrill.penetration;
-    gridResult.referenceNumber = roomGrill.referenceNumber;
+    gridResult.grillNo = roomGrill.referenceNumber;
     gridResult.effective=roomGrill.effective;
     
     this.listOfGrills = [...this.listOfGrills, gridResult];
