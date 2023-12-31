@@ -36,6 +36,8 @@ namespace Application.Features.DomainEvents.RoomLocationsAddRangeEvent
                 if (actualRoomLocation?.Id > 0)
                 {
                     roomLocation.Id = actualRoomLocation.Id;
+                    roomLocation.CreatedBy = actualRoomLocation.CreatedBy;
+                    roomLocation.Created = actualRoomLocation.Created;
                 }
                 await _roomLocationRepositoryAsync.UpdateAsync(roomLocation);
             }

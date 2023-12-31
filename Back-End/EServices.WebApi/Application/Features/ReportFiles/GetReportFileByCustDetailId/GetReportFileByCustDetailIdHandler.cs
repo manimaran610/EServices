@@ -85,11 +85,18 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_1_Location.docx"), GetFullPath("PC_1_Location-out.docx"), _keyValuePairs, templateRows);
                 processedFile = ConvertFileToBase64(GetFullPath("PC_1_Location-out.docx"));
                 uploadedFileUrl = await UploadFileForSharing(GetFullPath("PC_1_Location-out.docx"));
+            }
+            else if (customerDetail.FormType == FormType.FilterIntegrity)
+            {
 
-
+                var templateRows = PopulateFITemplateRowConfigs(rooms);
+                PopulateFIKeyValuePairs(customerDetail, rooms);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("FI.docx"), GetFullPath("FI-out.docx"), _keyValuePairs, templateRows);
+                processedFile = ConvertFileToBase64(GetFullPath("FI-out.docx"));
+                uploadedFileUrl = await UploadFileForSharing(GetFullPath("FI-out.docx"));
             }
 
-            return new Response<object>(new { File = processedFile,URL = uploadedFileUrl}, "File Processed successfully");
+            return new Response<object>(new { File = processedFile, URL = uploadedFileUrl }, "File Processed successfully");
         }
 
 
@@ -175,6 +182,27 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 });
             }
         }
+
+        private void PopulateFIKeyValuePairs(CustomerDetail customerDetail, IReadOnlyList<Room> rooms)
+        {
+            MapPropertiesToKeyValuePair(customerDetail);
+            MapPropertiesToKeyValuePair(customerDetail.Instrument);
+            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
+            _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
+
+            foreach (var room in rooms)
+            {
+                MapPropertiesToKeyValuePair(room);
+                room.RoomGrills.ForEach(grill =>
+                {
+                    _keyValuePairs.Add(new keyValue("Upcon", grill.UpStreamConcat));
+                    _keyValuePairs.Add(new keyValue("Pen", grill.Penetration.ToString()));
+
+                    MapPropertiesToKeyValuePair(grill);
+                });
+
+            }
+        }
         #endregion
 
         #region  TemplateConfigs
@@ -212,6 +240,17 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             foreach (var room in rooms)
             {
                 result.Add(new(orderNo, 3, 4, room.RoomLocations.Count()));
+                orderNo++;
+            }
+            return result.OrderByDescending(e => e.OrderNo).ToList();
+        }
+        private List<TemplateRowConfig> PopulateFITemplateRowConfigs(IReadOnlyList<Room> rooms)
+        {
+            List<TemplateRowConfig> result = new();
+            int orderNo = 1;
+            foreach (var room in rooms)
+            {
+                result.Add(new(orderNo, 3, 4, room.RoomGrills.Count()));
                 orderNo++;
             }
             return result.OrderByDescending(e => e.OrderNo).ToList();
@@ -301,7 +340,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 {
                     response.EnsureSuccessStatusCode();
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    result = responseBody.Split(":\"").Last().Replace("\"}}", "").Replace("org/", "org/dl/");
+                    result = responseBody.Split(":\"").Length > 0 ? responseBody.Split(":\"").Last().Replace("\"}}", "").Replace("org/", "org/dl/") : string.Empty;
                     Console.WriteLine(result);
                 }
 

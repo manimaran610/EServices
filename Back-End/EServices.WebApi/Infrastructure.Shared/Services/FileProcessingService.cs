@@ -76,14 +76,14 @@ public Task<string> ConvertDocToHtml(string path, byte[] byteArray)
             {
                 if (templateRows != null) CreateDynamicTemplateRows(doc, templateRows);
 
-                var allTextParams = doc.MainDocumentPart?.Document.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>();
-                var allHeaderParams = doc.MainDocumentPart?.HeaderParts.SelectMany(hp => hp.Header.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>());
+                var allTextParams = doc.MainDocumentPart?.Document.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>() ?? new List<Text>();
+                var allHeaderParams = doc.MainDocumentPart?.HeaderParts.SelectMany(hp => hp.Header.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>()) ?? new List<Text>();
 
 
                 foreach (var keyValue in keyValuePairs)
                 {
                     List<string> addedList = new List<string>();
-                    foreach (Text textItem in allTextParams ?? new List<Text>())
+                    foreach (Text textItem in allTextParams.Where(e=>  e.Text != null && e.Text.Contains($"<{keyValue.Key}>")))
                     {
                         if (textItem.Text != null)
                         {
@@ -95,10 +95,7 @@ public Task<string> ConvertDocToHtml(string path, byte[] byteArray)
                         }
                     }
 
-                    // allTextParams.FirstOrDefault(e => !string.IsNullOrEmpty(e.Text) && e.Text.Contains($"<{keyValue.Key}>"))?.Text.Replace($"<{keyValue.Key}>", keyValue.Value);
-
-
-                    foreach (Text textItem in allHeaderParams ?? new List<Text>())
+                    foreach (Text textItem in allHeaderParams.Where(e=>  e.Text != null && e.Text.Contains($"<{keyValue.Key}>")))
                     {
                         if (textItem.Text != null)
                         {
