@@ -64,7 +64,8 @@ namespace Application.Features.Rooms.Commands.UpdateRoom
                 await _roomRepository.UpdateAsync(room);
 
 
-                if (customerDetail.FormType == FormType.ACPH)
+                if ((customerDetail.FormType == FormType.ACPH) ||
+                    (customerDetail.FormType == FormType.FilterIntegrity))
                 {
                     var domainEvent = new RoomGrillsUpsertRangeEvent()
                     {
@@ -74,7 +75,8 @@ namespace Application.Features.Rooms.Commands.UpdateRoom
                     await _mediator.Publish(domainEvent);
                     message = $"Room updated along with Grills";
                 }
-                else if (customerDetail.FormType == FormType.ParticleCountThreeCycle)
+                else if ((customerDetail.FormType == FormType.ParticleCountThreeCycle) ||
+                      (customerDetail.FormType == FormType.ParticleCountSingleCycle))
                 {
                     var domainEvent = new RoomLocationsUpsertRangeEvent()
                     {

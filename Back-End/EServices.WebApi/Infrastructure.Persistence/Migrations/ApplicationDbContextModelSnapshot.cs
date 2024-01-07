@@ -33,6 +33,9 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<string>("AreaOfTest")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ClassType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Client")
                         .HasColumnType("nvarchar(max)");
 
@@ -42,7 +45,13 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CustomerNo")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("DateOfTest")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfTestDue")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EquipmentId")
@@ -66,9 +75,17 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<string>("Plant")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TestReference")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TraineeId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("InstrumentId");
+
+                    b.HasIndex("TraineeId");
 
                     b.ToTable("CustomerDetails");
                 });
@@ -257,6 +274,9 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Effective")
+                        .HasColumnType("int");
+
                     b.Property<float>("FilterAreaSqft")
                         .HasColumnType("real");
 
@@ -269,11 +289,23 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Penetration")
+                        .HasColumnType("int");
+
                     b.Property<string>("ReferenceNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Result")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RoomId")
                         .HasColumnType("int");
+
+                    b.Property<int>("Size")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UpStreamConcat")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -291,6 +323,9 @@ namespace Infrastructure.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AverageFiveMicron")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AverageOneMicron")
                         .HasColumnType("int");
 
                     b.Property<int>("AveragePointFiveMicron")
@@ -314,6 +349,9 @@ namespace Infrastructure.Persistence.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("OneMicronCycles")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PointFiveMicronCycles")
                         .HasColumnType("nvarchar(max)");
 
@@ -333,6 +371,46 @@ namespace Infrastructure.Persistence.Migrations
                     b.ToTable("RoomLocation");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Trainee", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CertificateFile")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CertificateName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Trainees");
+                });
+
             modelBuilder.Entity("Domain.Entities.CustomerDetail", b =>
                 {
                     b.HasOne("Domain.Entities.Instrument", "Instrument")
@@ -341,7 +419,13 @@ namespace Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.Trainee", "Trainee")
+                        .WithMany("CustomerDetails")
+                        .HasForeignKey("TraineeId");
+
                     b.Navigation("Instrument");
+
+                    b.Navigation("Trainee");
                 });
 
             modelBuilder.Entity("Domain.Entities.Room", b =>
@@ -392,6 +476,11 @@ namespace Infrastructure.Persistence.Migrations
                     b.Navigation("RoomGrills");
 
                     b.Navigation("RoomLocations");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Trainee", b =>
+                {
+                    b.Navigation("CustomerDetails");
                 });
 #pragma warning restore 612, 618
         }

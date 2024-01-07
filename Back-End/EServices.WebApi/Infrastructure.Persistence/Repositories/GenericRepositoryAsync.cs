@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Linq.Expressions;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore.DynamicLinq;
+using System;
 
 namespace Infrastructure.Persistence.Repository
 {
@@ -72,7 +73,7 @@ namespace Infrastructure.Persistence.Repository
 
         public async Task UpdateAsync(T entity)
         {
-            // _dbContext.Entry(entity).State = EntityState.Modified;
+            entity.LastModified = DateTime.UtcNow;
             _dbContext.Update<T>(entity);
             await _dbContext.SaveChangesAsync();
         }
@@ -100,6 +101,13 @@ namespace Infrastructure.Persistence.Repository
             return await Task.FromResult(_dbContext
          .Set<T>()
          .Count(e => !e.IsDeleted));
+        }
+
+         public async Task<bool> IsExistsAsync(int id)
+        {
+            return await _dbContext
+         .Set<T>()
+         .AnyAsync(e => !e.IsDeleted && e.Id == id);
         }
 
     }

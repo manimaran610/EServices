@@ -2,17 +2,65 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Application.Interfaces;
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Domain.Common;
+using Mammoth;
+using OpenXmlPowerTools;
+using Table = DocumentFormat.OpenXml.Wordprocessing.Table;
+using TableRow = DocumentFormat.OpenXml.Wordprocessing.TableRow;
+using Word = Microsoft.Office.Interop.Word;
+
 
 namespace Infrastructure.Shared.Services
 {
     public class FileProcessingService : IFileProcessingService
     {
+public Task<string> ConvertDocToHtml(string path, byte[] byteArray)
+    {
+        using (MemoryStream memoryStream = new MemoryStream(byteArray))
+        {
+            using (WordprocessingDocument doc = WordprocessingDocument.Open(memoryStream, true))
+            {
+                // Iterate through header parts and copy content to the main document
+                foreach (var headerPart in doc.MainDocumentPart.HeaderParts)
+                {
+                    CopyContentFromHeaderToBody(doc.MainDocumentPart.Document, headerPart.Header);
+                }
 
+                var settings = new HtmlConverterSettings()
+                {
+                    PageTitle = "My Page Title"
+                };
+
+                // Convert main document to HTML
+                var mainHtml = OpenXmlPowerTools.HtmlConverter.ConvertToHtml(doc, settings);
+
+                // Write the HTML to the specified path
+                File.WriteAllText(path, mainHtml.ToString());
+            }
+
+            return Task.FromResult("Success");
+        }
+    }
+
+    private void CopyContentFromHeaderToBody(Document mainDocument, Header header)
+    {
+        // Iterate through paragraphs in the header and copy to the body
+        foreach (var headerParagraph in header.Descendants<Paragraph>())
+        {
+            // Clone the paragraph to avoid modifying the original
+            var clonedParagraph = new Paragraph(headerParagraph.OuterXml);
+
+            // Append the cloned paragraph to the main document body
+            mainDocument.Body.AppendChild(clonedParagraph.CloneNode(true));
+        }
+    }
         public async Task MailMergeWorkDocument(string templatePath, string DestinatePath, List<keyValue> keyValuePairs, List<TemplateRowConfig>? templateRows = null)
         {
             try
@@ -28,14 +76,14 @@ namespace Infrastructure.Shared.Services
             {
                 if (templateRows != null) CreateDynamicTemplateRows(doc, templateRows);
 
-                var allTextParams = doc.MainDocumentPart?.Document.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>();
-                var allHeaderParams = doc.MainDocumentPart?.HeaderParts.SelectMany(hp => hp.RootElement.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>());
+                var allTextParams = doc.MainDocumentPart?.Document.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>() ?? new List<Text>();
+                var allHeaderParams = doc.MainDocumentPart?.HeaderParts.SelectMany(hp => hp.Header.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>()) ?? new List<Text>();
 
 
                 foreach (var keyValue in keyValuePairs)
                 {
                     List<string> addedList = new List<string>();
-                    foreach (Text textItem in allTextParams ?? new List<Text>())
+                    foreach (Text textItem in allTextParams.Where(e=>  e.Text != null && e.Text.Contains($"<{keyValue.Key}>")))
                     {
                         if (textItem.Text != null)
                         {
@@ -47,10 +95,7 @@ namespace Infrastructure.Shared.Services
                         }
                     }
 
-                    // allTextParams.FirstOrDefault(e => !string.IsNullOrEmpty(e.Text) && e.Text.Contains($"<{keyValue.Key}>"))?.Text.Replace($"<{keyValue.Key}>", keyValue.Value);
-
-
-                    foreach (Text textItem in allHeaderParams ?? new List<Text>())
+                    foreach (Text textItem in allHeaderParams.Where(e=>  e.Text != null && e.Text.Contains($"<{keyValue.Key}>")))
                     {
                         if (textItem.Text != null)
                         {
@@ -138,13 +183,13 @@ namespace Infrastructure.Shared.Services
                 }
             }
 
+
+
             void CreateDynamicTemplateRows(WordprocessingDocument document, List<TemplateRowConfig> templateRows)
             {
                 var lastChild = templateRows.LastOrDefault();
                 foreach (var templateRow in templateRows)
                 {
-                    Console.WriteLine("Foreach - " + templateRow.OrderNo);
-
 
                     // Assuming the table is in the first (0-index) body of the document
                     Table table = document.MainDocumentPart.Document.Body.Elements<Table>().First();
@@ -155,7 +200,6 @@ namespace Infrastructure.Shared.Services
                     table.InsertAfter(clonedRow, table.Elements<TableRow>().ElementAt(templateRow.RowInsertAfter));
                     if (templateRow.OrderNo == lastChild?.OrderNo)
                     {
-                        Console.WriteLine("If condition");
                         if (templateRow.NestedRowCount < 2)
                         {
                             table.RemoveChild(table.Elements<TableRow>().ElementAt(templateRow.RowInsertAfter));

@@ -39,6 +39,8 @@ namespace Infrastructure.Persistence
             services.AddTransient<IRoomGrillRepositoryAsync, RoomGrillRepositoryAsync>();
             services.AddTransient<IRoomLocationRepositoryAsync, RoomLocationRepositoryAsync>();
             services.AddTransient<ILogRepositoryAsync, LogRepositoryAsync>();
+            services.AddTransient<ITraineeRepositoryAsync, TraineeRepositoryAsync>();
+
 
 
 

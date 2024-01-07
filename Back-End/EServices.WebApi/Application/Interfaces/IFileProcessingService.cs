@@ -8,7 +8,9 @@ namespace Application.Interfaces
 {
     public interface IFileProcessingService
     {
-        public  Task MailMergeWorkDocument(string templatePath, string DestinatePath, List<keyValue> keyValuePairs, List<TemplateRowConfig>? templateRows = null);
+        Task MailMergeWorkDocument(string templatePath, string DestinatePath, List<keyValue> keyValuePairs, List<TemplateRowConfig>? templateRows = null);
+Task<string> ConvertDocToHtml(string path,byte[] byteArray);
+
 
     }
 }
