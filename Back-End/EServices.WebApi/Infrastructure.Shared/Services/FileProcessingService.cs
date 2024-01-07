@@ -83,7 +83,7 @@ public Task<string> ConvertDocToHtml(string path, byte[] byteArray)
                 foreach (var keyValue in keyValuePairs)
                 {
                     List<string> addedList = new List<string>();
-                    foreach (Text textItem in allTextParams.Where(e=>  e.Text != null && e.Text.Contains($"<{keyValue.Key}>")))
+                    foreach (Text textItem in allTextParams.Where(e=>  e.Text != null && e.Text.Contains($"<{keyValue.Key}>")).Take(2))
                     {
                         if (textItem.Text != null)
                         {
@@ -95,7 +95,7 @@ public Task<string> ConvertDocToHtml(string path, byte[] byteArray)
                         }
                     }
 
-                    foreach (Text textItem in allHeaderParams.Where(e=>  e.Text != null && e.Text.Contains($"<{keyValue.Key}>")))
+                    foreach (Text textItem in allHeaderParams.Where(e=>  e.Text != null && e.Text.Contains($"<{keyValue.Key}>")).Take(2))
                     {
                         if (textItem.Text != null)
                         {
