@@ -16,7 +16,7 @@ import { BaseHttpClientServiceService } from 'src/Services/Shared/base-http-clie
 import { RoomService } from 'src/Services/room.service';
 import { GridComponent } from 'src/app/theme/shared/components/grid/grid.component';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
-import { BusinessConstants } from '../../shared/Constants/business-constants';
+import { BusinessConstants } from '../../../shared/Constants/business-constants';
 
 @Component({
   selector: 'app-particle-room-locations-three-cycle',
@@ -44,8 +44,9 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
       gridColumnOptions: [
         { field: 'locationNo', header: 'Location No.', rowspan: '2', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
         { field: 'pointFive', header: '0.5 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
+        { field: 'one', header: '1 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
         { field: 'five', header: '5 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
-        { field: 'result', header: 'Result', rowspan: '2', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 10 },
+        { field: 'result', header: 'Result', rowspan: '2', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 14},
         { field: '', header: 'Action', rowspan: '2', isEditable: false, hasTableValue: false, isStandalone: false }
 
       ]
@@ -56,10 +57,15 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
         { field: 'ptTwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 3 },
         { field: 'ptThree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 4 },
         { field: 'ptAverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 5 },
-        { field: 'one', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 6 },
-        { field: 'two', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 7 },
-        { field: 'three', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 8 },
-        { field: 'average', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 9 },
+        { field: 'oneone', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 6 },
+        { field: 'onetwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 7 },
+        { field: 'onethree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 8 },
+        { field: 'oneaverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 9 },
+
+        { field: 'fiveone', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 10 },
+        { field: 'fivetwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 11 },
+        { field: 'fivethree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 12 },
+        { field: 'fiveaverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 13 },
       ]
     }
   ]
@@ -184,15 +190,16 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
 
   performGridCalculations(rowData: any) {
     rowData.ptAverage = Math.round((parseInt(rowData.ptOne) + parseInt(rowData.ptTwo) + parseInt(rowData.ptThree)) / 3);
-    rowData.average = Math.round((parseInt(rowData.one) + parseInt(rowData.two) + parseInt(rowData.three)) / 3);
+    rowData.oneaverage = Math.round((parseInt(rowData.oneone) + parseInt(rowData.onetwo) + parseInt(rowData.onethree)) / 3);
+    rowData.fiveaverage = Math.round((parseInt(rowData.fiveone) + parseInt(rowData.fivetwo) + parseInt(rowData.fivethree)) / 3);
     this.evaluateFinalResult(rowData);
     return rowData;
   }
   evaluateFinalResult(rowData: any) {
     const className = this.roomsFormGroup.controls['classType'].value;
     const classType = this.classficationList.find(e => e.name == className);
-    const isPassed = rowData.ptAverage >= classType.pointFiveMicron && rowData.average >= classType.fiveMicron;
-    rowData.result = isPassed ? 'Congress' : 'Non Congress';
+    const isPassed = rowData.ptAverage >= classType.pointFiveMicron && rowData.oneaverage >= classType.oneMicron && rowData.fiveaverage >= classType.fiveMicron ;
+    rowData.result = isPassed ? 'Complies' : 'Non Complies';
     rowData.resultClass = isPassed ? 'text-c-green' : 'text-c-red';
 
   }
@@ -279,9 +286,11 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
     const result = new RoomLocation();
     result.referenceNumber = location.locationNo;
     result.pointFiveMicronCycles = location.ptOne + ',' + location.ptTwo + ',' + location.ptThree;
-    result.fiveMicronCycles = location.one + ',' + location.two + ',' + location.three;
+    result.oneMicronCycles = location.oneone + ',' + location.onetwo + ',' + location.onethree;
+    result.fiveMicronCycles = location.fiveone + ',' + location.fivetwo + ',' + location.fivethree;
     result.averagePointFiveMicron = location.ptAverage
-    result.averageFiveMicron = location.average
+    result.averageFiveMicron = location.fiveaverage
+    result.averageOneMicron = location.oneaverage
     result.result = location.result;
     return result;
 
@@ -291,24 +300,29 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
     this.roomsFormGroup.controls['areaM2'].patchValue(this.roomModel!.areaM2);
     this.roomsFormGroup.controls['noOfLocations'].patchValue(this.roomModel!.noOfLocations);
     this.roomsFormGroup.controls['classType'].patchValue(this.roomModel!.classType);
-    this.roomModel!.roomLocations.forEach(e => this.reverseMapRoomLcationToGrid(e));
+    this.roomModel!.roomLocations.forEach(e => this.reverseMapRoomLocationToGrid(e));
     this.reEvaluateCalcResults();
 
     console.log(this.roomsFormGroup.value)
     console.log(this.listOflocations)
   }
 
-  reverseMapRoomLcationToGrid(location: RoomLocation) {
+  reverseMapRoomLocationToGrid(location: RoomLocation) {
     const result: any = {
       id: 0, locationNo: 0, ptOne: 0, ptTwo: 0, ptThree: 0, ptAverage: 0, one: 0, two: 0, three: 0, Average: 0, result: ''
     };
     result.id = location.id;
     result.locationNo = location.referenceNumber;
     result.ptAverage = location.averagePointFiveMicron;
-    result.average = location.averageFiveMicron;
-    result.one = location.fiveMicronCycles.split(',')[0],
-      result.two = location.fiveMicronCycles.split(',')[1],
-      result.three = location.fiveMicronCycles.split(',')[2],
+    result.fiveaverage = location.averageFiveMicron;
+    result.oneaverage = location.averageOneMicron;
+
+    result.oneone = location.oneMicronCycles.split(',')[0],
+      result.onetwo = location.oneMicronCycles.split(',')[1],
+      result.onethree = location.oneMicronCycles.split(',')[2],
+      result.fiveone = location.fiveMicronCycles.split(',')[0],
+      result.fivetwo = location.fiveMicronCycles.split(',')[1],
+      result.fivethree = location.fiveMicronCycles.split(',')[2],
       result.ptOne = location.pointFiveMicronCycles.split(',')[0],
       result.ptTwo = location.pointFiveMicronCycles.split(',')[1],
       result.ptThree = location.pointFiveMicronCycles.split(',')[2],

@@ -15,25 +15,25 @@ import { Room } from 'src/Models/room.Model';
 import { GridColumnOptions } from 'src/Models/grid-column-options';
 import { RoomService } from 'src/Services/room.service';
 import { RequestParameter } from 'src/Models/request-parameter';
-import { CustomerDetailsComponent } from '../../shared/Components/customer-details/customer-details.component';
+import { CustomerDetailsComponent } from '../../../shared/Components/customer-details/customer-details.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ParticleRoomLocationsSingleCycleComponent } from '../particle-room-locations-single-cycle/particle-room-locations-single-cycle.component';
+import { ParticleRoomLocationsThreeCycleComponent } from '../particle-room-locations-three-cycle/particle-room-locations-three-cycle.component';
 
 @Component({
-  selector: 'app-particle-count-single-cycle',
+  selector: 'app-particle-count-three-cycle',
   standalone: true,
   imports: [CommonModule, SharedModule, ConfirmDialogModule, MessagesModule,
-    HttpClientModule, ToastModule, CustomerDetailsComponent, ParticleRoomLocationsSingleCycleComponent,
+    HttpClientModule, ToastModule, CustomerDetailsComponent, ParticleRoomLocationsThreeCycleComponent,
     DynamicDialogModule, GridComponent],
   providers: [ConfirmationService, BaseHttpClientServiceService, MessageService, DialogService, RoomService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './particle-count-single-cycle.component.html',
-  styleUrls: ['./particle-count-single-cycle.component.css']
+  templateUrl: './particle-count-three-cycle.component.html',
+  styleUrls: ['./particle-count-three-cycle.component.css']
 })
-export class ParticleCountSingleCycleComponent implements OnDestroy,OnInit {
+export class ParticleCountThreeCycleComponent implements OnDestroy,OnInit {
   ref: DynamicDialogRef | undefined;
-  instance?: ParticleRoomLocationsSingleCycleComponent;
-  customerDetailId: number = 5;
+  instance?: ParticleRoomLocationsThreeCycleComponent;
+  customerDetailId: number = 0;
   roomId?: number;
   listOfRooms: Room[] = [];
 
@@ -50,7 +50,7 @@ export class ParticleCountSingleCycleComponent implements OnDestroy,OnInit {
 
   showDynamicPopup(roomId: number) {
     if (this.customerDetailId > 0) {
-      this.ref = this.dialogService.open(ParticleRoomLocationsSingleCycleComponent, {
+      this.ref = this.dialogService.open(ParticleRoomLocationsThreeCycleComponent, {
         header: 'Rooms and its Locations',
         width: '70%',
         contentStyle: { overflow: 'auto' },
@@ -60,14 +60,14 @@ export class ParticleCountSingleCycleComponent implements OnDestroy,OnInit {
       });
       const dialogRef = this.dialogService.dialogComponentRefMap.get(this.ref);
       dialogRef!.changeDetectorRef.detectChanges();
-      this.instance = dialogRef!.instance.componentRef!.instance as ParticleRoomLocationsSingleCycleComponent;
+      this.instance = dialogRef!.instance.componentRef!.instance as ParticleRoomLocationsThreeCycleComponent;
       this.instance.onCloseEventFire.subscribe((e) => {
         this.ref?.close(e);
         this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Room along with Locations saved', life: 4000 });
 
       });
 
-      this.ref.onClose.subscribe(() => {
+      this.ref.onClose.subscribe((input: any) => {
         this.getRoomsFromServer();
       });
     } else {
@@ -130,8 +130,9 @@ export class ParticleCountSingleCycleComponent implements OnDestroy,OnInit {
       error: (e) => { 
         this.messageService.add({
           key: 'tc', severity: 'error', summary: 'Failed',
-          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
-        });      },
+          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000      
+        });
+       },
       complete: () => { },
     });
   }
@@ -147,7 +148,7 @@ export class ParticleCountSingleCycleComponent implements OnDestroy,OnInit {
         this.messageService.add({
           key: 'tc', severity: 'error', summary: 'Failed',
           detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000      
-          });
+        });
       },
       complete: () => { },
     });

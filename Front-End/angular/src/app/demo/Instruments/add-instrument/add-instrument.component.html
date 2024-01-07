@@ -74,21 +74,23 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="exampleInputPassword1">Type</label>
-          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="type" placeholder="Enter Type"
-          [ngClass]="{'is-invalid': instrumentFormGroup.controls['type'].errors  && (instrumentFormGroup.controls['type'].touched || 
-          instrumentFormGroup.controls['type'].dirty), 'is-valid':instrumentFormGroup.controls['type'].valid}" />
-          <div class="invalid-feedback" *ngIf="!instrumentFormGroup.controls['type'].valid">Required</div>
+          <select class="form-select" id="inputGroupSelect04" formControlName="type">
+           <option value="0" selected disabled>Choose type</option>
+            <option *ngFor="let item of instrumentTypes; let i = index" [value]="item">
+              {{item}}</option>
+          </select>
         </div>
       </div>
 
       <div class="col-md-6">
         <div class="form-group ">
           <label for="exampleCheck1">Certificate</label>
-          <input type="file" class="form-control" id="exampleCheck1"  #fileInput (change)="uploadFile($event.target)" formControlName="certificate" placeholder="Select Certificate"
+          <input type="file" class="form-control" id="exampleCheck1"  accept="application/pdf"  #fileInput (change)="uploadFile($event.target)" formControlName="certificate" placeholder="Select Certificate"
           [ngClass]="{'is-invalid': instrumentFormGroup.controls['certificate'].errors  && (instrumentFormGroup.controls['certificate'].touched || 
           instrumentFormGroup.controls['certificate'].dirty), 'is-valid':instrumentFormGroup.controls['certificate'].valid}" />
           <div class="invalid-feedback" *ngIf="instrumentFormGroup.controls['certificate'].hasError('required')">Required</div>
           <div class="invalid-feedback" *ngIf="instrumentFormGroup.controls['certificate'].hasError('max')">File size should be less than 5MB</div>
+          <div class="invalid-feedback" *ngIf="instrumentFormGroup.controls['certificate'].hasError('min')">File must be in PDF Format</div>
 
         </div>
       </div>

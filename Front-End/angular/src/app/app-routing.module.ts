@@ -6,12 +6,13 @@ import { Routes, RouterModule } from '@angular/router';
 // project import
 import { AdminComponent } from './theme/layout/admin/admin.component';
 import { GuestComponent } from './theme/layout/guest/guest.component';
-import HomePageComponent from './demo/home-page/home-page.component';
 import { Form1Component } from './demo/ahu-forms/form1/form1.component';
 import { AddInstrumentComponent } from './demo/Instruments/add-instrument/add-instrument.component';
 import { AcphComponent } from './demo/reports/acph/acph.component';
-import { ParticleCountThreeCycleComponent } from './demo/reports/particle-count/particle-count-three-cycle/particle-count-three-cycle.component';
-import { ParticleCountSingleCycleComponent } from './demo/reports/particle-count/particle-count-single-cycle/particle-count-single-cycle.component';
+import { ParticleCountThreeCycleComponent } from './demo/reports/particle-count/three-cycle/particle-count-three-cycle/particle-count-three-cycle.component';
+import { ParticleCountSingleCycleComponent } from './demo/reports/particle-count/single-cycle/particle-count-single-cycle/particle-count-single-cycle.component';
+import { AddTraineeComponent } from './demo/trainee-details/add-trainee/add-trainee.component';
+import { FilterIntegrityComponent } from './demo/reports/filter-integrity/filter-integrity/filter-integrity.component';
 
 
 const routes: Routes = [
@@ -66,6 +67,15 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'Trainee',
+        children: [
+          {
+            path: 'Add-Trainee',
+            component: AddTraineeComponent
+          }
+        ]
+      },
+      {
         path: 'Reports',
         children: [
           {
@@ -90,15 +100,14 @@ const routes: Routes = [
             ]
 
           },
+          {
+            path: 'FilterIntegrity',
+            component: FilterIntegrityComponent
+          },
         ]
       } 
     ]
   },
-  {
-    path: 'Home1',
-    component: HomePageComponent,
-  },
-
   {
     path: '',
     component: GuestComponent,

@@ -29,6 +29,7 @@ export class AddInstrumentComponent implements OnInit {
 
     instrumentFormGroup: FormGroup;
     msgs: Message[] = [];
+    instrumentTypes :string[]=['Type1','Type2','Type3'];
     isAddInstrument: boolean = true;
     isSaveLoading:boolean=false;
     isSaved: boolean = false;
@@ -50,7 +51,7 @@ export class AddInstrumentComponent implements OnInit {
                 serialNo: new FormControl(),
                 make: new FormControl(),
                 model: new FormControl(),
-                type: new FormControl(),
+                type: new FormControl('0'),
                 calibratedOn: new FormControl(),
                 calibratedDueOn: new FormControl(),
                 certificate: new FormControl(),
@@ -116,7 +117,8 @@ export class AddInstrumentComponent implements OnInit {
         if (event.files.length > 0 && event.files[0].size < 5120000) {
             this.tempFileName = event.files[0].name;
           if(event.files[0].name.split('?')[0].split('.').pop() !== 'pdf') {
-            this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Please choose PDF Files", life: 4000 });
+            this.instrumentFormGroup.controls['certificate'].setErrors({min:true});
+          //  this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Please choose PDF Files", life: 4000 });
           }
             this.tempFile = await this.fileProcessingService.fileToBase64(event.files[0]);
            

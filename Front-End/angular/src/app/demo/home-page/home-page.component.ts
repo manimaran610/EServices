@@ -236,7 +236,7 @@ export default class HomePageComponent implements OnInit {
             background: 'bg-c-green',
             icon: 'icon icon-filter',
             accentColor: '#6710F5',
-            navigateTo: '/form1'
+            navigateTo: '/Reports/FilterIntegrity'
           },
           {
             title: 'Particle count',
@@ -244,7 +244,7 @@ export default class HomePageComponent implements OnInit {
             background: 'bg-c-yellow',
             icon: 'icon icon-codepen',
             accentColor: '#6F42C1',
-            navigateTo: '/form1'
+            navigateTo: '/Reports/ParticleCount/SingleCycle'
           },
           {
             title: 'Particle count',
@@ -252,14 +252,14 @@ export default class HomePageComponent implements OnInit {
             background: 'bg-c-red',
             icon: 'icon icon-codepen',
             accentColor: 'blue',
-            navigateTo: '/form1'
+            navigateTo: '/Reports/ParticleCount/ThreeCycle'
           },
           {
             title: 'Temp. Mapping',
             background: 'bg-c-purple',
             icon: 'icon icon-thermometer',
             accentColor: '#0D6EFD',
-            navigateTo: '/form1'
+            navigateTo: ''
           },
 
         ]
@@ -273,6 +273,18 @@ export default class HomePageComponent implements OnInit {
             icon: 'icon icon-framer',
             accentColor: '#0D6EFD',
             navigateTo: '/Instrument/Add-Instrument'
+          },
+        ]
+      },
+      {
+        title: 'Trainee Details',
+        services: [
+          {
+            title: 'Add Trainee',
+            background: 'bg-c-blue',
+            icon: 'icon icon-framer',
+            accentColor: '#0D6EFD',
+            navigateTo: '/Trainee/Add-Trainee'
           },
         ]
       }

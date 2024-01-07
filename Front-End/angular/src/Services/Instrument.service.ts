@@ -11,27 +11,32 @@ import { RequestParameter } from 'src/Models/request-parameter';
 export class InstrumentService {
 
   constructor(private httpService: BaseHttpClientServiceService) {
-    httpService.mapURLPath('Instrument')
+    this.httpService.mapURLPath('Instrument');
   }
 
   postInstrument(data: Instrument): Observable<BaseResponse<number>> {
+    this.httpService.mapURLPath('Instrument');
     return this.httpService.post<Instrument, number>(data)
   }
 
   getInstrumentById(id: string): Observable<BaseResponse<Instrument>> {
+    this.httpService.mapURLPath('Instrument');
     return this.httpService.getById<Instrument>(id);
   }
 
   getAllPagedResponse(reqParams?: RequestParameter): Observable<BaseResponse<Instrument[]>> {
+    this.httpService.mapURLPath('Instrument');
     reqParams = reqParams !== undefined ? reqParams! : new RequestParameter();
     return this.httpService.getAll<Instrument[]>(reqParams);
   }
 
   deleteInstrumentById(id: string): Observable<BaseResponse<number>> {
+    this.httpService.mapURLPath('Instrument');
     return this.httpService.deleteById<number>(id);
   }
 
   updateInstrument(id: string, data: Instrument): Observable<BaseResponse<number>> {
+    this.httpService.mapURLPath('Instrument');
     return this.httpService.put<Instrument, number>(id, data)
   }
 }

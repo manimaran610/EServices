@@ -15,7 +15,7 @@ import { BaseHttpClientServiceService } from 'src/Services/Shared/base-http-clie
 import { RoomService } from 'src/Services/room.service';
 import { GridComponent } from 'src/app/theme/shared/components/grid/grid.component';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
-import { BusinessConstants } from '../../shared/Constants/business-constants';
+import { BusinessConstants } from '../../../shared/Constants/business-constants';
 import { GridColumnOptions } from 'src/Models/grid-column-options';
 
 @Component({
@@ -43,7 +43,8 @@ export class ParticleRoomLocationsSingleCycleComponent implements OnInit {
 
     { field: 'locationNo', header: 'Location No.', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
     { field: 'ptAverage', header: '0.5 Micron and above',isEditable: true, hasTableValue: true, isStandalone: false },
-    { field: 'average', header: '5 Micron and above',isEditable: true,  hasTableValue: true, isStandalone: false },
+    { field: 'oneAverage', header: '1 Micron and above',isEditable: true,  hasTableValue: true, isStandalone: false },
+    { field: 'fiveAverage', header: '5 Micron and above',isEditable: true,  hasTableValue: true, isStandalone: false },
     { field: 'result', header: 'Result', isEditable: false, hasTableValue: true, isStandalone: false, },
     { field: '', header: 'Action', isEditable: false, hasTableValue: false, isStandalone: false }
   ]
@@ -171,7 +172,7 @@ export class ParticleRoomLocationsSingleCycleComponent implements OnInit {
   evaluateFinalResult(rowData: any) {
     const className = this.roomsFormGroup.controls['classType'].value;
     const classType = this.classficationList.find(e => e.name == className);
-    const isPassed = rowData.ptAverage >= classType.pointFiveMicron && rowData.average >= classType.fiveMicron;
+    const isPassed = rowData.ptAverage >= classType.pointFiveMicron && rowData.oneAverage >= classType.oneMicron && rowData.fiveAverage >= classType.fiveMicron;
     rowData.result = isPassed ? 'Congress' : 'Non Congress';
     rowData.resultClass = isPassed ? 'text-c-green' : 'text-c-red';
 
@@ -258,7 +259,8 @@ export class ParticleRoomLocationsSingleCycleComponent implements OnInit {
     const result = new RoomLocation();
     result.referenceNumber = location.locationNo;
     result.averagePointFiveMicron = location.ptAverage
-    result.averageFiveMicron = location.average
+    result.averageFiveMicron = location.fiveAverage
+    result.averageOneMicron = location.oneAverage
     result.result = location.result;
     return result;
 
@@ -282,7 +284,8 @@ export class ParticleRoomLocationsSingleCycleComponent implements OnInit {
     result.id = location.id;
     result.locationNo = location.referenceNumber;
     result.ptAverage = location.averagePointFiveMicron;
-    result.average = location.averageFiveMicron;
+    result.oneAverage = location.averageOneMicron;
+    result.fiveAverage = location.averageFiveMicron;
     result.result = location.result;
 
     this.listOflocations = [...this.listOflocations, result];

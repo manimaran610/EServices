@@ -5,6 +5,8 @@ export class RoomLocation {
     averagePointFiveMicron: number = 0;
     fiveMicronCycles: string = '';
     averageFiveMicron: number = 0;
+    oneMicronCycles: string ='';
+    averageOneMicron: number = 0;
     result: string = '';
 
 }
