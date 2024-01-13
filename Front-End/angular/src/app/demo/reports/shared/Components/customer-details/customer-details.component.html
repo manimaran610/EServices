@@ -2,6 +2,7 @@
   <ngx-doc-viewer *ngIf="isPreview" [url]="documentUrl" [extension]="'docx'"></ngx-doc-viewer>
 </div>
 
+<div *ngIf="isPreview" [innerHTML]="docHtml"></div>
 <app-card cardTitle="" [options]="false">
   <div class="row">
     <div class="col text-start">
@@ -9,19 +10,25 @@
     </div>
     <div class="col text-end">
 
-      <!-- <button class="btn btn-primary m-2" *ngIf="isPreview" type="button" (click)="reportRefresh()"
-         ngbTooltip='Download Report File'>
+      <button class="btn btn-primary m-2" *ngIf="isPreview" type="button" (click)="reportRefresh()"
+         ngbTooltip='Refresh document'>
       <span *ngIf="isRefreshing" class="spinner-border spinner-border-sm me-1"></span>
           Refresh
       <i class="m-2 feather icon-loader"></i>
     </button>
-
+    
       <button class="btn btn-primary m-2"  type="button" (click)="reportPreview()"
-      [disabled]="!isSaved" ngbTooltip='Download Report File'>
+      [disabled]="!isSaved" ngbTooltip='Preview report file'>
       <span *ngIf="isPreviewing" class="spinner-border spinner-border-sm me-1"></span>
           {{isPreview ? 'Hide Preview' :'Show Preview'}}  
       <i class="m-2 feather icon-eye"></i>
-    </button> -->
+    </button>
+    
+    <a></a><button class="btn btn-primary m-2"  type="button" (click)="openInWord()"
+    *ngIf="isSaved && isPreview" ngbTooltip='Preview in Microsoft word'>
+        {{'Open in Word'}}  
+    <i class="m-2 feather icon-link"></i>
+  </button>
     
       <button class="btn btn-danger m-2"  type="button" (click)="downloadReport()"
         [disabled]="!isSaved" ngbTooltip='Download Report File'>

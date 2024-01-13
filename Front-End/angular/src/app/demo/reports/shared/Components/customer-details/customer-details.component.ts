@@ -59,6 +59,8 @@ export class CustomerDetailsComponent implements OnInit {
   traineeList: Trainee[] = [];
 
   documentUrl: string = '';
+  officeDocumentURL:string ='https://view.officeapps.live.com/op/embed.aspx?src=';
+  docHtml:string='';
   documentFile?: File;
 
   customerDetailModel: CustomerDetail = new CustomerDetail();
@@ -145,6 +147,10 @@ export class CustomerDetailsComponent implements OnInit {
    }
   }
 
+  async openInWord(){
+    window.open(this.officeDocumentURL, '_blank');
+  }
+
   //#region  API Server calls
   async getInstrumentsFromServer() {
     await this.instrumentService.getAllPagedResponse().subscribe({
@@ -191,6 +197,7 @@ export class CustomerDetailsComponent implements OnInit {
           if (response.succeeded) {
             console.log(response);
             this.documentUrl = response.data.url;
+            this.officeDocumentURL += response.data.url;
             this.documentFile = this.fileService.base64ToFile(
               response.data.file,
               `${this.getFormName(this.formType)}.docx`,
