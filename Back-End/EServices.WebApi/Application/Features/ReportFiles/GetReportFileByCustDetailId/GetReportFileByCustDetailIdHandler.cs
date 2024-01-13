@@ -107,6 +107,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
             _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
             _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
+            _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
 
             for (int i = 1; i <= rooms.Count; i++)
             {
@@ -130,6 +131,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
             _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
             _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
+            _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
 
             foreach (var room in rooms)
             {
@@ -169,6 +171,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
             _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
             _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
+            _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
 
             foreach (var room in rooms)
             {
@@ -189,6 +192,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
             _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
             _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
+            _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
 
             foreach (var room in rooms)
             {
