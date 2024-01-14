@@ -1,0 +1,17 @@
+<!-- BreadCrumb -->
+<nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>'">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a (click)="navigateToUrl('Home')" class="text-c-blue"><i class="feather icon-home "></i></a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Reports</li>
+    <li class="breadcrumb-item active" aria-current="page">Temp Mapping</li>
+  </ol>
+</nav>
+
+<!-- Toast Messages -->
+<!-- <p-messages  position="top-center" [value]="msgs"></p-messages> -->
+<p-toast position="bottom-right" key="tc"></p-toast>
+
+<app-customer-details [formType]="5" [customerDetailId]="customerDetailId" (customerSave)="onCustomerSave($event)"  (customerError)="onCustomerError($event)" (customerInfo)="onCustomerInfo($event)"></app-customer-details>
+

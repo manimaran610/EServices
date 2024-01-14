@@ -23,11 +23,11 @@
           {{isPreview ? 'Hide Preview' :'Show Preview'}}  
       <i class="m-2 feather icon-eye"></i>
     </button>
-    
-    <a></a><button class="btn btn-primary m-2"  type="button" (click)="openInWord()"
-    *ngIf="isSaved && isPreview" ngbTooltip='Preview in Microsoft word'>
-        {{'Open in Word'}}  
-    <i class="m-2 feather icon-link"></i>
+       
+    <button class="btn btn-primary m-2"  type="button" (click)="openInWord()"
+    *ngIf="isSaved && isPreview"   [disabled]="isPreviewing || isRefreshing" ngbTooltip='Preview in Microsoft word'>
+    Open in Word
+    <i class="m-2 feather icon-external-link"></i>
   </button>
     
       <button class="btn btn-danger m-2"  type="button" (click)="downloadReport()"
