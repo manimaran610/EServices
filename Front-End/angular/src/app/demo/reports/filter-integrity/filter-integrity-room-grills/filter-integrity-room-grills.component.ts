@@ -176,7 +176,7 @@ export class FilterIntegrityRoomGrillsComponent implements OnInit {
   }
 
   onGrillSave(event: any) {
-    // event = this.performGrillCalculations(event);
+     event = this.performGrillCalculations(event);
  console.log(event);
     if (this.listOfGrills.find((e) => e.id === event.id) === undefined) {
       this.listOfGrills.push(event);
@@ -199,7 +199,11 @@ export class FilterIntegrityRoomGrillsComponent implements OnInit {
   }
 
  
-
+  performGrillCalculations(event:any){
+    event.result = parseFloat(event.effective) < 0.01 ?'Complies' :'Not Complies' 
+    event.resultClass = parseFloat(event.effective) < 0.01 ?'text-c-green' : 'text-c-red';
+    return event;
+  }
   //#region Forms controls
   onClear() {
     this.acphRoomsFormGroup.reset();

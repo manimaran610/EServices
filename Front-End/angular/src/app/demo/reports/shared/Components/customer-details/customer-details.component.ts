@@ -59,6 +59,8 @@ export class CustomerDetailsComponent implements OnInit {
   traineeList: Trainee[] = [];
 
   documentUrl: string = '';
+  officeDocumentURL:string ='https://view.officeapps.live.com/op/embed.aspx?src=';
+  docHtml:string='';
   documentFile?: File;
 
   customerDetailModel: CustomerDetail = new CustomerDetail();
@@ -145,6 +147,10 @@ export class CustomerDetailsComponent implements OnInit {
    }
   }
 
+  async openInWord(){
+    window.open(this.officeDocumentURL + this.documentUrl);
+  }
+
   //#region  API Server calls
   async getInstrumentsFromServer() {
     await this.instrumentService.getAllPagedResponse().subscribe({
@@ -189,14 +195,14 @@ export class CustomerDetailsComponent implements OnInit {
       this.customerDetailService.getReport(this.customerDetailId.toString()).subscribe({
         next: (response: BaseResponse<any>) => {
           if (response.succeeded) {
-            console.log(response);
-            this.documentUrl = response.data.url;
-            this.documentFile = this.fileService.base64ToFile(
-              response.data.file,
-              `${this.getFormName(this.formType)}.docx`,
-              'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-            );
-            if(this.isDownloading) this.fileService.downloadFile(this.documentFile!);
+            this.documentUrl = response.data.url;        
+            if(this.isDownloading) {
+              this.documentFile = this.fileService.base64ToFile(
+                response.data.file,
+                `${this.getFormName(this.formType)}.docx`,
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+              );
+              this.fileService.downloadFile(this.documentFile!);}
             this.changeRef.detectChanges();
           }
         },
@@ -207,7 +213,9 @@ export class CustomerDetailsComponent implements OnInit {
             : e.error.Message !== undefined
             ? this.customerError.emit(e.error.Message)
             : this.customerError.emit(e.error.title);
-          this.isPreviewing = false;
+            this.isPreviewing = false;
+            this.isDownloading = false;
+            this.isRefreshing=false;
         },
         complete: () => {
           this.isPreviewing = false;

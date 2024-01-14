@@ -259,7 +259,7 @@ export default class HomePageComponent implements OnInit {
             background: 'bg-c-purple',
             icon: 'icon icon-thermometer',
             accentColor: '#0D6EFD',
-            navigateTo: ''
+            navigateTo: '/Reports/TempMapping'
           },
 
         ]

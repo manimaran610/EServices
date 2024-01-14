@@ -33,7 +33,7 @@ import { ParticleRoomLocationsSingleCycleComponent } from '../particle-room-loca
 export class ParticleCountSingleCycleComponent implements OnDestroy,OnInit {
   ref: DynamicDialogRef | undefined;
   instance?: ParticleRoomLocationsSingleCycleComponent;
-  customerDetailId: number = 0;
+  customerDetailId: number = 1414;
   roomId?: number;
   listOfRooms: Room[] = [];
 

@@ -13,6 +13,7 @@ import { ParticleCountThreeCycleComponent } from './demo/reports/particle-count/
 import { ParticleCountSingleCycleComponent } from './demo/reports/particle-count/single-cycle/particle-count-single-cycle/particle-count-single-cycle.component';
 import { AddTraineeComponent } from './demo/trainee-details/add-trainee/add-trainee.component';
 import { FilterIntegrityComponent } from './demo/reports/filter-integrity/filter-integrity/filter-integrity.component';
+import { TempMappingComponent } from './demo/reports/temp-mapping/temp-mapping.component';
 
 
 const routes: Routes = [
@@ -103,6 +104,14 @@ const routes: Routes = [
           {
             path: 'FilterIntegrity',
             component: FilterIntegrityComponent
+          },
+          {
+            path: 'TempMapping',
+            component: TempMappingComponent
+          },
+          {
+            path: 'TempMapping/:id',
+            component: TempMappingComponent
           },
         ]
       } 
