@@ -103,6 +103,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
         #region  Key value populators
         private void PopulateACPHKeyValuePairs(CustomerDetail customerDetail, IReadOnlyList<Room> rooms)
         {
+             int count = 1;
             MapPropertiesToKeyValuePair(customerDetail);
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
             _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
@@ -111,6 +112,9 @@ namespace Application.Features.Rooms.Commands.CreateRoom
 
             for (int i = 1; i <= rooms.Count; i++)
             {
+                 _keyValuePairs.Add(new keyValue("sno", count.ToString()));
+                 count++;
+
                 string keyPrefix = $"R-";
                 MapPropertiesToKeyValuePair(rooms[i - 1], keyPrefix);
                 rooms[i - 1].RoomGrills.ForEach(grill =>
@@ -127,15 +131,18 @@ namespace Application.Features.Rooms.Commands.CreateRoom
 
         private void PopulatePC3KeyValuePairs(CustomerDetail customerDetail, IReadOnlyList<Room> rooms)
         {
+            int count = 1;
             MapPropertiesToKeyValuePair(customerDetail);
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
             _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
             _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
             _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
-
             foreach (var room in rooms)
             {
                 MapPropertiesToKeyValuePair(room);
+                 _keyValuePairs.Add(new keyValue("sno", count.ToString()));
+                 count++;
+
                 room.RoomLocations.ForEach(location =>
                 {
                     var pointMicrons = location.PointFiveMicronCycles.Split(',');
@@ -167,15 +174,18 @@ namespace Application.Features.Rooms.Commands.CreateRoom
 
         private void PopulatePC1KeyValuePairs(CustomerDetail customerDetail, IReadOnlyList<Room> rooms)
         {
+            int count = 1;
             MapPropertiesToKeyValuePair(customerDetail);
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
             _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
             _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
             _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
-
             foreach (var room in rooms)
             {
                 MapPropertiesToKeyValuePair(room);
+                 _keyValuePairs.Add(new keyValue("sno", count.ToString()));
+                 count++;
+
                 room.RoomLocations.ForEach(location =>
                 {
                     _keyValuePairs.Add(new($"pt-Average", location.AveragePointFiveMicron.ToString()));
@@ -188,15 +198,17 @@ namespace Application.Features.Rooms.Commands.CreateRoom
 
         private void PopulateFIKeyValuePairs(CustomerDetail customerDetail, IReadOnlyList<Room> rooms)
         {
+            int count = 1;
             MapPropertiesToKeyValuePair(customerDetail);
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
             _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
             _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
             _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
-
             foreach (var room in rooms)
             {
                 MapPropertiesToKeyValuePair(room);
+                 _keyValuePairs.Add(new keyValue("sno", count.ToString()));
+                 count++;
                 room.RoomGrills.ForEach(grill =>
                 {
                     _keyValuePairs.Add(new keyValue("Upcon", grill.UpStreamConcat));
@@ -253,7 +265,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             int orderNo = 1;
             foreach (var room in rooms)
             {
-                result.Add(new(orderNo, 3, 4, room.RoomGrills.Count()));
+                result.Add(new(orderNo, 2, 3, room.RoomGrills.Count()));
                 orderNo++;
             }
             return result.OrderByDescending(e => e.OrderNo).ToList();
