@@ -143,9 +143,14 @@ namespace Infrastructure.Shared.Services
                     //Map QR Image into word document
                     if (keyValue.Key.Contains("ImgQR"))
                     {
+                        // byte[] imageBytes = await GenerateQRImage(
+                        //     $"http://chart.apis.google.com/chart?cht=qr&chs=600x500&chl={keyValue.Value}"
+                        // );
+
                         byte[] imageBytes = await GenerateQRImage(
-                            $"http://chart.apis.google.com/chart?cht=qr&chs=600x500&chl={keyValue.Value}"
+                            $"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={keyValue.Value}"
                         );
+                        
                         MapImageIntoDocument(doc.MainDocumentPart, imageBytes, "<QRCode>");
                         addedList.Add(keyValue.Key);
                     }
@@ -295,10 +300,17 @@ namespace Infrastructure.Shared.Services
 
         private async Task<byte[]> GenerateQRImage(string url)
         {
-            using (WebClient client = new WebClient())
+            try
             {
+              using (WebClient client = new WebClient())
                 return await Task.FromResult(client.DownloadData(url));
             }
+            catch (System.Exception ex)
+            {
+                Console.WriteLine("Error occurred while downloading QR Code");
+                return new byte[0];
+            }
+           
         }
 
         private ImagePart FeedImagePart(MainDocumentPart mainPart, byte[] imageBytes)
