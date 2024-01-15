@@ -211,7 +211,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                  count++;
                 room.RoomGrills.ForEach(grill =>
                 {
-                    _keyValuePairs.Add(new keyValue("Upcon", grill.UpStreamConcat));
+                    _keyValuePairs.Add(new keyValue("Upcon", grill.UpStreamConcat.ToString()));
                     _keyValuePairs.Add(new keyValue("Pen", grill.Penetration.ToString()));
 
                     MapPropertiesToKeyValuePair(grill);
