@@ -14,9 +14,9 @@ namespace Domain.Entities
         public int AirFlowCFM { get; set; }
         public int RoomId { get; set; }
         public int Size { get; set; }
-        public int Penetration { get; set; }
-        public int Effective { get; set; }
-        public string UpStreamConcat { get; set; }
+        public double Penetration { get; set; }
+        public double Effective { get; set; }
+        public double UpStreamConcat { get; set; }
         public string Result { get; set; }
 
 

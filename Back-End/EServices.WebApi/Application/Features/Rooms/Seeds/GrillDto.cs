@@ -9,9 +9,9 @@ namespace Application.Features.Rooms.Seeds
         public string AirVelocityReadingInFPMO { get; set; }
         public int AvgVelocityFPM { get; set; }
         public int AirFlowCFM { get; set; }
-        public int Penetration { get; set; }
-        public int Effective { get; set; }
-        public string UpStreamConcat { get; set; }
+        public double Penetration { get; set; }
+        public double Effective { get; set; }
+        public double UpStreamConcat { get; set; }
         public string Result { get; set; }
     }
 }
