@@ -91,7 +91,7 @@
 
       <div class="col-md-6">
         <div class="form-group">
-          <label for="exampleInputPassword1">Equipment Id:</label>
+          <label for="exampleInputPassword1">Equipment/Room ID:</label>
           <input type="text" class="form-control" id="exampleInputPassword1" formControlName="equipmentId"
             placeholder="Enter Equipment Id"
             [ngClass]="{'is-invalid': customerDetailsFormGroup.controls['equipmentId'].errors  && (customerDetailsFormGroup.controls['equipmentId'].touched || customerDetailsFormGroup.controls['equipmentId'].dirty), 'is-valid':customerDetailsFormGroup.controls['equipmentId'].valid}" />
@@ -112,14 +112,20 @@
         </div>
       </div>
 
+   
+
       <div class="col-md-6">
         <div class="form-group">
           <label for="exampleInputPassword1">Test Condition:</label>
-          <select class="form-select" id="inputGroupSelect04" formControlName="classType">
-           <option value="0" selected disabled>Choose type</option>
+          <!-- <select class="form-select" id="inputGroupSelect04" formControlName="classType">
             <option *ngFor="let item of classficationList; let i = index" [value]="item.name">
               {{item.name}}</option>
-          </select>
+          </select> -->
+          <input type="text" class="form-control" name="city" formControlName="classType" list="classficationList">
+          <datalist id="classficationList">
+            <option *ngFor="let item of classficationList">
+              {{item.name}}</option>
+          </datalist>
         </div>
       </div>
     

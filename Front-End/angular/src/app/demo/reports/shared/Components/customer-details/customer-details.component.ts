@@ -87,7 +87,7 @@ export class CustomerDetailsComponent implements OnInit {
       client: new FormControl(),
       dateOfTest: new FormControl(),
       dateOfTestDue: new FormControl(),
-      classType: new FormControl('0'),
+      classType: new FormControl(),
       testReference: new FormControl(),
       plant: new FormControl(),
       equipmentId: new FormControl(),
