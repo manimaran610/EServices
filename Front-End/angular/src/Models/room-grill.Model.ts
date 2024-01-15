@@ -6,8 +6,8 @@ export class RoomGrill {
   avgVelocityFPM: number = 0;
   airFlowCFM: number = 0;
   size: number = 0;
-  upStreamConcat: string = '';
-  penetration: number = 0;
+  upStreamConcat: number = 0;
+  penetration: number =0 ;
   effective: number = 0;
   result: string = '';
 }
