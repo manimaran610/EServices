@@ -9,6 +9,7 @@ services:
           - "9000:80"
         depends_on:
           - db
+        restart: always
 
     db:
         image: "mcr.microsoft.com/mssql/server:2022-latest"
@@ -19,6 +20,7 @@ services:
             ACCEPT_EULA: "Y"
         volumes:
           - sql_server_data:/var/opt/mssql
+        restart: always
 
     ui:
         build:
@@ -28,6 +30,7 @@ services:
           - "80:80"
         links:
          - api
+        restart: always
 
 volumes:
   sql_server_data:
