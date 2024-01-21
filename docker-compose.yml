@@ -28,3 +28,7 @@ services:
           - "80:80"
         links:
          - api
+
+volumes:
+  sql_server_data:
+    driver: local
