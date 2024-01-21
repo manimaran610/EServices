@@ -6,7 +6,7 @@ services:
           context: Back-End/EServices.WebApi/ 
           dockerfile: Dockerfile
         ports:
-          - "80:80"
+          - "9000:80"
         depends_on:
           - db
 
