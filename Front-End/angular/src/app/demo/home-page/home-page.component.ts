@@ -259,7 +259,7 @@ export default class HomePageComponent implements OnInit {
             background: 'bg-c-red',
             icon: 'icon icon-codepen',
             accentColor: 'blue',
-            navigateTo: '/NotFound'
+            navigateTo: '/Reports/ParticleCount/RecvCycle'
           },
 
         ]

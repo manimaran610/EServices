@@ -17,6 +17,7 @@ import { GridComponent } from '../../../../../../theme/shared/components/grid/gr
 import { BaseResponse } from '../../../../../../../Models/response-models/base-response';
 import { BaseHttpClientServiceService } from '../../../../../../../Services/Shared/base-http-client-service.service';
 import { BusinessConstants } from '../../../../shared/Constants/business-constants';
+import { generateKey } from 'crypto';
 
 @Component({
   selector: 'app-particle-room-locations-recv-cycle',
@@ -41,8 +42,8 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
 
   gridColumnOptions: GridColumnOptions[] = [
 
-    { field: 'locationNo', header: 'Location No.', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
-    { field: 'time', header: 'Time',isEditable: true, hasTableValue: true, isStandalone: false },
+    { field: 'condition', header: 'Condition', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
+    { field: 'time', header: 'Time',isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false },
     { field: 'ptAverage', header: '0.5 Micron and above',isEditable: true, hasTableValue: true, isStandalone: false },
     { field: 'oneAverage', header: '1 Micron and above',isEditable: true,  hasTableValue: true, isStandalone: false },
     { field: 'fiveAverage', header: '5 Micron and above',isEditable: true,  hasTableValue: true, isStandalone: false },
@@ -77,6 +78,7 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
 
   //#region Forms controls
   onSubmit() {
+   
     if (this.roomsFormGroup.valid && this.listOflocations.length > 0) {
       if (this.hasMinimumCleanRoomSampling()) {
         this.mapFormToRoomObject();
@@ -177,15 +179,30 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
     const isPassed = rowData.ptAverage >= classType.pointFiveMicron && rowData.oneAverage >= classType.oneMicron && rowData.fiveAverage >= classType.fiveMicron;
     rowData.result = isPassed ? 'Complies' : 'Non Complies';
     rowData.resultClass = isPassed ? 'text-c-green' : 'text-c-red';
+    rowData.locationNo = rowData.locationNo !== undefined || rowData.locationNo !== '' ? this.generateRandomId(): rowData.locationNo;
 
   }
 
 performTimeDifferenceCalculations(){
-  const sorted =this.listOflocations.sort((obj1, obj2) => obj1.time! - obj2.time!)
-  const lastFail = this.listOflocations.sort((obj1, obj2) => obj1.time! - obj2.time!).find(e=>e.result='Non Complies');
-  // console.log(this.listOflocations[(this.listOflocations[Symbol.]])
-  console.log(sorted)
+  let result :number = 0
+  const nonCompliesList  = this.listOflocations.filter(e=>e.result=== 'Non Complies');
+  const lastFailedIndex = this.listOflocations.findIndex(e=>e.id === nonCompliesList[nonCompliesList.length -1].id)
+  const finalCompliesEntries = this.listOflocations.slice(lastFailedIndex + 1)
+  const belowInitialCompliesValues = finalCompliesEntries.filter(e=> parseInt(e.ptAverage) < parseInt(this.listOflocations[0].ptAverage))
+  if(belowInitialCompliesValues.length > 0){
+    const lastCompliesIndex = this.listOflocations.findIndex(e=>e.id === belowInitialCompliesValues[0].id)
+    const finalResult = this.listOflocations.slice(lastFailedIndex + 1,lastCompliesIndex + 1);
+    result =finalResult.length;
+    console.log(finalResult)
+  }else {
+    const lastCompliesIndex = this.listOflocations.findIndex(e=>e.id === finalCompliesEntries[finalCompliesEntries.length -1].id)
+    const finalResult = this.listOflocations.slice(lastFailedIndex + 1,lastCompliesIndex + 1);
+    result =finalResult.length;
+    console.log(finalResult)
+  }
+  this.roomModel!.limit = result;
 }
+ 
   //#endregion
 
   //#region  API Server
@@ -265,10 +282,13 @@ performTimeDifferenceCalculations(){
   MapToRoomLocation(location: any): RoomLocation {
     const result = new RoomLocation();
     result.referenceNumber = location.locationNo;
+    result.condition = location.condition;
+    result.time = location.time;
     result.averagePointFiveMicron = location.ptAverage
     result.averageFiveMicron = location.fiveAverage
     result.averageOneMicron = location.oneAverage
     result.result = location.result;
+    result.condition=location.condition;
     return result;
 
   }
@@ -277,19 +297,21 @@ performTimeDifferenceCalculations(){
     this.roomsFormGroup.controls['areaM2'].patchValue(this.roomModel!.areaM2);
     this.roomsFormGroup.controls['noOfLocations'].patchValue(this.roomModel!.noOfLocations);
     this.roomsFormGroup.controls['classType'].patchValue(this.roomModel!.classType);
-    this.roomModel!.roomLocations.forEach(e => this.reverseMapRoomLcationToGrid(e));
+    this.roomModel!.roomLocations.forEach(e => this.reverseMapRoomLocationToGrid(e));
     this.reEvaluateCalcResults();
 
     console.log(this.roomsFormGroup.value)
     console.log(this.listOflocations)
   }
 
-  reverseMapRoomLcationToGrid(location: RoomLocation) {
+  reverseMapRoomLocationToGrid(location: RoomLocation) {
     const result: any = {
-      id: 0, locationNo: 0, ptOne: 0, ptTwo: 0, ptThree: 0, ptAverage: 0, one: 0, two: 0, three: 0, Average: 0, result: ''
+      id: 0, locationNo: 0, condition:'',time:'', ptOne: 0, ptTwo: 0, ptThree: 0, ptAverage: 0, one: 0, two: 0, three: 0, Average: 0, result: ''
     };
     result.id = location.id;
     result.locationNo = location.referenceNumber;
+    result.condition=location.condition;
+    result.time=location.time;
     result.ptAverage = location.averagePointFiveMicron;
     result.oneAverage = location.averageOneMicron;
     result.fiveAverage = location.averageFiveMicron;
@@ -300,4 +322,16 @@ performTimeDifferenceCalculations(){
   }
 
   //#endregion
+
+  private generateRandomId = (): string => {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < 20; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+
+};
 }
+
