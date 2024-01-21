@@ -201,7 +201,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             int count = 1;
             MapPropertiesToKeyValuePair(customerDetail);
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
-            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
+            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToShortDateString()));
             _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
             _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
             foreach (var room in rooms)
@@ -326,7 +326,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             {
                 obj.GetType().GetProperties().ToList().ForEach(prop =>
                 {
-                    this._keyValuePairs.Add(new(keyPrefix + prop.Name, Convert.ToString(prop.GetValue(obj, default))));
+                    this._keyValuePairs.Add(new(keyPrefix + prop.Name, prop.PropertyType == DateTime.Now.GetType() ? ((DateTime)prop.GetValue(obj,default)).ToShortDateString():Convert.ToString(prop.GetValue(obj, default))));
                 });
             }
         }

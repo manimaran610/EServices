@@ -6,7 +6,8 @@ namespace Domain.Enums
         FilterIntegrity,
         ParticleCountSingleCycle,
         ParticleCountThreeCycle,
-        TempMapping
+        TempMapping,
+        ParticleCountRecvCycle
 
     }
 }

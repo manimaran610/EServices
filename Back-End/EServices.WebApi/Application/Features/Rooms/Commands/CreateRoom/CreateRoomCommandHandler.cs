@@ -58,7 +58,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 message = $"Room added along with Grills";
             }
             else if ((customerDetail.FormType == FormType.ParticleCountThreeCycle) || 
-                        (customerDetail.FormType == FormType.ParticleCountSingleCycle))
+                        (customerDetail.FormType == FormType.ParticleCountSingleCycle) || (customerDetail.FormType == FormType.ParticleCountRecvCycle))
             {
                 var domainEvent = new RoomLocationsUpsertRangeEvent()
                 {

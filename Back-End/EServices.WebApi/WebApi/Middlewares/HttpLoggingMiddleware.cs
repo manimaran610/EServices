@@ -78,7 +78,7 @@ namespace WebApi.Middlewares
             LogContext.PushProperty("Response", response);
             LogContext.PushProperty("Elapsed", elapsed);
 
-            Serilog.Log.Information($"{context.Request.Method} - {context.Request.Path} - {context.Response.StatusCode}");
+            Serilog.Log.Information($"{context.Request.Method} - {context.Request.Path} - {context.Response.StatusCode} - in - {elapsed}ms");
         }
 
         double GetElapsedMilliseconds(long start, long stop)

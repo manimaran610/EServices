@@ -88,7 +88,7 @@ namespace Infrastructure.Persistence.Contexts
           .HasPrincipalKey(e => e.Id);
 
             builder.Entity<Log>()
-                .ToTable("Logs", t => t.ExcludeFromMigrations());
+                .ToTable("Log", t => t.ExcludeFromMigrations());
 
             builder.Entity<CustomerDetail>()
                 .HasOne(e => e.Trainee)
