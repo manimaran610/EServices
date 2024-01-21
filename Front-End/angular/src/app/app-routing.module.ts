@@ -14,6 +14,7 @@ import { ParticleCountSingleCycleComponent } from './demo/reports/particle-count
 import { AddTraineeComponent } from './demo/trainee-details/add-trainee/add-trainee.component';
 import { FilterIntegrityComponent } from './demo/reports/filter-integrity/filter-integrity/filter-integrity.component';
 import { TempMappingComponent } from './demo/reports/temp-mapping/temp-mapping.component';
+import { ParticleCountRecvCycleComponent } from './demo/reports/particle-count/recv-cycle/particle-count-recv-cycle/particle-count-recv-cycle.component';
 
 
 const routes: Routes = [
@@ -23,6 +24,11 @@ const routes: Routes = [
     children: [
       {
         path: '',
+        redirectTo: 'Home',
+        pathMatch: 'full'
+      },
+      {
+        path: 'Home',
         redirectTo: 'Home',
         pathMatch: 'full'
       },
@@ -97,6 +103,10 @@ const routes: Routes = [
               {
                 path: 'SingleCycle',
                 component: ParticleCountSingleCycleComponent
+              },
+              {
+                path: 'RecvCycle',
+                component: ParticleCountRecvCycleComponent
               }
             ]
 

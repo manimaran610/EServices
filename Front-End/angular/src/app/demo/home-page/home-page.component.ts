@@ -254,11 +254,12 @@ export default class HomePageComponent implements OnInit {
             navigateTo: '/Reports/ParticleCount/ThreeCycle'
           },
           {
-            title: 'Temp. Mapping',
-            background: 'bg-c-purple',
-            icon: 'icon icon-thermometer',
-            accentColor: '#0D6EFD',
-            navigateTo: '/Reports/TempMapping'
+            title: 'Particle count',
+            subTitle: '(Recv Cycle)',
+            background: 'bg-c-red',
+            icon: 'icon icon-codepen',
+            accentColor: 'blue',
+            navigateTo: '/NotFound'
           },
 
         ]
