@@ -35,6 +35,8 @@ namespace Application.Features.DomainEvents.RoomGrillsAddRangeEvent
                 if (actualRoomGrill?.Id > 0)
                 {
                     roomGrill.Id = actualRoomGrill.Id;
+                    roomGrill.CreatedBy = actualRoomGrill.CreatedBy;
+                    roomGrill.Created = actualRoomGrill.Created;
                 }
                 await _roomGrillRepositoryAsync.UpdateAsync(roomGrill);
             }
@@ -44,7 +46,7 @@ namespace Application.Features.DomainEvents.RoomGrillsAddRangeEvent
             {
                 if (!request.Grills.Any(e => e.ReferenceNumber == existingGrill.ReferenceNumber))
                 {
-                    await _roomGrillRepositoryAsync.SoftDeleteAsync(existingGrill);
+                    _roomGrillRepositoryAsync.SoftDeleteAsync(existingGrill);
                 }
             }
         }

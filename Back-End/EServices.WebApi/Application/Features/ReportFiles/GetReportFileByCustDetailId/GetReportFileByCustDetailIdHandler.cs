@@ -19,10 +19,11 @@ using Domain.Common;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using System.Net.Http;
 
 namespace Application.Features.Rooms.Commands.CreateRoom
 {
-    public class GetReportFileByCustDetailIdHandler : IRequestHandler<GetReportFileByCustDetailId, Response<string>>
+    public class GetReportFileByCustDetailIdHandler : IRequestHandler<GetReportFileByCustDetailId, Response<object>>
     {
         private readonly IRoomRepositoryAsync _roomRepository;
         private readonly ICustomerDetailRepositoryAsync _customerDetailRepositoryAsync;
@@ -45,10 +46,12 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<Response<string>> Handle(GetReportFileByCustDetailId request, CancellationToken cancellationToken)
+        public async Task<Response<object>> Handle(GetReportFileByCustDetailId request, CancellationToken cancellationToken)
         {
             this._keyValuePairs = new();
+            string outFileName = Guid.NewGuid().ToString() + ".docx";
             string processedFile = string.Empty;
+            string uploadedFileUrl = string.Empty;
 
             var customerDetail = await _customerDetailRepositoryAsync.GetByIdAsync(request.CustomerDetailId, GetCustomerDetailSelectExpression());
             if (customerDetail == null)
@@ -57,23 +60,62 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             var rooms = await _roomRepository.GetPagedReponseAsync(0, int.MaxValue, $"CustomerDetailId:eq:{request.CustomerDetailId}", "Name:asc", GetRoomSelectExpression());
             if (customerDetail.FormType == FormType.ACPH)
             {
+                var templateRows = PopulateACPHTemplateRowConfigs(rooms);
                 PopulateACPHKeyValuePairs(customerDetail, rooms);
-                await _fileProcessingService.MailMergeWorkDocument(TemplatesBasePath + "ACPH.docx", DestinationBasePath + "ACPH-out.docx", _keyValuePairs);
-                processedFile = ConvertFileToBase64(DestinationBasePath + "ACPH-out.docx");
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("ACPH.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows);
+                processedFile = ConvertFileToBase64(GetFullPath(outFileName));
+                uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
+
+            }
+            else if (customerDetail.FormType == FormType.ParticleCountThreeCycle)
+            {
+
+                var templateRows = PopulatePC3TemplateRowConfigs(rooms);
+                PopulatePC3KeyValuePairs(customerDetail, rooms);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_3_Location.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows);
+                processedFile = ConvertFileToBase64(GetFullPath(outFileName));
+                uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
+
+            }
+            else if (customerDetail.FormType == FormType.ParticleCountSingleCycle)
+            {
+
+                var templateRows = PopulatePC1TemplateRowConfigs(rooms);
+                PopulatePC1KeyValuePairs(customerDetail, rooms);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_1_Location.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows);
+                processedFile = ConvertFileToBase64(GetFullPath(outFileName));
+                uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
+            }
+            else if (customerDetail.FormType == FormType.FilterIntegrity)
+            {
+
+                var templateRows = PopulateFITemplateRowConfigs(rooms);
+                PopulateFIKeyValuePairs(customerDetail, rooms);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("FI.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows);
+                processedFile = ConvertFileToBase64(GetFullPath(outFileName));
+                uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
             }
 
-
-            return new Response<string>(processedFile, "File Processed successfully");
+            return new Response<object>(new { File = processedFile, URL = uploadedFileUrl }, "File Processed successfully");
         }
 
+
+        #region  Key value populators
         private void PopulateACPHKeyValuePairs(CustomerDetail customerDetail, IReadOnlyList<Room> rooms)
         {
+             int count = 1;
             MapPropertiesToKeyValuePair(customerDetail);
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
+            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
+            _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
+            _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
 
             for (int i = 1; i <= rooms.Count; i++)
             {
-                string keyPrefix = $"R{i}-";
+                 _keyValuePairs.Add(new keyValue("sno", count.ToString()));
+                 count++;
+
+                string keyPrefix = $"R-";
                 MapPropertiesToKeyValuePair(rooms[i - 1], keyPrefix);
                 rooms[i - 1].RoomGrills.ForEach(grill =>
                 {
@@ -87,8 +129,151 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             }
         }
 
+        private void PopulatePC3KeyValuePairs(CustomerDetail customerDetail, IReadOnlyList<Room> rooms)
+        {
+            int count = 1;
+            MapPropertiesToKeyValuePair(customerDetail);
+            MapPropertiesToKeyValuePair(customerDetail.Instrument);
+            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
+            _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
+            _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
+            foreach (var room in rooms)
+            {
+                MapPropertiesToKeyValuePair(room);
+                 _keyValuePairs.Add(new keyValue("sno", count.ToString()));
+                 count++;
+
+                room.RoomLocations.ForEach(location =>
+                {
+                    var pointMicrons = location.PointFiveMicronCycles.Split(',');
+                    for (int j = 1; j <= pointMicrons.Length; j++)
+                    {
+                        this._keyValuePairs.Add(new($"pt-{j}", pointMicrons[j - 1]));
+                    }
+                    _keyValuePairs.Add(new($"pt-Average", location.AveragePointFiveMicron.ToString()));
+
+                    var oneMicrons = location.OneMicronCycles.Split(',');
+                    for (int j = 1; j <= oneMicrons.Length; j++)
+                    {
+                        this._keyValuePairs.Add(new($"1-{j}", pointMicrons[j - 1]));
+                    }
+                    _keyValuePairs.Add(new($"1-Average", location.AverageOneMicron.ToString()));
 
 
+                    var fiveMicrons = location.FiveMicronCycles.Split(',');
+                    for (int j = 1; j <= fiveMicrons.Length; j++)
+                    {
+                        this._keyValuePairs.Add(new($"5-{j}", fiveMicrons[j - 1]));
+                    }
+                    _keyValuePairs.Add(new($"5-Average", location.AverageFiveMicron.ToString()));
+
+                    MapPropertiesToKeyValuePair(location);
+                });
+            }
+        }
+
+        private void PopulatePC1KeyValuePairs(CustomerDetail customerDetail, IReadOnlyList<Room> rooms)
+        {
+            int count = 1;
+            MapPropertiesToKeyValuePair(customerDetail);
+            MapPropertiesToKeyValuePair(customerDetail.Instrument);
+            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString()));
+            _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
+            _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
+            foreach (var room in rooms)
+            {
+                MapPropertiesToKeyValuePair(room);
+                 _keyValuePairs.Add(new keyValue("sno", count.ToString()));
+                 count++;
+
+                room.RoomLocations.ForEach(location =>
+                {
+                    _keyValuePairs.Add(new($"pt-Average", location.AveragePointFiveMicron.ToString()));
+                    _keyValuePairs.Add(new($"1-Average", location.AverageOneMicron.ToString()));
+                    _keyValuePairs.Add(new($"5-Average", location.AverageFiveMicron.ToString()));
+                    MapPropertiesToKeyValuePair(location);
+                });
+            }
+        }
+
+        private void PopulateFIKeyValuePairs(CustomerDetail customerDetail, IReadOnlyList<Room> rooms)
+        {
+            int count = 1;
+            MapPropertiesToKeyValuePair(customerDetail);
+            MapPropertiesToKeyValuePair(customerDetail.Instrument);
+            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToShortDateString()));
+            _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
+            _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
+            foreach (var room in rooms)
+            {
+                MapPropertiesToKeyValuePair(room);
+                 _keyValuePairs.Add(new keyValue("sno", count.ToString()));
+                 count++;
+                room.RoomGrills.ForEach(grill =>
+                {
+                    _keyValuePairs.Add(new keyValue("Upcon", grill.UpStreamConcat.ToString()));
+                    _keyValuePairs.Add(new keyValue("Pen", grill.Penetration.ToString()));
+
+                    MapPropertiesToKeyValuePair(grill);
+                });
+
+            }
+        }
+        #endregion
+
+        #region  TemplateConfigs
+        private List<TemplateRowConfig> PopulateACPHTemplateRowConfigs(IReadOnlyList<Room> rooms)
+        {
+            List<TemplateRowConfig> result = new();
+            int orderNo = 1;
+            foreach (var room in rooms)
+            {
+                result.Add(new(orderNo, 3, 4, room.RoomGrills.Count()));
+                orderNo++;
+            }
+
+            return result.OrderByDescending(e => e.OrderNo).ToList();
+
+
+        }
+        private List<TemplateRowConfig> PopulatePC3TemplateRowConfigs(IReadOnlyList<Room> rooms)
+        {
+            List<TemplateRowConfig> result = new();
+            int orderNo = 1;
+            foreach (var room in rooms)
+            {
+                result.Add(new(orderNo, 4, 5, room.RoomLocations.Count()));
+                orderNo++;
+            }
+            return result.OrderByDescending(e => e.OrderNo).ToList();
+        }
+
+        private List<TemplateRowConfig> PopulatePC1TemplateRowConfigs(IReadOnlyList<Room> rooms)
+        {
+            List<TemplateRowConfig> result = new();
+            int orderNo = 1;
+            foreach (var room in rooms)
+            {
+                result.Add(new(orderNo, 3, 4, room.RoomLocations.Count()));
+                orderNo++;
+            }
+            return result.OrderByDescending(e => e.OrderNo).ToList();
+        }
+        private List<TemplateRowConfig> PopulateFITemplateRowConfigs(IReadOnlyList<Room> rooms)
+        {
+            List<TemplateRowConfig> result = new();
+            int orderNo = 1;
+            foreach (var room in rooms)
+            {
+                result.Add(new(orderNo, 2, 3, room.RoomGrills.Count()));
+                orderNo++;
+            }
+            return result.OrderByDescending(e => e.OrderNo).ToList();
+        }
+
+        #endregion
+
+        #region  Select Expressions
         private Expression<Func<Room, Room>> GetRoomSelectExpression()
         {
             Expression<Func<Room, Room>> selectExpression = e => new()
@@ -100,8 +285,10 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 RoomVolume = e.RoomVolume,
                 CustomerDetailId = e.CustomerDetailId,
                 Name = e.Name,
+                AreaM2 = e.AreaM2,
                 TotalAirFlowCFM = e.TotalAirFlowCFM,
-                RoomGrills = e.RoomGrills.Where(e => !e.IsDeleted).OrderBy(e => e.ReferenceNumber).ToList()
+                RoomGrills = e.RoomGrills.Where(e => !e.IsDeleted).OrderBy(e => e.ReferenceNumber).ToList(),
+                RoomLocations = e.RoomLocations.Where(e => !e.IsDeleted).OrderBy(e => e.ReferenceNumber).ToList()
 
             };
 
@@ -114,24 +301,32 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             {
                 Id = e.Id,
                 Client = e.Client,
+                CustomerNo = e.CustomerNo,
                 AreaOfTest = e.AreaOfTest,
                 DateOfTest = e.DateOfTest,
                 EquipmentId = e.EquipmentId,
                 FormType = e.FormType,
                 InstrumentId = e.InstrumentId,
                 Plant = e.Plant,
-                Instrument = e.Instrument
+                ClassType = e.ClassType,
+                TestReference = e.TestReference,
+                DateOfTestDue = e.DateOfTestDue,
+                Instrument = e.Instrument,
+                Trainee = new Trainee() { Name = e.Trainee.Name }
             };
             return expression;
         }
 
+        #endregion
+
+        #region  Helpers
         private void MapPropertiesToKeyValuePair<T>(T obj, string keyPrefix = "")
         {
             if (obj != null)
             {
                 obj.GetType().GetProperties().ToList().ForEach(prop =>
                 {
-                    this._keyValuePairs.Add(new(keyPrefix + prop.Name, Convert.ToString(prop.GetValue(obj, default))));
+                    this._keyValuePairs.Add(new(keyPrefix + prop.Name, prop.PropertyType == DateTime.Now.GetType() ? ((DateTime)prop.GetValue(obj,default)).ToShortDateString():Convert.ToString(prop.GetValue(obj, default))));
                 });
             }
         }
@@ -141,9 +336,31 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             var bytes = File.ReadAllBytes(path);
             return Convert.ToBase64String(bytes);
         }
-        private string TemplatesBasePath => _webHostEnvironment.ContentRootPath.Split("\\WebApi")[0] + "\\Application\\Features\\ReportFiles\\WordTemplates\\";
-        private string DestinationBasePath => _webHostEnvironment.ContentRootPath.Split("\\WebApi")[0] + "\\Application\\Features\\ReportFiles\\ProcessedFiles\\";
+
+        private string GetFullPath(string filename) => Path.Combine("WordTemplates", filename);
+        #endregion
 
 
+
+        private async Task<string> UploadFileForSharing(string filePath)
+        {
+            string result = string.Empty;
+            using (HttpClient client = new HttpClient())
+            using (MultipartFormDataContent form = new MultipartFormDataContent())
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Open))
+            {
+                form.Add(new StreamContent(fileStream), "file", Path.GetFileName(filePath));
+
+                using (HttpResponseMessage response = await client.PostAsync("https://tmpfiles.org/api/v1/upload", form))
+                {
+                    response.EnsureSuccessStatusCode();
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    result = responseBody.Split(":\"").Length > 0 ? responseBody.Split(":\"").Last().Replace("\"}}", "").Replace("org/", "org/dl/") : string.Empty;
+                }
+
+            }
+            File.Delete(filePath);
+            return result;
+        }
     }
 }

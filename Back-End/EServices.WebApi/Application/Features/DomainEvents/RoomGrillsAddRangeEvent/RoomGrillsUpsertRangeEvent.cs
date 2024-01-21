@@ -9,6 +9,6 @@ namespace Application.Features.DomainEvents.RoomGrillsAddRangeEvent
     public class RoomGrillsUpsertRangeEvent : INotification
     {
         public  int RoomId { get; set; }
-        public List<GrillDto> Grills {get;set;}
+        public List<GrillDTO> Grills {get;set;}
     }
 }

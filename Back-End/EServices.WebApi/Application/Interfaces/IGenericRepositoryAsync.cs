@@ -18,6 +18,8 @@ namespace Application.Interfaces
         Task SoftDeleteAsync(T entity);
 
         Task<int> TotalCountAsync();
+        Task<bool> IsExistsAsync(int id);
+
 
 
     }

@@ -11,9 +11,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MailKit" Version="2.8.0" />
+    <PackageReference Include="Mammoth" Version="1.4.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.DynamicLinq" Version="7.3.5" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Office.Interop.Word" Version="12.0.0" />
     <PackageReference Include="MimeKit" Version="2.9.1" />
+    <PackageReference Include="MSOffice.Interop" Version="16.0.55555" />
+    <PackageReference Include="OpenXmlPowerTools" Version="4.5.3.2" />
   </ItemGroup>
 </Project>

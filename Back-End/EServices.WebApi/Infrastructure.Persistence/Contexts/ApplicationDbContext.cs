@@ -23,6 +23,10 @@ namespace Infrastructure.Persistence.Contexts
         public DbSet<CustomerDetail> CustomerDetails { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<RoomGrill> RoomGrills { get; set; }
+        public DbSet<Log> Logs { get; set; }
+        public DbSet<Trainee> Trainees { get; set; }
+
+
 
 
 
@@ -54,6 +58,7 @@ namespace Infrastructure.Persistence.Contexts
             {
                 property.SetColumnType("decimal(18,6)");
             }
+
             base.OnModelCreating(builder);
 
             builder.Entity<CustomerDetail>()
@@ -74,6 +79,24 @@ namespace Infrastructure.Persistence.Contexts
            .WithMany(e => e.RoomGrills)
            .HasForeignKey(e => e.RoomId)
           .HasPrincipalKey(e => e.Id);
+
+
+            builder.Entity<RoomLocation>()
+           .HasOne(e => e.Room)
+           .WithMany(e => e.RoomLocations)
+           .HasForeignKey(e => e.RoomId)
+          .HasPrincipalKey(e => e.Id);
+
+            builder.Entity<Log>()
+                .ToTable("Log", t => t.ExcludeFromMigrations());
+
+            builder.Entity<CustomerDetail>()
+                .HasOne(e => e.Trainee)
+                .WithMany(e => e.CustomerDetails)
+                .HasForeignKey(e => e.TraineeId)
+                .HasPrincipalKey(e => e.Id);
+
+
 
 
 
