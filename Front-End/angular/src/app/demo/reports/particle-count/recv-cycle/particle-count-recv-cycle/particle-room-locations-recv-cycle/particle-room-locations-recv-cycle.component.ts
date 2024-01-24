@@ -176,7 +176,7 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
   evaluateFinalResult(rowData: any) {
     const className = this.roomsFormGroup.controls['classType'].value;
     const classType = this.classficationList.find(e => e.name == className);
-    const isPassed = rowData.ptAverage >= classType.pointFiveMicron && rowData.oneAverage >= classType.oneMicron && rowData.fiveAverage >= classType.fiveMicron;
+    const isPassed = rowData.ptAverage <= classType.pointFiveMicron && rowData.oneAverage <= classType.oneMicron && rowData.fiveAverage <= classType.fiveMicron;
     rowData.result = isPassed ? 'Complies' : 'Non Complies';
     rowData.resultClass = isPassed ? 'text-c-green' : 'text-c-red';
     rowData.locationNo = rowData.locationNo !== undefined || rowData.locationNo !== '' ? this.generateRandomId(): rowData.locationNo;
