@@ -62,7 +62,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             {
                 var templateRows = PopulateACPHTemplateRowConfigs(rooms);
                 PopulateACPHKeyValuePairs(customerDetail, rooms);
-                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("ACPH.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("ACPH.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows,1);
                 processedFile = ConvertFileToBase64(GetFullPath(outFileName));
                 uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
 
@@ -72,7 +72,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
 
                 var templateRows = PopulatePC3TemplateRowConfigs(rooms);
                 PopulatePC3KeyValuePairs(customerDetail, rooms);
-                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_3_Location.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_3_Location.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows,1);
                 processedFile = ConvertFileToBase64(GetFullPath(outFileName));
                 uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
 
@@ -82,7 +82,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
 
                 var templateRows = PopulatePC1TemplateRowConfigs(rooms);
                 PopulatePC1KeyValuePairs(customerDetail, rooms);
-                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_1_Location.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_1_Location.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows,1);
                 processedFile = ConvertFileToBase64(GetFullPath(outFileName));
                 uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
             }
@@ -91,7 +91,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
 
                 var templateRows = PopulateFITemplateRowConfigs(rooms);
                 PopulateFIKeyValuePairs(customerDetail, rooms);
-                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("FI.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("FI.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows,1);
                 processedFile = ConvertFileToBase64(GetFullPath(outFileName));
                 uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
             }
@@ -359,7 +359,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 }
 
             }
-            File.Delete(filePath);
+          File.Delete(filePath);
             return result;
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using Application.Interfaces;
 using DocumentFormat.OpenXml.Packaging;
@@ -65,7 +66,8 @@ namespace Infrastructure.Shared.Services
             string templatePath,
             string DestinatePath,
             List<keyValue> keyValuePairs,
-            List<TemplateRowConfig>? templateRows = null
+            List<TemplateRowConfig> templateRows = null,
+            int documentTableIndex = 0
         )
         {
             try
@@ -80,7 +82,7 @@ namespace Infrastructure.Shared.Services
             using (WordprocessingDocument doc = WordprocessingDocument.Open(DestinatePath, true))
             {
                 if (templateRows != null)
-                    CreateDynamicTemplateRows(doc, templateRows);
+                    CreateDynamicTemplateRows(doc, templateRows, documentTableIndex);
 
                 var allTextParams =
                     doc.MainDocumentPart
@@ -98,28 +100,9 @@ namespace Infrastructure.Shared.Services
                 foreach (var keyValue in keyValuePairs)
                 {
                     List<string> addedList = new List<string>();
-                    foreach (
-                        Text textItem in allTextParams
-                            .Where(e => e.Text != null && e.Text.Contains($"<{keyValue.Key}>"))
-                            .Take(2)
-                    )
-                    {
-                        if (textItem.Text != null)
-                        {
-                            if (
-                                textItem.Text.Contains($"<{keyValue.Key}>")
-                                && !addedList.Any(e => e == keyValue.Key && !keyValue.Key.Contains("ImgQR"))
-                            )
-                            {
-                                textItem.Text = textItem
-                                    .Text
-                                    .Replace($"<{keyValue.Key}>", keyValue.Value);
-                                addedList.Add(keyValue.Key);
-                            }
-                        }
-                    }
 
-                    foreach (
+                    //Mapping header contents
+                      foreach (
                         Text textItem in allHeaderParams
                             .Where(e => e.Text != null && e.Text.Contains($"<{keyValue.Key}>"))
                             .Take(2)
@@ -139,6 +122,31 @@ namespace Infrastructure.Shared.Services
                             }
                         }
                     }
+                    //Mapping Body contents
+                    foreach (
+                        Text textItem in allTextParams
+                            .Where(e => e.Text != null && e.Text.Contains($"<{keyValue.Key}>"))
+                            .Take(2)
+                    )
+                    {
+                        if (textItem.Text != null)
+                        {
+                            if (
+                                textItem.Text.Contains($"<{keyValue.Key}>")
+                                && !addedList.Any(
+                                    e => e == keyValue.Key && !keyValue.Key.Contains("ImgQR")
+                                )
+                            )
+                            {
+                                textItem.Text = textItem
+                                    .Text
+                                    .Replace($"<{keyValue.Key}>", keyValue.Value);
+                                addedList.Add(keyValue.Key);
+                            }
+                        }
+                    }
+
+                  
 
                     //Map QR Image into word document
                     if (keyValue.Key.Contains("ImgQR"))
@@ -150,7 +158,7 @@ namespace Infrastructure.Shared.Services
                         byte[] imageBytes = await GenerateQRImage(
                             $"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={keyValue.Value}"
                         );
-                        
+
                         MapImageIntoDocument(doc.MainDocumentPart, imageBytes, "<QRCode>");
                         addedList.Add(keyValue.Key);
                     }
@@ -158,7 +166,6 @@ namespace Infrastructure.Shared.Services
 
                 // Remove unfilled rows from the document
                 CleanUpUnMergedTemplateFields(allTextParams);
-                
 
                 // Save the document
                 doc.MainDocumentPart.Document.Save();
@@ -252,14 +259,22 @@ namespace Infrastructure.Shared.Services
 
             void CreateDynamicTemplateRows(
                 WordprocessingDocument document,
-                List<TemplateRowConfig> templateRows
+                List<TemplateRowConfig> templateRows,
+                int tableIndex = 0
             )
             {
                 var lastChild = templateRows.LastOrDefault();
                 foreach (var templateRow in templateRows)
                 {
                     // Assuming the table is in the first (0-index) body of the document
-                    Table table = document.MainDocumentPart.Document.Body.Elements<Table>().First();
+                    var tables = document.MainDocumentPart.Document.Body.Elements<Table>();
+                    Table table = document
+                        .MainDocumentPart
+                        .Document
+                        .Body
+                        .Elements<Table>()
+                        .Skip(tableIndex)
+                        .First();
                     // Clone the row at the specified index
                     TableRow clonedRow = (TableRow)
                         table.Elements<TableRow>().ElementAt(templateRow.RowIndex).CloneNode(true);
@@ -302,15 +317,14 @@ namespace Infrastructure.Shared.Services
         {
             try
             {
-              using (WebClient client = new WebClient())
-                return await Task.FromResult(client.DownloadData(url));
+                using (WebClient client = new WebClient())
+                    return await Task.FromResult(client.DownloadData(url));
             }
             catch (System.Exception ex)
             {
                 Console.WriteLine("Error occurred while downloading QR Code");
                 return new byte[0];
             }
-           
         }
 
         private ImagePart FeedImagePart(MainDocumentPart mainPart, byte[] imageBytes)
@@ -332,7 +346,12 @@ namespace Infrastructure.Shared.Services
         )
         {
             ImagePart imagePart = FeedImagePart(mainPart, imageBytes);
-            var textElementsList = mainPart?.Document.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>().ToList().Where(e => e.Text.Contains(placeholder)) ?? new List<Text>();
+            var textElementsList =
+                mainPart
+                    ?.Document
+                    .Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>()
+                    .ToList()
+                    .Where(e => e.Text.Contains(placeholder)) ?? new List<Text>();
             foreach (var textElement in textElementsList)
             {
                 if (textElement != null)
@@ -342,12 +361,12 @@ namespace Infrastructure.Shared.Services
                     if (text.Contains(placeholder))
                     {
                         textElement.Text = "";
-                         text = "" ;     // Clear the existing text
+                        text = ""; // Clear the existing text
 
                         // Create an inline image
                         var inline = new Drawing(
                             new DW.Inline(
-                                new DW.Extent() { Cx = 900000, Cy = 900000 }, // Adjust the size as needed
+                                new DW.Extent() { Cx = 400000, Cy = 400000 }, // Adjust the size as needed
                                 new DW.EffectExtent()
                                 {
                                     LeftEdge = 0L,
@@ -394,7 +413,7 @@ namespace Infrastructure.Shared.Services
                                             new PIC.ShapeProperties(
                                                 new A.Transform2D(
                                                     new A.Offset() { X = 0, Y = 0 },
-                                                    new A.Extents() { Cx = 900000, Cy = 900000 }
+                                                    new A.Extents() { Cx = 400000, Cy = 400000 }
                                                 ), // Adjust the size as needed
                                                 new A.PresetGeometry(new A.AdjustValueList())
                                                 {
