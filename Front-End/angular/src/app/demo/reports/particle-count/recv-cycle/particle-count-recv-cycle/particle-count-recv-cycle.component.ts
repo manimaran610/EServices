@@ -34,7 +34,7 @@ import { BaseResponse } from '../../../../../../Models/response-models/base-resp
 export class ParticleCountRecvCycleComponent implements OnDestroy,OnInit {
   ref: DynamicDialogRef | undefined;
   instance?: ParticleRoomLocationsRecvCycleComponent;
-  customerDetailId: number = 5;
+  customerDetailId: number = 0;
   roomId?: number;
   listOfRooms: Room[] = [];
 

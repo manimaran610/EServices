@@ -59,6 +59,13 @@ export class BusinessConstants {
         { cleanroomArea: 1000, minimumSample: 27 }
     ]
 
+    public static InstrumentTypes: string[] = [
+        'Anemometer',
+        'Capture Hoot',
+        'Particle Counter',
+        'Aerosol Photometer'   
+    ]
+
 }
 
 
