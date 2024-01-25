@@ -51,6 +51,7 @@ namespace Application.Features.Rooms.Commands.UpdateRoom
             else
             {
                 room.Name = request.Name;
+                room.Limit =request.Limit;
                 room.NoOfGrills = request.NoOfGrills;
                 room.AirChangesPerHour = request.AirChangesPerHour;
                 room.DesignACPH = request.DesignACPH;

@@ -9,6 +9,7 @@ namespace Application.Features.CustomerDetails.Commands.CreateCustomerDetail
     public class CreateCustomerDetailCommand : IRequest<Response<int>>
     {
         public string Client { get; set; }
+        public string Limit { get; set; }
         public string plant { get; set; }
         public string EquipmentId { get; set; }
         public string TestReference { get; set; }

@@ -1,5 +1,3 @@
-
-
 using System;
 using System.Collections.Generic;
 using Domain.Common;
@@ -10,6 +8,7 @@ namespace Domain.Entities
     public class CustomerDetail : AuditableBaseEntity
     {
         public string CustomerNo { get; set; }
+        public string Limit { get; set; }
         public string Client { get; set; }
         public string TestReference { get; set; }
         public string ClassType { get; set; }
@@ -24,6 +23,5 @@ namespace Domain.Entities
         public virtual Instrument Instrument { get; set; } = default!;
         public virtual Trainee Trainee { get; set; } = default!;
         public virtual List<Room> Rooms { get; set; } = default;
-
     }
 }
