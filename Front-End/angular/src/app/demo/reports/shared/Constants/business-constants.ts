@@ -4,25 +4,25 @@ export class BusinessConstants {
 
     public static ClassificationTypes: any[] = [
         {
-            name: 'Class 5',
+            name: 'Class-5',
             pointFiveMicron: 3520,
             oneMicron:832,
             fiveMicron: 20
         },
         {
-            name: 'Class 6',
+            name: 'Class-6',
             pointFiveMicron: 35200,
             oneMicron:8320,
             fiveMicron: 293
         },
         {
-            name: 'Class 7',
+            name: 'Class-7',
             pointFiveMicron: 352000,
             oneMicron:83200,
             fiveMicron: 2930
         },
         {
-            name: 'Class 8',
+            name: 'Class-8',
             pointFiveMicron: 3520000,
             oneMicron:832000,
             fiveMicron: 29300

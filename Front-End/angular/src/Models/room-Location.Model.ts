@@ -3,6 +3,7 @@ export class RoomLocation {
     referenceNumber: string = '';
     condition: string = '';
     time: string = '';
+    limit:string ='';
     pointFiveMicronCycles: string = '';
     averagePointFiveMicron: number = 0;
     fiveMicronCycles: string = '';

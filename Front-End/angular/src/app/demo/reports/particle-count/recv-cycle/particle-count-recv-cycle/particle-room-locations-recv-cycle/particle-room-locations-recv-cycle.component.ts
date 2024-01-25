@@ -22,7 +22,16 @@ import { generateKey } from 'crypto';
 @Component({
   selector: 'app-particle-room-locations-recv-cycle',
   standalone: true,
-  imports: [CommonModule, SharedModule, ConfirmDialogModule, HttpClientModule, ReactiveFormsModule, GridComponent, ToastModule, DynamicDialogModule],
+  imports: [
+    CommonModule,
+    SharedModule,
+    ConfirmDialogModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    GridComponent,
+    ToastModule,
+    DynamicDialogModule
+  ],
   providers: [ConfirmationService, RoomService, BaseHttpClientServiceService, MessageService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './particle-room-locations-recv-cycle.component.html',
@@ -31,7 +40,7 @@ import { generateKey } from 'crypto';
 export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
   roomsFormGroup: FormGroup;
   roomModel?: Room;
-  tempGrillsList: any[] = []
+  tempGrillsList: any[] = [];
   classficationList: any[] = BusinessConstants.ClassificationTypes;
   listOflocations: any[] = [];
   roomId: number = 0;
@@ -41,15 +50,14 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
   addNewRowEvent: EventEmitter<any> = new EventEmitter<any>();
 
   gridColumnOptions: GridColumnOptions[] = [
-
     { field: 'condition', header: 'Condition', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
-    { field: 'time', header: 'Time',isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false },
-    { field: 'ptAverage', header: '0.5 Micron and above',isEditable: true, hasTableValue: true, isStandalone: false },
-    { field: 'oneAverage', header: '1 Micron and above',isEditable: true,  hasTableValue: true, isStandalone: false },
-    { field: 'fiveAverage', header: '5 Micron and above',isEditable: true,  hasTableValue: true, isStandalone: false },
-    { field: 'result', header: 'Result', isEditable: false, hasTableValue: true, isStandalone: false, },
+    { field: 'time', header: 'Time', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false },
+    { field: 'ptAverage', header: '0.5 Micron and above', isEditable: true, hasTableValue: true, isStandalone: false },
+    { field: 'oneAverage', header: '1 Micron and above', isEditable: true, hasTableValue: true, isStandalone: false },
+    { field: 'fiveAverage', header: '5 Micron and above', isEditable: true, hasTableValue: true, isStandalone: false },
+    { field: 'result', header: 'Result', isEditable: false, hasTableValue: true, isStandalone: false },
     { field: '', header: 'Action', isEditable: false, hasTableValue: false, isStandalone: false }
-  ]
+  ];
 
   constructor(
     private messageService: MessageService,
@@ -57,28 +65,24 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
     private changeRef: ChangeDetectorRef,
     private roomService: RoomService
   ) {
-    this.roomsFormGroup = new FormGroup(
-      {
-        roomName: new FormControl(),
-        areaM2: new FormControl(),
-        noOfLocations: new FormControl(),
-        classType: new FormControl('0'),
-      });
+    this.roomsFormGroup = new FormGroup({
+      roomName: new FormControl(),
+      areaM2: new FormControl(),
+      noOfLocations: new FormControl(),
+      classType: new FormControl('0')
+    });
     this.addFormControlValidators();
-
   }
   ngOnInit() {
     if (this.ref.data!.roomId !== undefined && this.ref.data!.roomId > 0) {
-      console.log(this.ref.data)
+      console.log(this.ref.data);
       this.roomId = this.ref.data.roomId;
       this.getRoomByIdFromServer();
-
     }
   }
 
   //#region Forms controls
   onSubmit() {
-   
     if (this.roomsFormGroup.valid && this.listOflocations.length > 0) {
       if (this.hasMinimumCleanRoomSampling()) {
         this.mapFormToRoomObject();
@@ -87,53 +91,67 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
         this.roomId > 0 ? this.updateRoomToAPIServer() : this.postRoomToAPIServer();
       }
     } else if (this.listOflocations.length <= 0) {
-      this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Please Add the Locations", life: 4000 });
+      this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'Please Add the Locations', life: 4000 });
+    } else {
+      this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'Room Details Invalid', life: 4000 });
     }
-    else {
-      this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Room Details Invalid", life: 4000 });
-    }
-
   }
 
   onClear() {
-    this.roomsFormGroup.reset()
+    this.roomsFormGroup.reset();
     this.listOflocations = [];
   }
   addFormControlValidators() {
-    this.roomsFormGroup.controls['roomName'].addValidators([Validators.required])
-    this.roomsFormGroup.controls['areaM2'].addValidators([Validators.required, Validators.min(1)])
-    this.roomsFormGroup.controls['classType'].addValidators([Validators.required,])
+    this.roomsFormGroup.controls['roomName'].addValidators([Validators.required]);
+    this.roomsFormGroup.controls['areaM2'].addValidators([Validators.required, Validators.min(1)]);
+    this.roomsFormGroup.controls['classType'].addValidators([Validators.required]);
   }
   reEvaluateCalcResults() {
-    console.log(this.listOflocations)
-    this.listOflocations.forEach(e => e = this.evaluateFinalResult(e));
+    console.log(this.listOflocations);
+    this.listOflocations.forEach((e) => (e = this.evaluateFinalResult(e)));
   }
 
   hasMinimumCleanRoomSampling(): boolean {
-    console.log('hasMinimumCleanRoomSampling')
+    console.log('hasMinimumCleanRoomSampling');
     let result: boolean = false;
     const areaM2 = parseInt(this.roomsFormGroup.controls['areaM2'].value);
     const noOfLocation = parseInt(this.roomsFormGroup.controls['noOfLocations'].value);
 
-    let cleanRoomSample = BusinessConstants.ISO14644_Clean_Room_Samples.find(e => e.cleanroomArea == areaM2);
+    let cleanRoomSample = BusinessConstants.ISO14644_Clean_Room_Samples.find((e) => e.cleanroomArea == areaM2);
     if (cleanRoomSample !== undefined) {
       const minimumSample = parseInt(cleanRoomSample.minimumSample);
       if (minimumSample > noOfLocation) {
-        this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: `${minimumSample} Minimum samples required for Area ${areaM2}`, life: 4000 });
+        this.messageService.add({
+          key: 'tc',
+          severity: 'warn',
+          summary: 'Warning',
+          detail: `${minimumSample} Minimum samples required for Area ${areaM2}`,
+          life: 4000
+        });
       } else result = true;
-    }
-    else {
-      cleanRoomSample = BusinessConstants.ISO14644_Clean_Room_Samples.filter(e => parseInt(e.cleanroomArea) > areaM2)[0];
+    } else {
+      cleanRoomSample = BusinessConstants.ISO14644_Clean_Room_Samples.filter((e) => parseInt(e.cleanroomArea) > areaM2)[0];
       if (cleanRoomSample !== undefined) {
         const minimumSample = parseInt(cleanRoomSample.minimumSample);
         if (minimumSample > noOfLocation) {
-          this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: `${minimumSample} Minimum samples required for Area ${areaM2}`, life: 4000 });
+          this.messageService.add({
+            key: 'tc',
+            severity: 'warn',
+            summary: 'Warning',
+            detail: `${minimumSample} Minimum samples required for Area ${areaM2}`,
+            life: 4000
+          });
         } else result = true;
-      }
-      else {
+      } else {
         const minimumSample = 27 * Math.round(areaM2 / 1000);
         if (minimumSample > noOfLocation) {
-          this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: `${minimumSample} Minimum samples required for Area ${areaM2}`, life: 4000 });
+          this.messageService.add({
+            key: 'tc',
+            severity: 'warn',
+            summary: 'Warning',
+            detail: `${minimumSample} Minimum samples required for Area ${areaM2}`,
+            life: 4000
+          });
         } else result = true;
       }
     }
@@ -143,66 +161,70 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
 
   //#region Grill Rows
   addGridRow() {
-    this.roomsFormGroup.valid && this.roomsFormGroup.controls['classType'].value !== '0' ? this.addNewRowEvent.emit(true) :
-      this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: "Room Details Invalid", life: 4000 });
+    this.roomsFormGroup.valid && this.roomsFormGroup.controls['classType'].value !== '0'
+      ? this.addNewRowEvent.emit(true)
+      : this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'Room Details Invalid', life: 4000 });
   }
 
-
   onGridRowSave(event: any) {
-
     this.evaluateFinalResult(event);
-    if (this.listOflocations.find(e => e.id === event.id) === undefined) {
+    if (this.listOflocations.find((e) => e.id === event.id) === undefined) {
       this.listOflocations.push(event);
     } else {
-      const index = this.listOflocations.findIndex(e => e.id === event.id);
+      const index = this.listOflocations.findIndex((e) => e.id === event.id);
       this.listOflocations[index] = event;
     }
 
-    this.roomsFormGroup.controls['noOfLocations'].patchValue(this.listOflocations.length)
+    this.roomsFormGroup.controls['noOfLocations'].patchValue(this.listOflocations.length);
     this.changeRef.detectChanges();
   }
 
-
   onGridRowDelete(event: any) {
-    if (this.listOflocations.find(e => e.id === event.id) !== undefined) {
-      this.listOflocations = this.listOflocations.filter(e => e.id !== event.id);
+    if (this.listOflocations.find((e) => e.id === event.id) !== undefined) {
+      this.listOflocations = this.listOflocations.filter((e) => e.id !== event.id);
     }
     this.roomsFormGroup.controls['noOfLocations'].patchValue(this.listOflocations.length);
     this.changeRef.detectChanges();
-
   }
-
 
   evaluateFinalResult(rowData: any) {
     const className = this.roomsFormGroup.controls['classType'].value;
-    const classType = this.classficationList.find(e => e.name == className);
-    const isPassed = rowData.ptAverage <= classType.pointFiveMicron && rowData.oneAverage <= classType.oneMicron && rowData.fiveAverage <= classType.fiveMicron;
+    const classType = this.classficationList.find((e) => e.name == className);
+    const isPassed =
+      rowData.ptAverage <= classType.pointFiveMicron &&
+      rowData.oneAverage <= classType.oneMicron &&
+      rowData.fiveAverage <= classType.fiveMicron;
     rowData.result = isPassed ? 'Complies' : 'Non Complies';
     rowData.resultClass = isPassed ? 'text-c-green' : 'text-c-red';
-    rowData.locationNo = rowData.locationNo !== undefined || rowData.locationNo !== '' ? this.generateRandomId(): rowData.locationNo;
-
+    rowData.locationNo = rowData.locationNo !== undefined || rowData.locationNo !== '' ? this.generateRandomId() : rowData.locationNo;
   }
 
-performTimeDifferenceCalculations(){
-  let result :number = 0
-  const nonCompliesList  = this.listOflocations.filter(e=>e.result=== 'Non Complies');
-  const lastFailedIndex = this.listOflocations.findIndex(e=>e.id === nonCompliesList[nonCompliesList.length -1].id)
-  const finalCompliesEntries = this.listOflocations.slice(lastFailedIndex + 1)
-  const belowInitialCompliesValues = finalCompliesEntries.filter(e=> parseInt(e.ptAverage) < parseInt(this.listOflocations[0].ptAverage))
-  if(belowInitialCompliesValues.length > 0){
-    const lastCompliesIndex = this.listOflocations.findIndex(e=>e.id === belowInitialCompliesValues[0].id)
-    const finalResult = this.listOflocations.slice(lastFailedIndex + 1,lastCompliesIndex + 1);
-    result =finalResult.length;
-    console.log(finalResult)
-  }else {
-    const lastCompliesIndex = this.listOflocations.findIndex(e=>e.id === finalCompliesEntries[finalCompliesEntries.length -1].id)
-    const finalResult = this.listOflocations.slice(lastFailedIndex + 1,lastCompliesIndex + 1);
-    result =finalResult.length;
-    console.log(finalResult)
+  performTimeDifferenceCalculations() {
+    let result: number = 0;
+    const nonCompliesList = this.listOflocations.filter((e) => e.result === 'Non Complies');
+    const lastFailedIndex = this.listOflocations.findIndex((e) => e.id === nonCompliesList[nonCompliesList.length - 1].id);
+    const finalCompliesEntries = this.listOflocations.slice(lastFailedIndex + 1);
+    const belowInitialCompliesValues = finalCompliesEntries.filter(
+      (e) => parseInt(e.ptAverage) < parseInt(this.listOflocations[0].ptAverage)
+    );
+    if (belowInitialCompliesValues.length > 0) {
+      const lastCompliesIndex = this.listOflocations.findIndex((e) => e.id === belowInitialCompliesValues[0].id);
+      const finalResult = this.listOflocations.slice(lastFailedIndex + 1, lastCompliesIndex + 1);
+      result = finalResult.length;
+      console.log(finalResult);
+    } else {
+      if (finalCompliesEntries.length > 0) {
+        const lastCompliesIndex = this.listOflocations.findIndex((e) => e.id === finalCompliesEntries[finalCompliesEntries.length - 1].id);
+        const finalResult = this.listOflocations.slice(lastFailedIndex + 1, lastCompliesIndex + 1);
+        result = finalResult.length;
+        console.log(finalResult);
+      } else {
+        this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'Invalid Entries', life: 4000 });
+      }
+    }
+    this.roomModel!.limit = result;
   }
-  this.roomModel!.limit = result;
-}
- 
+
   //#endregion
 
   //#region  API Server
@@ -210,19 +232,29 @@ performTimeDifferenceCalculations(){
     this.isSaveLoading = true;
     this.roomService.postRoom(this.roomModel!).subscribe({
       next: (response: BaseResponse<number>) => {
-        if (response.succeeded) this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Room along with Grills saved', life: 4000 });
+        if (response.succeeded)
+          this.messageService.add({
+            key: 'tc',
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Room along with Grills saved',
+            life: 4000
+          });
         this.onCloseEventFire.emit(true);
       },
       error: (e) => {
         this.messageService.add({
-          key: 'tc', severity: 'error', summary: 'Failed',
-          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000      
+          key: 'tc',
+          severity: 'error',
+          summary: 'Failed',
+          detail: e.status == 0 ? 'Server connection error' : e.error.Message !== undefined ? e.error.Message : e.error.title,
+          life: 4000
         });
         this.isSaveLoading = false;
       },
       complete: () => {
         this.isSaveLoading = false;
-      },
+      }
     });
   }
 
@@ -237,14 +269,17 @@ performTimeDifferenceCalculations(){
       error: (e) => {
         console.error(e.error);
         this.messageService.add({
-          key: 'tc', severity: 'error', summary: 'Failed',
-          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000      
+          key: 'tc',
+          severity: 'error',
+          summary: 'Failed',
+          detail: e.status == 0 ? 'Server connection error' : e.error.Message !== undefined ? e.error.Message : e.error.title,
+          life: 4000
         });
         this.isSaveLoading = false;
       },
       complete: () => {
         this.isSaveLoading = false;
-      },
+      }
     });
   }
 
@@ -253,17 +288,21 @@ performTimeDifferenceCalculations(){
       next: (response: BaseResponse<Room>) => {
         if (response.succeeded) {
           this.roomModel = response.data;
-          console.log(response)
-          console.log(this.roomModel)
+          console.log(response);
+          console.log(this.roomModel);
           this.reverseMapRoomObjectToForm();
         }
       },
       error: (e) => {
         this.messageService.add({
-          key: 'tc', severity: 'error', summary: 'Failed',
-          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000      
-        });         },
-      complete: () => { },
+          key: 'tc',
+          severity: 'error',
+          summary: 'Failed',
+          detail: e.status == 0 ? 'Server connection error' : e.error.Message !== undefined ? e.error.Message : e.error.title,
+          life: 4000
+        });
+      },
+      complete: () => {}
     });
   }
   //#endregion
@@ -276,7 +315,7 @@ performTimeDifferenceCalculations(){
     this.roomModel.noOfLocations = this.roomsFormGroup.controls['noOfLocations'].value;
     this.roomModel.classType = this.roomsFormGroup.controls['classType'].value;
     this.roomModel.customerDetailId = this.ref.data.customerDetailId;
-    this.listOflocations.forEach(e => this.roomModel?.roomLocations.push(this.MapToRoomLocation(e)))
+    this.listOflocations.forEach((e) => this.roomModel?.roomLocations.push(this.MapToRoomLocation(e)));
   }
 
   MapToRoomLocation(location: any): RoomLocation {
@@ -284,34 +323,45 @@ performTimeDifferenceCalculations(){
     result.referenceNumber = location.locationNo;
     result.condition = location.condition;
     result.time = location.time;
-    result.averagePointFiveMicron = location.ptAverage
-    result.averageFiveMicron = location.fiveAverage
-    result.averageOneMicron = location.oneAverage
+    result.averagePointFiveMicron = location.ptAverage;
+    result.averageFiveMicron = location.fiveAverage;
+    result.averageOneMicron = location.oneAverage;
     result.result = location.result;
-    result.condition=location.condition;
+    result.condition = location.condition;
     return result;
-
   }
   reverseMapRoomObjectToForm() {
     this.roomsFormGroup.controls['roomName'].patchValue(this.roomModel!.name);
     this.roomsFormGroup.controls['areaM2'].patchValue(this.roomModel!.areaM2);
     this.roomsFormGroup.controls['noOfLocations'].patchValue(this.roomModel!.noOfLocations);
     this.roomsFormGroup.controls['classType'].patchValue(this.roomModel!.classType);
-    this.roomModel!.roomLocations.forEach(e => this.reverseMapRoomLocationToGrid(e));
+    this.roomModel!.roomLocations.forEach((e) => this.reverseMapRoomLocationToGrid(e));
     this.reEvaluateCalcResults();
 
-    console.log(this.roomsFormGroup.value)
-    console.log(this.listOflocations)
+    console.log(this.roomsFormGroup.value);
+    console.log(this.listOflocations);
   }
 
   reverseMapRoomLocationToGrid(location: RoomLocation) {
     const result: any = {
-      id: 0, locationNo: 0, condition:'',time:'', ptOne: 0, ptTwo: 0, ptThree: 0, ptAverage: 0, one: 0, two: 0, three: 0, Average: 0, result: ''
+      id: 0,
+      locationNo: 0,
+      condition: '',
+      time: '',
+      ptOne: 0,
+      ptTwo: 0,
+      ptThree: 0,
+      ptAverage: 0,
+      one: 0,
+      two: 0,
+      three: 0,
+      Average: 0,
+      result: ''
     };
     result.id = location.id;
     result.locationNo = location.referenceNumber;
-    result.condition=location.condition;
-    result.time=location.time;
+    result.condition = location.condition;
+    result.time = location.time;
     result.ptAverage = location.averagePointFiveMicron;
     result.oneAverage = location.averageOneMicron;
     result.fiveAverage = location.averageFiveMicron;
@@ -328,10 +378,8 @@ performTimeDifferenceCalculations(){
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
     for (let i = 0; i < 20; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
-
-};
+  };
 }
-
