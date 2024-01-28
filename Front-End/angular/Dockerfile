@@ -5,6 +5,10 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
+# Clean dependencies
+RUN npm clean
+COPY . .
+
 # Install dependencies
 RUN npm install
 COPY . .
@@ -13,7 +17,7 @@ RUN npm install -g @angular/cli@latest
 COPY . .
 
 # Run Angular build
-RUN ng build  --prod
+RUN ng build  
 
 # Stage 2: Create a minimal Nginx image with the built Angular app
 FROM nginx:1.21-alpine
