@@ -11,6 +11,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
     public class CreateRoomCommand : IRequest<Response<int>>
     {
         public string Name { get; set; }
+         public string Limit { get; set; }
         public string DesignACPH { get; set; }
         public string ClassType { get; set; }
         public int NoOfGrills { get; set; }
