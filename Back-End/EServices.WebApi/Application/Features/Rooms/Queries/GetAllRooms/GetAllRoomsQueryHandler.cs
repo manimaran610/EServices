@@ -38,6 +38,7 @@ namespace Application.Features.Rooms.Queries.GetAllRooms
                 ClassType = e.ClassType,
                 AreaM2 = e.AreaM2,
                 RoomVolume = e.RoomVolume,
+                Limit=e.Limit,
                 CustomerDetailId = e.CustomerDetailId,
                 Name = e.Name,
                 TotalAirFlowCFM = e.TotalAirFlowCFM
