@@ -5,16 +5,15 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-# Clean dependencies
-RUN npm clean
-COPY . .
-
 # Install dependencies
-RUN npm install
+RUN npm ci
 COPY . .
 
 RUN npm install -g @angular/cli@latest
 COPY . .
+
+# Remove existing Angular files (if any)
+RUN rm -rf node_modules dist
 
 # Run Angular build
 RUN ng build  
