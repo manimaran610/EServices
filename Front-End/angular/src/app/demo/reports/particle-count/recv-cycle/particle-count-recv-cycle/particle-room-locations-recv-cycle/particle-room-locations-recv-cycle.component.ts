@@ -50,7 +50,7 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
   addNewRowEvent: EventEmitter<any> = new EventEmitter<any>();
 
   gridColumnOptions: GridColumnOptions[] = [
-    { field: 'condition', header: 'Condition', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
+    { field: 'condition', header: 'Condition', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
     { field: 'time', header: 'Time', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false },
     { field: 'ptAverage', header: '0.5 Micron and above', isEditable: true, hasTableValue: true, isStandalone: false },
     { field: 'oneAverage', header: '1 Micron and above', isEditable: true, hasTableValue: true, isStandalone: false },
@@ -201,22 +201,23 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
 
   performTimeDifferenceCalculations() {
     let result: number = 0;
-    const nonCompliesList = this.listOflocations.filter((e) => e.result === 'Non Complies');
-    const lastFailedIndex = this.listOflocations.findIndex((e) => e.id === nonCompliesList[nonCompliesList.length - 1].id);
-    const finalCompliesEntries = this.listOflocations.slice(lastFailedIndex + 1);
+    this.listOflocations = this.listOflocations.sort((obj1,obj2)=> obj1.time - obj2.time)
+    const nonCompliesList = this.listOflocations.filter((e) => e.result !== undefined && e.result ==='Non Complies');
+    const lastFailedIndex = nonCompliesList.length > 0 ? this.listOflocations.findIndex((e) => e.id == nonCompliesList[nonCompliesList.length - 1].id) : -1
+    const finalCompliesEntries = lastFailedIndex > -1 ?  this.listOflocations.slice(lastFailedIndex + 1) : [];
     const belowInitialCompliesValues = finalCompliesEntries.filter(
       (e) => parseInt(e.ptAverage) < parseInt(this.listOflocations[0].ptAverage)
     );
     if (belowInitialCompliesValues.length > 0) {
       const lastCompliesIndex = this.listOflocations.findIndex((e) => e.id === belowInitialCompliesValues[0].id);
       const finalResult = this.listOflocations.slice(lastFailedIndex + 1, lastCompliesIndex + 1);
-      result = finalResult.length;
+      result =  finalResult.length - 1;
       console.log(finalResult);
     } else {
       if (finalCompliesEntries.length > 0) {
         const lastCompliesIndex = this.listOflocations.findIndex((e) => e.id === finalCompliesEntries[finalCompliesEntries.length - 1].id);
         const finalResult = this.listOflocations.slice(lastFailedIndex + 1, lastCompliesIndex + 1);
-        result = finalResult.length;
+        result =  finalResult.length - 1;
         console.log(finalResult);
       } else {
         this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'Invalid Entries', life: 4000 });

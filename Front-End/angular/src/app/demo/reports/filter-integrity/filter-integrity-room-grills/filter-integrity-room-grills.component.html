@@ -39,7 +39,7 @@
 
     <app-grid [title]="'Filter-Integrity Room Grills'" [isBordered]="true" [tableStyle]="{ 'min-width': '50rem'}" [listOfItems]="listOfGrills" [gridColumnOptions]="gridColumnOptions"  [addNewRow]="addNewRowEvent"
     [dataKey]="'id'"  [canEdit] ="true"[canDelete]="true"  (Save) ="onGrillSave($event)" (Delete)="onGrillDelete($event)" 
-    [sortField]="'grillNo'" [sortOrder]="-1"
+    [sortField]="'grillNo'" [sortOrder]="1"
     ></app-grid>
 
       <div class="container">
