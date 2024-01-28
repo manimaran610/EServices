@@ -13,7 +13,7 @@ RUN npm install -g @angular/cli@latest
 COPY . .
 
 # Run Angular build
-RUN ng build 
+RUN ng clean build 
 
 # Stage 2: Create a minimal Nginx image with the built Angular app
 FROM nginx:1.21-alpine
