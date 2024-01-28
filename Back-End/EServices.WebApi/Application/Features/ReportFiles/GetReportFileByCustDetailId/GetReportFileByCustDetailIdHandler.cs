@@ -196,7 +196,10 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             foreach (var room in rooms)
             {
                 MapPropertiesToKeyValuePair(room);
+                
                 if(room.ClassType != null) PopulatePCReportISOClassTypes(room.ClassType);
+                 
+                 _keyValuePairs.Add(new keyValue("lmt", DisplayWithSuffix(room.Limit)));
                  _keyValuePairs.Add(new keyValue("sno", count.ToString()));
                  count++;
 
@@ -333,7 +336,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 InstrumentId = e.InstrumentId,
                 Plant = e.Plant,
                 ClassType = e.ClassType,
-                TestReference = e.TestReference,
+                TestCondition = e.TestCondition,
                 DateOfTestDue = e.DateOfTestDue,
                 Instrument = e.Instrument,
                 Trainee = new Trainee() { Name = e.Trainee.Name }
@@ -364,7 +367,16 @@ namespace Application.Features.Rooms.Commands.CreateRoom
         private string GetFullPath(string filename) => Path.Combine("WordTemplates", filename);
         #endregion
 
-
+    private  string DisplayWithSuffix(string number)
+    {
+        if (number.EndsWith("11")) return number + "th";
+        if (number.EndsWith("12")) return number + "th";
+        if (number.EndsWith("13")) return number + "th";
+        if (number.EndsWith("1")) return number + "st";
+        if (number.EndsWith("2")) return number + "nd";
+        if (number.EndsWith("3")) return number + "rd";
+        return number + "th";
+    }
 
         private async Task<string> UploadFileForSharing(string filePath)
         {

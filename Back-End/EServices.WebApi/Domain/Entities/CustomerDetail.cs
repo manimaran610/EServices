@@ -10,7 +10,7 @@ namespace Domain.Entities
         public string CustomerNo { get; set; }
         public string Limit { get; set; }
         public string Client { get; set; }
-        public string TestReference { get; set; }
+        public string TestCondition { get; set; }
         public string ClassType { get; set; }
         public string Plant { get; set; }
         public string EquipmentId { get; set; }

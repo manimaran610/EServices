@@ -12,7 +12,7 @@ namespace Application.Features.CustomerDetails.Commands.CreateCustomerDetail
         public string Limit { get; set; }
         public string plant { get; set; }
         public string EquipmentId { get; set; }
-        public string TestReference { get; set; }
+        public string TestCondition { get; set; }
         public string ClassType { get; set; }
         public string AreaOfTest { get; set; }
         public FormType FormType { get; set; }
