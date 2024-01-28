@@ -6,7 +6,7 @@ export class Room {
     name: string = '';
     designACPH: string = '';
     areaM2: number = 0;
-    limit: number = 0;
+    limit: string = '';
     classType: string = '';
     noOfGrills: number = 0;
     noOfLocations: number = 0;

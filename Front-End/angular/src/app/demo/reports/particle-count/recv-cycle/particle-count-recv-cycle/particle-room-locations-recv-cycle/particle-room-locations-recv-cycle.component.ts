@@ -223,7 +223,7 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
         this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'Invalid Entries', life: 4000 });
       }
     }
-    this.roomModel!.limit = result;
+    this.roomModel!.limit = result.toString();
   }
 
   //#endregion
