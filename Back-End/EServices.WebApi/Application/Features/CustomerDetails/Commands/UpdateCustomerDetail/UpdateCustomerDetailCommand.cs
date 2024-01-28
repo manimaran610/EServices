@@ -13,7 +13,7 @@ namespace Application.Features.CustomerDetails.Commands.UpdateCustomerDetail
         public int TraineeId { get; set; }
         public string Client { get; set; }
         public string plant { get; set; }
-        public string TestReference { get; set; }
+        public string TestCondition { get; set; }
         public string ClassType { get; set; }
 
         public string EquipmentId { get; set; }

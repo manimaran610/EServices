@@ -1,10 +1,10 @@
-
-
 namespace Application.Features.Rooms.Seeds
 {
     public class LocationDTO
     {
         public string ReferenceNumber { get; set; }
+        public string Condition { get; set; }
+        public string Time { get; set; }
         public string PointFiveMicronCycles { get; set; }
         public string OneMicronCycles { get; set; }
         public string FiveMicronCycles { get; set; }

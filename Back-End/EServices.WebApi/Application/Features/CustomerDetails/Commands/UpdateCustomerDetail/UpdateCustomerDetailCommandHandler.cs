@@ -33,7 +33,7 @@ namespace Application.Features.CustomerDetails.Commands.UpdateCustomerDetail
                 CustomerDetail.DateOfTest = command.DateOfTest;
                 CustomerDetail.FormType = command.FormType;
                 CustomerDetail.DateOfTestDue=command.DateOfTestDue;
-                CustomerDetail.TestReference=command.TestReference;
+                CustomerDetail.TestCondition=command.TestCondition;
                 CustomerDetail.ClassType = command.ClassType;
 
                 await _customerDetailRepository.UpdateAsync(CustomerDetail);
