@@ -16,9 +16,6 @@ COPY . .
 RUN npm install -g @angular/cli@latest
 COPY . .
 
-# Remove existing Angular files (if any)
-RUN rm -rf node_modules dist
-
 # Run Angular build
 RUN ng build  
 
