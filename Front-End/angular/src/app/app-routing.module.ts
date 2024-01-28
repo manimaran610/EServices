@@ -74,10 +74,10 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'Trainee',
+        path: 'Employee',
         children: [
           {
-            path: 'Add-Trainee',
+            path: 'Add-Employee',
             component: AddTraineeComponent
           }
         ]

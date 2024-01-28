@@ -14,6 +14,7 @@ import { ToastModule } from 'primeng/toast';
 import { BaseResponse } from 'src/Models/response-models/base-response';
 import {  Router } from '@angular/router';
 import { BaseHttpClientServiceService } from 'src/Services/Shared/base-http-client-service.service';
+import { BusinessConstants } from '../../reports/shared/Constants/business-constants';
 
 
 @Component({
@@ -29,7 +30,7 @@ export class AddInstrumentComponent implements OnInit {
 
     instrumentFormGroup: FormGroup;
     msgs: Message[] = [];
-    instrumentTypes :string[]=['Type1','Type2','Type3'];
+    instrumentTypes :string[]=BusinessConstants.InstrumentTypes;
     isAddInstrument: boolean = true;
     isSaveLoading:boolean=false;
     isSaved: boolean = false;

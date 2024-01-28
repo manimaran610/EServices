@@ -198,7 +198,7 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
   evaluateFinalResult(rowData: any) {
     const className = this.roomsFormGroup.controls['classType'].value;
     const classType = this.classficationList.find(e => e.name == className);
-    const isPassed = rowData.ptAverage >= classType.pointFiveMicron && rowData.oneaverage >= classType.oneMicron && rowData.fiveaverage >= classType.fiveMicron ;
+    const isPassed = rowData.ptAverage <= classType.pointFiveMicron && rowData.oneaverage <= classType.oneMicron && rowData.fiveaverage <= classType.fiveMicron ;
     rowData.result = isPassed ? 'Complies' : 'Non Complies';
     rowData.resultClass = isPassed ? 'text-c-green' : 'text-c-red';
 

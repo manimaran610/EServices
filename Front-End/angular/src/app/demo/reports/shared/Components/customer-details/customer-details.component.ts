@@ -88,7 +88,7 @@ export class CustomerDetailsComponent implements OnInit {
       dateOfTest: new FormControl(),
       dateOfTestDue: new FormControl(),
       classType: new FormControl(),
-      testReference: new FormControl(),
+      testCondition: new FormControl(),
       plant: new FormControl(),
       equipmentId: new FormControl(),
       areaOfTest: new FormControl(),
@@ -303,7 +303,7 @@ export class CustomerDetailsComponent implements OnInit {
     this.customerDetailsFormGroup.controls['dateOfTest'].addValidators([Validators.required]);
     this.customerDetailsFormGroup.controls['dateOfTestDue'].addValidators([Validators.required]);
     this.customerDetailsFormGroup.controls['classType'].addValidators([Validators.required]);
-    this.customerDetailsFormGroup.controls['testReference'].addValidators([Validators.required]);
+    this.customerDetailsFormGroup.controls['testCondition'].addValidators([Validators.required]);
     this.customerDetailsFormGroup.controls['plant'].addValidators([Validators.required]);
     this.customerDetailsFormGroup.controls['equipmentId'].addValidators([Validators.required]);
     this.customerDetailsFormGroup.controls['areaOfTest'].addValidators([Validators.required]);

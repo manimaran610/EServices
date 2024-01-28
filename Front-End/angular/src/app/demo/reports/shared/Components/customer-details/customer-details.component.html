@@ -91,7 +91,7 @@
 
       <div class="col-md-6">
         <div class="form-group">
-          <label for="exampleInputPassword1">Equipment/Room ID:</label>
+          <label for="exampleInputPassword1">Equipment/Room-ID/Name:</label>
           <input type="text" class="form-control" id="exampleInputPassword1" formControlName="equipmentId"
             placeholder="Enter Equipment Id"
             [ngClass]="{'is-invalid': customerDetailsFormGroup.controls['equipmentId'].errors  && (customerDetailsFormGroup.controls['equipmentId'].touched || customerDetailsFormGroup.controls['equipmentId'].dirty), 'is-valid':customerDetailsFormGroup.controls['equipmentId'].valid}" />
@@ -102,11 +102,11 @@
       </div>
       <div class="col-md-6">
         <div class="form-group">
-          <label for="exampleInputPassword1">Test Reference:</label>
-          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="testReference"
-            placeholder="Enter Test Reference"
-            [ngClass]="{'is-invalid': customerDetailsFormGroup.controls['testReference'].errors  && (customerDetailsFormGroup.controls['testReference'].touched || customerDetailsFormGroup.controls['testReference'].dirty), 'is-valid':customerDetailsFormGroup.controls['testReference'].valid}" />
-          <div class="invalid-feedback" *ngIf="customerDetailsFormGroup.controls['testReference'].hasError('required')">
+          <label for="exampleInputPassword1">Test Condition:</label>
+          <input type="text" class="form-control" id="exampleInputPassword1" formControlName="testCondition"
+            placeholder="Enter Test Condition"
+            [ngClass]="{'is-invalid': customerDetailsFormGroup.controls['testCondition'].errors  && (customerDetailsFormGroup.controls['testCondition'].touched || customerDetailsFormGroup.controls['testCondition'].dirty), 'is-valid':customerDetailsFormGroup.controls['testCondition'].valid}" />
+          <div class="invalid-feedback" *ngIf="customerDetailsFormGroup.controls['testCondition'].hasError('required')">
             Required
           </div>
         </div>
@@ -116,12 +116,8 @@
 
       <div class="col-md-6">
         <div class="form-group">
-          <label for="exampleInputPassword1">Test Condition:</label>
-          <!-- <select class="form-select" id="inputGroupSelect04" formControlName="classType">
-            <option *ngFor="let item of classficationList; let i = index" [value]="item.name">
-              {{item.name}}</option>
-          </select> -->
-          <input type="text" class="form-control" name="city" formControlName="classType" list="classficationList" placeholder="Enter Test Condition">
+          <label for="exampleInputPassword1">Test Reference:</label>
+          <input type="text" class="form-control" name="city" formControlName="classType" list="classficationList" placeholder="Enter Test Reference">
           <datalist id="classficationList">
             <option *ngFor="let item of classficationList">
               {{item.name}}</option>

@@ -259,7 +259,7 @@ export default class HomePageComponent implements OnInit {
             background: 'bg-c-red',
             icon: 'icon icon-codepen',
             accentColor: 'blue',
-            navigateTo: '/NotFound'
+            navigateTo: '/Reports/ParticleCount/RecvCycle'
           },
 
         ]
@@ -277,14 +277,14 @@ export default class HomePageComponent implements OnInit {
         ]
       },
       {
-        title: 'Trainee Details',
+        title: 'Employee Details',
         services: [
           {
-            title: 'Add Trainee',
+            title: 'Add Employee',
             background: 'bg-c-blue',
             icon: 'icon icon-framer',
             accentColor: '#0D6EFD',
-            navigateTo: '/Trainee/Add-Trainee'
+            navigateTo: '/Employee/Add-Employee'
           },
         ]
       }
