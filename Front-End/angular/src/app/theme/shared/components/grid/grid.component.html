@@ -59,7 +59,7 @@
                 <p-cellEditor>
                     <ng-template pTemplate="input">
                         <div class="form-group">
-                            <input *ngIf="col.isEditable" pInputText type="text" class="form-control" [(ngModel)]="rowData[col.field!]">
+                            <input *ngIf="col.isEditable" type="{{col.inputType !== undefined ? col.inputType : 'text'}}" class="form-control" [(ngModel)]="rowData[col.field!]">
                         </div>
                     </ng-template>
                     <ng-template *ngIf="!col.hasRouterLink" class="" pTemplate="output">
@@ -101,7 +101,7 @@
             <td *ngFor="let col of getFilteredColumns()" [class]="col.dataClass! +' '+rowData[col.field! +'Class']">
                 <p-cellEditor>
                     <ng-template pTemplate="input">
-                        <input *ngIf="col.isEditable"  pInputText type="text" class="form-control" [(ngModel)]="rowData[col.field!]">
+                        <input *ngIf="col.isEditable" type="{{col.inputType !== undefined ? col.inputType : 'text'}}" class="form-control" [(ngModel)]="rowData[col.field!]">
                     </ng-template>
                     <ng-template *ngIf="!col.hasRouterLink" pTemplate="output">
                         {{rowData[col.field!]}}

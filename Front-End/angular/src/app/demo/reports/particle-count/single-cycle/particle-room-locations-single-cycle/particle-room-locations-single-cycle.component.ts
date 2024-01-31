@@ -42,9 +42,9 @@ export class ParticleRoomLocationsSingleCycleComponent implements OnInit {
   gridColumnOptions: GridColumnOptions[] = [
 
     { field: 'locationNo', header: 'Location No.', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
-    { field: 'ptAverage', header: '0.5 Micron and above',isEditable: true, hasTableValue: true, isStandalone: false },
-    { field: 'oneAverage', header: '1 Micron and above',isEditable: true,  hasTableValue: true, isStandalone: false },
-    { field: 'fiveAverage', header: '5 Micron and above',isEditable: true,  hasTableValue: true, isStandalone: false },
+    { field: 'ptAverage', header: '0.5 Micron and above',isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false },
+    { field: 'oneAverage', header: '1 Micron and above',isEditable: true,  hasTableValue: true,inputType: 'number', isStandalone: false },
+    { field: 'fiveAverage', header: '5 Micron and above',isEditable: true,  hasTableValue: true,inputType: 'number', isStandalone: false },
     { field: 'result', header: 'Result', isEditable: false, hasTableValue: true, isStandalone: false, },
     { field: '', header: 'Action', isEditable: false, hasTableValue: false, isStandalone: false }
   ]

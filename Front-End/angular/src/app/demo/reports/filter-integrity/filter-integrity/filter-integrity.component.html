@@ -17,7 +17,7 @@
 <app-card cardTitle="Rooms">
 <button class="btn btn-primary m-2"  (click)="showDynamicPopup(0)" ngbTooltip='Add new room'> Add Room</button>
 <app-grid [title]="'Filter-Integrity Room Grills'" [listOfItems]="listOfRooms" [gridColumnOptions]="gridColumnOptions" [canPreview]="true"  [canDelete]="true"
-   (Delete)="onRoomDelete($event)" (Preview)="onRoomPreview($event)" [dataKey]="'id'"  [sortOrder]="1" [sortField]="'name'"
+   (Delete)="onRoomDelete($event)" (Preview)="onRoomPreview($event)" [dataKey]="'id'" 
     ></app-grid>
   </app-card>
 
