@@ -49,7 +49,7 @@ namespace Application.Features.CustomerDetails.Commands.CreateCustomerDetail
         private async Task<string> CreateUniqueCustomerIdentifer(CreateCustomerDetailCommand request)
         {
             string id = "001";
-            string prefix = $"VP-{GetTypeName(request.FormType)}-{request.Client.Substring(0, 3).ToUpper()}-{DateTime.Now.Year - 2000}{DateTime.Now.Month}-";
+            string prefix = $"VP-{GetTypeName(request.FormType)}-{request.Client.Substring(0, 3).ToUpper()}-{DateTime.Now.Year - 2000}{DateTime.Now.ToString("MM")}-";
             var customerDetails = await _customerDetailRepository.GetPagedReponseAsync(0, 1, $"CustomerNo:con:{prefix}", "CustomerNo:desc");
             if (customerDetails.Count > 0)
             {

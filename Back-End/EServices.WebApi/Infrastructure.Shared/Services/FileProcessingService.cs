@@ -97,6 +97,14 @@ namespace Infrastructure.Shared.Services
                                 hp.Header.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>()
                         ) ?? new List<Text>();
 
+                    var allFooterParams =
+                    doc.MainDocumentPart
+                        ?.FooterParts
+                        .SelectMany(
+                            hp =>
+                                hp.Footer.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>()
+                        ) ?? new List<Text>();
+
                 foreach (var keyValue in keyValuePairs)
                 {
                     List<string> addedList = new List<string>();
@@ -118,10 +126,32 @@ namespace Infrastructure.Shared.Services
                                 textItem.Text = textItem
                                     .Text
                                     .Replace($"<{keyValue.Key}>", keyValue.Value);
+                                //addedList.Add(keyValue.Key);
+                            }
+                        }
+                    }
+
+                      foreach (
+                        Text textItem in allFooterParams
+                            .Where(e => e.Text != null && e.Text.Contains($"<{keyValue.Key}>"))
+                            .Take(2)
+                    )
+                    {
+                        if (textItem.Text != null)
+                        {
+                            if (
+                                textItem.Text.Contains($"<{keyValue.Key}>")
+                                && !addedList.Any(e => e == keyValue.Key)
+                            )
+                            {
+                                textItem.Text = textItem
+                                    .Text
+                                    .Replace($"<{keyValue.Key}>", keyValue.Value);
                                 addedList.Add(keyValue.Key);
                             }
                         }
                     }
+
                     //Mapping Body contents
                     foreach (
                         Text textItem in allTextParams
