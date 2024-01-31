@@ -66,7 +66,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                  "Created:asc", 
                  GetRoomSelectExpression(customerDetail.FormType)
             );
-            
+
             if (customerDetail.FormType == FormType.ACPH)
             {
                 var templateRows = PopulateACPHTemplateRowConfigs(rooms);
@@ -362,7 +362,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             {
                 obj.GetType().GetProperties().ToList().ForEach(prop =>
                 {
-                    this._keyValuePairs.Add(new(keyPrefix + prop.Name, prop.PropertyType == DateTime.Now.GetType() ? ((DateTime)prop.GetValue(obj,default)).ToString("dd/MM/yyyy"):Convert.ToString(prop.GetValue(obj, default))));
+                    this._keyValuePairs.Add(new(keyPrefix + prop.Name, prop.PropertyType == DateTime.Now.GetType() ? ((DateTime)prop.GetValue(obj,default)).ToString("dd-MM-yyyy"):Convert.ToString(prop.GetValue(obj, default))));
                 });
             }
         }
