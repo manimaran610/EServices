@@ -58,7 +58,15 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             if (customerDetail == null)
                 throw new ApiException($"CustomerDetail does not exists with CustomerDetailId -{request.CustomerDetailId}");
 
-            var rooms = await _roomRepository.GetPagedReponseAsync(0, int.MaxValue, $"CustomerDetailId:eq:{request.CustomerDetailId}", "Name:asc", GetRoomSelectExpression());
+            var rooms = await _roomRepository.GetPagedReponseAsync
+            (
+                0,
+                 int.MaxValue, 
+                 $"CustomerDetailId:eq:{request.CustomerDetailId}",
+                 "Created:asc", 
+                 GetRoomSelectExpression(customerDetail.FormType)
+            );
+            
             if (customerDetail.FormType == FormType.ACPH)
             {
                 var templateRows = PopulateACPHTemplateRowConfigs(rooms);
@@ -117,7 +125,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
              int count = 1;
             MapPropertiesToKeyValuePair(customerDetail);
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
-            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToShortDateString()));
+            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString("dd-MM-yyyy")));
             _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
             _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
 
@@ -144,15 +152,15 @@ namespace Application.Features.Rooms.Commands.CreateRoom
         {
             int count = 1;
             MapPropertiesToKeyValuePair(customerDetail);
+            if(customerDetail.ClassType != null) PopulatePCReportISOClassTypes(customerDetail.ClassType);
+
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
-            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToShortDateString()));
+            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString("dd-MM-yyyy")));
             _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
             _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
             foreach (var room in rooms)
             {
                 MapPropertiesToKeyValuePair(room);
-                 if(room.ClassType != null) PopulatePCReportISOClassTypes(room.ClassType);
-
                  _keyValuePairs.Add(new keyValue("sno", count.ToString()));
                  count++;
 
@@ -189,16 +197,15 @@ namespace Application.Features.Rooms.Commands.CreateRoom
         {
             int count = 1;
             MapPropertiesToKeyValuePair(customerDetail);
+             if(customerDetail.ClassType != null) PopulatePCReportISOClassTypes(customerDetail.ClassType);
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
-            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToShortDateString()));
+            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString("dd-MM-yyyy")));
             _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
             _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
             foreach (var room in rooms)
             {
                 MapPropertiesToKeyValuePair(room);
-                
-                if(room.ClassType != null) PopulatePCReportISOClassTypes(room.ClassType);
-                 
+                         
                  _keyValuePairs.Add(new keyValue("lmt", DisplayWithSuffix(room.Limit)));
                  _keyValuePairs.Add(new keyValue("sno", count.ToString()));
                  count++;
@@ -218,7 +225,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             int count = 1;
             MapPropertiesToKeyValuePair(customerDetail);
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
-            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToShortDateString()));
+            _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString("dd-MM-yyyy")));
             _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
             _keyValuePairs.Add(new keyValue("ImgQR", customerDetail.CustomerNo));
             foreach (var room in rooms)
@@ -299,7 +306,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
         #endregion
 
         #region  Select Expressions
-        private Expression<Func<Room, Room>> GetRoomSelectExpression()
+        private Expression<Func<Room, Room>> GetRoomSelectExpression(FormType formType)
         {
             Expression<Func<Room, Room>> selectExpression = e => new()
             {
@@ -315,7 +322,9 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 AreaM2 = e.AreaM2,
                 TotalAirFlowCFM = e.TotalAirFlowCFM,
                 RoomGrills = e.RoomGrills.Where(e => !e.IsDeleted).OrderBy(e => e.ReferenceNumber).ToList(),
-                RoomLocations = e.RoomLocations.Where(e => !e.IsDeleted).OrderBy(e => e.ReferenceNumber).ToList()
+                RoomLocations = formType == FormType.ParticleCountRecvCycle ?
+                  e.RoomLocations.Where(e => !e.IsDeleted).OrderBy(e => e.Time).ToList():
+                e.RoomLocations.Where(e => !e.IsDeleted).OrderBy(e => e.ReferenceNumber).ToList()
 
             };
 
@@ -353,7 +362,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             {
                 obj.GetType().GetProperties().ToList().ForEach(prop =>
                 {
-                    this._keyValuePairs.Add(new(keyPrefix + prop.Name, prop.PropertyType == DateTime.Now.GetType() ? ((DateTime)prop.GetValue(obj,default)).ToShortDateString():Convert.ToString(prop.GetValue(obj, default))));
+                    this._keyValuePairs.Add(new(keyPrefix + prop.Name, prop.PropertyType == DateTime.Now.GetType() ? ((DateTime)prop.GetValue(obj,default)).ToString("dd/MM/yyyy"):Convert.ToString(prop.GetValue(obj, default))));
                 });
             }
         }
