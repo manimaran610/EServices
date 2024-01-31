@@ -19,13 +19,19 @@ export class BusinessConstants {
             name: 'Class-7',
             pointFiveMicron: 352000,
             oneMicron:83200,
-            fiveMicron: 2930
+            fiveMicron: 2900
         },
         {
             name: 'Class-8',
             pointFiveMicron: 3520000,
             oneMicron:832000,
-            fiveMicron: 29300
+            fiveMicron: 29000
+        },
+        {
+            name: 'Class-9',
+            pointFiveMicron: 35200000,
+            oneMicron:8320000,
+            fiveMicron: 290000
         }
     ]
 

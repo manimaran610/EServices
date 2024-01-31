@@ -52,9 +52,9 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
   gridColumnOptions: GridColumnOptions[] = [
     { field: 'condition', header: 'Condition', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
     { field: 'time', header: 'Time', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false },
-    { field: 'ptAverage', header: '0.5 Micron and above', isEditable: true, hasTableValue: true, isStandalone: false },
-    { field: 'oneAverage', header: '1 Micron and above', isEditable: true, hasTableValue: true, isStandalone: false },
-    { field: 'fiveAverage', header: '5 Micron and above', isEditable: true, hasTableValue: true, isStandalone: false },
+    { field: 'ptAverage', header: '0.5 Micron and above', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false },
+    { field: 'oneAverage', header: '1 Micron and above', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false },
+    { field: 'fiveAverage', header: '5 Micron and above', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false },
     { field: 'result', header: 'Result', isEditable: false, hasTableValue: true, isStandalone: false },
     { field: '', header: 'Action', isEditable: false, hasTableValue: false, isStandalone: false }
   ];
@@ -194,7 +194,7 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
       rowData.ptAverage <= classType.pointFiveMicron &&
       rowData.oneAverage <= classType.oneMicron &&
       rowData.fiveAverage <= classType.fiveMicron;
-    rowData.result = isPassed ? 'Complies' : 'Non Complies';
+    rowData.result = isPassed ? 'Pass' : 'Fail';
     rowData.resultClass = isPassed ? 'text-c-green' : 'text-c-red';
     rowData.locationNo = rowData.locationNo !== undefined || rowData.locationNo !== '' ? this.generateRandomId() : rowData.locationNo;
   }
@@ -202,21 +202,21 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
   performTimeDifferenceCalculations() {
     let result: number = 0;
     this.listOflocations = this.listOflocations.sort((obj1,obj2)=> obj1.time - obj2.time)
-    const nonCompliesList = this.listOflocations.filter((e) => e.result !== undefined && e.result ==='Non Complies');
-    const lastFailedIndex = nonCompliesList.length > 0 ? this.listOflocations.findIndex((e) => e.id == nonCompliesList[nonCompliesList.length - 1].id) : -1
-    const finalCompliesEntries = lastFailedIndex > -1 ?  this.listOflocations.slice(lastFailedIndex + 1) : [];
-    const belowInitialCompliesValues = finalCompliesEntries.filter(
+    const failedList = this.listOflocations.filter((e) => e.result !== undefined && e.result ==='Fail');
+    const lastFailedIndex = failedList.length > 0 ? this.listOflocations.findIndex((e) => e.id == failedList[failedList.length - 1].id) : -1
+    const finalPassedEntries = lastFailedIndex > -1 ?  this.listOflocations.slice(lastFailedIndex + 1) : [];
+    const belowInitialPassedValues = finalPassedEntries.filter(
       (e) => parseInt(e.ptAverage) < parseInt(this.listOflocations[0].ptAverage)
     );
-    if (belowInitialCompliesValues.length > 0) {
-      const lastCompliesIndex = this.listOflocations.findIndex((e) => e.id === belowInitialCompliesValues[0].id);
-      const finalResult = this.listOflocations.slice(lastFailedIndex + 1, lastCompliesIndex + 1);
+    if (belowInitialPassedValues.length > 0) {
+      const lastPassIndex = this.listOflocations.findIndex((e) => e.id === belowInitialPassedValues[0].id);
+      const finalResult = this.listOflocations.slice(lastFailedIndex + 1, lastPassIndex + 1);
       result =  finalResult.length - 1;
       console.log(finalResult);
     } else {
-      if (finalCompliesEntries.length > 0) {
-        const lastCompliesIndex = this.listOflocations.findIndex((e) => e.id === finalCompliesEntries[finalCompliesEntries.length - 1].id);
-        const finalResult = this.listOflocations.slice(lastFailedIndex + 1, lastCompliesIndex + 1);
+      if (finalPassedEntries.length > 0) {
+        const lastPassIndex = this.listOflocations.findIndex((e) => e.id === finalPassedEntries[finalPassedEntries.length - 1].id);
+        const finalResult = this.listOflocations.slice(lastFailedIndex + 1, lastPassIndex + 1);
         result =  finalResult.length - 1;
         console.log(finalResult);
       } else {

@@ -71,12 +71,12 @@ export class AcphRoomGrillsComponent implements OnInit {
     },
     {
       gridColumnOptions: [
-        { field: 'sqrt', width: '15%', header: 'Sqrt', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 2 },
-        { field: 'one', width: '15%', header: '1', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 3 },
-        { field: 'two', width: '15%', header: '2', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 4 },
-        { field: 'three', width: '15%', header: '3', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 5 },
-        { field: 'four', width: '15%', header: '4', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 6 },
-        { field: 'five', width: '15%', header: '5', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 7 }
+        { field: 'sqrt', width: '15%', header: 'Sqrt', isEditable: true, hasTableValue: true, isStandalone: false,inputType: 'number', orderNo: 2 },
+        { field: 'one', width: '15%', header: '1', isEditable: true, hasTableValue: true, isStandalone: false,inputType: 'number', orderNo: 3 },
+        { field: 'two', width: '15%', header: '2', isEditable: true, hasTableValue: true, isStandalone: false,inputType: 'number', orderNo: 4 },
+        { field: 'three', width: '15%', header: '3', isEditable: true, hasTableValue: true, isStandalone: false,inputType: 'number', orderNo: 5 },
+        { field: 'four', width: '15%', header: '4', isEditable: true, hasTableValue: true, isStandalone: false,inputType: 'number', orderNo: 6 },
+        { field: 'five', width: '15%', header: '5', isEditable: true, hasTableValue: true, isStandalone: false,inputType: 'number', orderNo: 7 }
       ]
     }
   ];

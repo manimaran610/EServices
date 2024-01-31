@@ -58,7 +58,6 @@
 
     <app-grid [title]="'ACPH Room Locations'" [isBordered]="true" [tableStyle]="{ 'min-width': '30rem'}" [listOfItems]="listOflocations" [gridColumnOptions]="gridColumnOptions"  [addNewRow]="addNewRowEvent"
     [dataKey]="'id'"  [canEdit] ="true"[canDelete]="true" (Save) ="onGridRowSave($event)" (Delete)="onGridRowDelete($event)" 
-    [sortField]="'time'" [sortOrder]="1"
     ></app-grid>
 
       <div class="container">

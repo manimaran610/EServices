@@ -15,5 +15,6 @@ export class GridColumnOptions {
     public isStandalone?: boolean = false;
     public orderNo?: number = 0;
     public dataClass?: string;
+    public inputType?:string;
 
 }
