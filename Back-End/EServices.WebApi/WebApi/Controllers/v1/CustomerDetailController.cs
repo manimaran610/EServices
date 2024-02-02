@@ -29,9 +29,9 @@ namespace WebApi.Controllers.v1
 
          // GET Report api/<controller>/5
         [HttpGet("{id}/Report")]
-        public async Task<IActionResult> GenerateReport(int id)
+        public async Task<IActionResult> GenerateReport([FromRoute] int id,[FromQuery] int roomId = 0)
         {
-            return Ok(await Mediator.Send(new GetReportFileByCustDetailId { CustomerDetailId = id }));
+            return Ok(await Mediator.Send(new GetReportFileByCustDetailId { CustomerDetailId = id ,RoomId=roomId}));
         }
 
         // POST api/<controller>

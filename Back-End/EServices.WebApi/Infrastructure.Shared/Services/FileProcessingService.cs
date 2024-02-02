@@ -97,7 +97,7 @@ namespace Infrastructure.Shared.Services
                                 hp.Header.Descendants<DocumentFormat.OpenXml.Wordprocessing.Text>()
                         ) ?? new List<Text>();
 
-                    var allFooterParams =
+                var allFooterParams =
                     doc.MainDocumentPart
                         ?.FooterParts
                         .SelectMany(
@@ -110,7 +110,7 @@ namespace Infrastructure.Shared.Services
                     List<string> addedList = new List<string>();
 
                     //Mapping header contents
-                      foreach (
+                    foreach (
                         Text textItem in allHeaderParams
                             .Where(e => e.Text != null && e.Text.Contains($"<{keyValue.Key}>"))
                             .Take(2)
@@ -131,7 +131,7 @@ namespace Infrastructure.Shared.Services
                         }
                     }
 
-                      foreach (
+                    foreach (
                         Text textItem in allFooterParams
                             .Where(e => e.Text != null && e.Text.Contains($"<{keyValue.Key}>"))
                             .Take(2)
@@ -175,8 +175,6 @@ namespace Infrastructure.Shared.Services
                             }
                         }
                     }
-
-                  
 
                     //Map QR Image into word document
                     if (keyValue.Key.Contains("ImgQR"))
