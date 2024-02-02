@@ -18,6 +18,9 @@ import { RequestParameter } from 'src/Models/request-parameter';
 import { CustomerDetailsComponent } from '../../../shared/Components/customer-details/customer-details.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ParticleRoomLocationsThreeCycleComponent } from '../particle-room-locations-three-cycle/particle-room-locations-three-cycle.component';
+import { CustomerDetailService } from 'src/Services/cutomer-detail.service';
+import { BusinessConstants } from '../../../shared/Constants/business-constants';
+import { FileProcessingService } from 'src/Services/Shared/file-processing.service';
 
 @Component({
   selector: 'app-particle-count-three-cycle',
@@ -25,19 +28,20 @@ import { ParticleRoomLocationsThreeCycleComponent } from '../particle-room-locat
   imports: [CommonModule, SharedModule, ConfirmDialogModule, MessagesModule,
     HttpClientModule, ToastModule, CustomerDetailsComponent, ParticleRoomLocationsThreeCycleComponent,
     DynamicDialogModule, GridComponent],
-  providers: [ConfirmationService, BaseHttpClientServiceService, MessageService, DialogService, RoomService],
+  providers: [ConfirmationService, BaseHttpClientServiceService,CustomerDetailService,FileProcessingService, MessageService, DialogService, RoomService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './particle-count-three-cycle.component.html',
   styleUrls: ['./particle-count-three-cycle.component.css']
 })
-export class ParticleCountThreeCycleComponent implements OnDestroy,OnInit {
+export class ParticleCountThreeCycleComponent implements OnDestroy, OnInit {
   ref: DynamicDialogRef | undefined;
   instance?: ParticleRoomLocationsThreeCycleComponent;
   customerDetailId: number = 0;
   roomId?: number;
+  formType:number =4;
   listOfRooms: Room[] = [];
 
-  constructor(private router: Router, private route: ActivatedRoute, public dialogService: DialogService, private messageService: MessageService, private roomService: RoomService) { }
+  constructor(private router: Router,private customerDetailService: CustomerDetailService, private fileService: FileProcessingService,private route: ActivatedRoute, public dialogService: DialogService, private messageService: MessageService, private roomService: RoomService) { }
 
   gridColumnOptions: GridColumnOptions[] = [
     { field: 'name', header: 'Room Name', isSortable: true, hasTableValue: true, isStandalone: false },
@@ -115,6 +119,10 @@ export class ParticleCountThreeCycleComponent implements OnDestroy,OnInit {
     this.roomId = event.id;
     this.deleteRoomFromServer();
   }
+  onRoomDownload(event: Room) {
+    this.roomId = event.id;
+    this.getReportFromServer();
+  }
   //#endregion
 
   getRoomsFromServer() {
@@ -127,12 +135,12 @@ export class ParticleCountThreeCycleComponent implements OnDestroy,OnInit {
           console.log(this.listOfRooms)
         }
       },
-      error: (e) => { 
+      error: (e) => {
         this.messageService.add({
           key: 'tc', severity: 'error', summary: 'Failed',
-          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000      
+          detail: e.status == 0 ? 'Server connection error' : e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
         });
-       },
+      },
       complete: () => { },
     });
   }
@@ -147,20 +155,42 @@ export class ParticleCountThreeCycleComponent implements OnDestroy,OnInit {
       error: (e) => {
         this.messageService.add({
           key: 'tc', severity: 'error', summary: 'Failed',
-          detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000      
+          detail: e.status == 0 ? 'Server connection error' : e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
         });
       },
       complete: () => { },
     });
   }
 
-
-
-  ngOnDestroy() {
-    if (this.ref) {
-      this.ref.close();
+  getReportFromServer() {
+    if (this.customerDetailId > 0) {
+      this.customerDetailService.getReport(this.customerDetailId.toString(),this.roomId).subscribe({
+        next: (response: BaseResponse<any>) => {
+          if (response.succeeded) {
+          
+              const documentFile = this.fileService.base64ToFile(
+                response.data.file,
+                response.data.fileName,
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+              );
+              this.fileService.downloadFile(documentFile!);
+            }
+          },   
+        error: (e) => {
+          this.messageService.add({
+            key: 'tc', severity: 'error', summary: 'Failed',
+            detail: e.status == 0 ? 'Server connection error' : e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
+          });
+        }
+      });
     }
-    this.instance?.onCloseEventFire.unsubscribe();
   }
 
-}
+    ngOnDestroy() {
+      if (this.ref) {
+        this.ref.close();
+      }
+      this.instance?.onCloseEventFire.unsubscribe();
+    }
+
+  }

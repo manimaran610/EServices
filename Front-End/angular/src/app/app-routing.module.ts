@@ -101,11 +101,23 @@ const routes: Routes = [
                 component: ParticleCountThreeCycleComponent
               },
               {
+                path: 'ThreeCycle/:id',
+                component: ParticleCountThreeCycleComponent
+              },
+              {
                 path: 'SingleCycle',
                 component: ParticleCountSingleCycleComponent
               },
               {
+                path: 'SingleCycle/:id',
+                component: ParticleCountSingleCycleComponent
+              },
+              {
                 path: 'RecvCycle',
+                component: ParticleCountRecvCycleComponent
+              },
+              {
+                path: 'RecvCycle/:id',
                 component: ParticleCountRecvCycleComponent
               }
             ]
@@ -113,6 +125,10 @@ const routes: Routes = [
           },
           {
             path: 'FilterIntegrity',
+            component: FilterIntegrityComponent
+          },
+          {
+            path: 'FilterIntegrity/:id',
             component: FilterIntegrityComponent
           },
           {

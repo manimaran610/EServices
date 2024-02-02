@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, OnChanges, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, OnChanges } from '@angular/core';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 import { CommonModule } from '@angular/common';
@@ -8,8 +8,7 @@ import { SharedModule } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { GridColumnOptions } from 'src/Models/grid-column-options';
 import { GroupedColumnOptions } from 'src/Models/grouped-column-options';
-import { group } from 'console';
-import { Action } from 'rxjs/internal/scheduler/Action';
+
 
 
 @Component({
@@ -39,6 +38,7 @@ export class GridComponent implements OnInit, OnChanges {
     @Input() canEdit: boolean = false;
     @Input() canPreview: boolean = false;
     @Input() canDelete: boolean = false;
+    @Input() canDownload: boolean = false;
     @Input() hasPagination: boolean = true;
     @Input() hasLazyLoading: boolean = false;
     @Input() totalRecords: number = 0;
@@ -54,6 +54,7 @@ export class GridComponent implements OnInit, OnChanges {
     @Output() RadioChanges: EventEmitter<any> = new EventEmitter<any>();
     @Output() LazyLoad: EventEmitter<any> = new EventEmitter<any>();
     @Output() Preview: EventEmitter<any> = new EventEmitter<any>();
+    @Output() Download: EventEmitter<any> = new EventEmitter<any>();
 
 
     firstOffset: number = 0;
@@ -97,6 +98,9 @@ export class GridComponent implements OnInit, OnChanges {
     onRowSelected(event: any) { }
 
     onRowPreviewEvent(event: any) { this.Preview.emit(event); }
+    
+    onRowDownloadEvent(event: any) { this.Download.emit(event); }
+
 
     onLazyLoadEvent(event: any) {
 

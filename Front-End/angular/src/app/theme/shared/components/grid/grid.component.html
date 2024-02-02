@@ -86,6 +86,8 @@
                         (click)="onRowDelete(rowData,rowIndex)"><i class="feather icon-trash"></i></button>
                     <button *ngIf="canPreview && !editing" iconType="eye" class="m-2 btn btn-primary"
                         (click)="onRowPreviewEvent(rowData)"><i class="feather icon-eye"></i></button>
+                    <button *ngIf="canDownload && !editing" iconType="eye" class="m-2 btn btn-primary"
+                        (click)="onRowDownloadEvent(rowData)"><i class="feather icon-download"></i></button>
                     <button *ngIf="editing" pSaveEditableRow type="button" class="btn btn-primary"
                         (click)="onRowEditSave(rowData,htmlTableRowElement)"><i class="feather icon-save"></i></button>
                     <button ton *ngIf="editing" type="button" pCancelEditableRow class="m-2 btn btn-primary"
@@ -120,6 +122,8 @@
                         (click)="onRowDelete(rowData,rowIndex)"><i class="feather icon-trash"></i></button>
                     <button *ngIf="canPreview && !editing" iconType="eye" class="m-2 btn btn-primary" 
                         (click)="onRowPreviewEvent(rowData)"><i class="feather icon-eye"></i></button>
+                    <button *ngIf="canDownload && !editing" iconType="eye" class="m-2 btn btn-primary"
+                        (click)="onRowDownloadEvent(rowData)"><i class="feather icon-download"></i></button>
                     <button *ngIf="editing" pSaveEditableRow type="button" class="btn btn-primary"
                         (click)="onRowEditSave(rowData,htmlTableRowElement)"><i class="feather icon-save"></i></button>
                     <button ton *ngIf="editing" type="button" pCancelEditableRow class="m-2 btn btn-primary"

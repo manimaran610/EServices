@@ -199,7 +199,7 @@ export class CustomerDetailsComponent implements OnInit {
             if(this.isDownloading) {
               this.documentFile = this.fileService.base64ToFile(
                 response.data.file,
-                `${this.getFormName(this.formType)}.docx`,
+                response.data.fileName,
                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
               );
               this.fileService.downloadFile(this.documentFile!);}
@@ -268,6 +268,7 @@ export class CustomerDetailsComponent implements OnInit {
   }
 
   updateCustomerToAPIServer() {
+    this.isSaveLoading = true;
     console.log(this.customerDetailModel);
     this.customerDetailModel.id = this.customerDetailId;
     this.customerDetailService.updateCustomerDetail(this.customerDetailId.toString(), this.customerDetailModel).subscribe({
@@ -283,8 +284,9 @@ export class CustomerDetailsComponent implements OnInit {
           : e.error.Message !== undefined
           ? this.customerError.emit(e.error.Message)
           : this.customerError.emit(e.error.title);
+          this.isSaveLoading = false;
       },
-      complete: () => {}
+      complete: () => { this.isSaveLoading = false;}
     });
   }
   //#endregion
@@ -314,7 +316,11 @@ export class CustomerDetailsComponent implements OnInit {
   mapCustomerDetailToForm() {
     this.customerDetailsFormGroup.controls['client'].patchValue(this.customerDetailModel.client);
     this.customerDetailsFormGroup.controls['dateOfTest'].patchValue(this.formatDate(this.customerDetailModel.dateOfTest!));
+    this.customerDetailsFormGroup.controls['dateOfTestDue'].patchValue(this.formatDate(this.customerDetailModel.dateOfTestDue!));
     this.customerDetailsFormGroup.controls['plant'].patchValue(this.customerDetailModel.plant);
+    this.customerDetailsFormGroup.controls['testCondition'].patchValue(this.customerDetailModel.testCondition);
+    this.customerDetailsFormGroup.controls['classType'].patchValue(this.customerDetailModel.classType);
+    this.customerDetailsFormGroup.controls['traineeId'].patchValue(this.customerDetailModel.traineeId);
     this.customerDetailsFormGroup.controls['equipmentId'].patchValue(this.customerDetailModel.equipmentId);
     this.customerDetailsFormGroup.controls['areaOfTest'].patchValue(this.customerDetailModel.areaOfTest);
     this.customerDetailsFormGroup.controls['instrumentType'].patchValue(
@@ -334,20 +340,5 @@ export class CustomerDetailsComponent implements OnInit {
     return [year, month, day].join('-');
   }
 
-  getFormName(typeId: number): string {
-    switch (typeId) {
-      case 1:
-        return 'ACPH';
-      case 2:
-        return 'FilterIntegrity';
-      case 3:
-        return 'ParticleCountSingleCycle';
-      case 4:
-        return 'ParticleCountThreeCycle';
-      case 5:
-        return 'TempMapping';
-      default:
-        return 'NotSupported';
-    }
-  }
+
 }
