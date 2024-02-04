@@ -81,6 +81,9 @@ namespace Application.Features.CustomerDetails.Commands.CreateCustomerDetail
                 case FormType.ParticleCountSingleCycle:
                     result = "PC1";
                     break;
+                case FormType.ParticleCountRecvCycle:
+                    result = "PCR";
+                    break;
             }
             return result;
         }

@@ -32,7 +32,9 @@ namespace Application.Mappings
             CreateMap<CreateInstrumentCommand, Instrument>();
             CreateMap<GetAllInstrumentsQuery, RequestParameter>();
 
-            CreateMap<CustomerDetail, GetAllCustomerDetailsViewModel>().ReverseMap();
+            CreateMap<CustomerDetail, GetAllCustomerDetailsViewModel>()
+            .ForMember(m => m.FormTypeName, opt => opt.MapFrom(entity => entity.FormType.ToString()))
+            .ReverseMap();
             CreateMap<CreateCustomerDetailCommand, CustomerDetail>();
             CreateMap<GetAllCustomerDetailsQuery, RequestParameter>();
 
