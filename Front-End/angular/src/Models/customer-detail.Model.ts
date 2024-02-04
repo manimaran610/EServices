@@ -5,6 +5,7 @@ export class CustomerDetail {
   equipmentId: string = '';
   areaOfTest: string = '';
   formType: number = 1;
+  formTypeName: string = '';
   classType: string = '';
   testCondition: string = '';
   traineeId: number = 0;

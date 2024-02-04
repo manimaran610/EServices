@@ -84,6 +84,8 @@ export class BusinessConstants {
             return 'ParticleCountThreeCycle';
           case 5:
             return 'TempMapping';
+          case 6:
+            return 'ParticleCountRecvCycle';
           default:
             return 'NotSupported';
         }

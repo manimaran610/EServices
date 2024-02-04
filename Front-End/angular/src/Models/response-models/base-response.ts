@@ -3,4 +3,6 @@ export interface BaseResponse<T> {
     message: string;
     errors: string[];
     data: T;
+    totalCount:number;
+    resultCount:number;
 }

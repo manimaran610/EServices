@@ -103,7 +103,7 @@ export class GridComponent implements OnInit, OnChanges {
 
 
     onLazyLoadEvent(event: any) {
-
+            console.warn(event);
         let queryParams = {
             offset: event.first,
             count: event.rows,
