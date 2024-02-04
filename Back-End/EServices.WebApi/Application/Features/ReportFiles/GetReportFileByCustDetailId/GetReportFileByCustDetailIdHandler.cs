@@ -79,10 +79,12 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             }
             else if (customerDetail.FormType == FormType.ParticleCountThreeCycle)
             {
-
+                string templateName = request.RoomId > 0 ? 
+                (string.Equals(BusinessConstants.AtRestISOClassTypes[0].ClassName,customerDetail.ClassType) ? "PC3_C5_Location.docx":"PC3_C_Location.docx")
+                 : "PC_3_Location.docx";
                 var templateRows = PopulatePC3TemplateRowConfigs(rooms);
                 PopulatePC3KeyValuePairs(customerDetail, rooms);
-                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_3_Location.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows, 1);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath(templateName), GetFullPath(outFileName), _keyValuePairs, templateRows, 1);
                 processedFile = ConvertFileToBase64(GetFullPath(outFileName));
                 uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
 
@@ -237,7 +239,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 room.RoomGrills.ForEach(grill =>
                 {
                     _keyValuePairs.Add(new keyValue("Upcon", grill.UpStreamConcat.ToString()));
-                    _keyValuePairs.Add(new keyValue("Pen", grill.Penetration > 0 ? grill.Penetration.ToString() : "0.000"));
+                    _keyValuePairs.Add(new keyValue("Pen", grill.Penetration > 0 ? grill.Penetration.ToString() : "0.0000"));
 
                     MapPropertiesToKeyValuePair(grill);
                 });
