@@ -57,7 +57,7 @@ const routes: Routes = [
         loadComponent: () => import('./demo/home-page/home-page.component')
       },
       {
-        path: 'search-forms',
+        path: 'Reports',
         component: SearchFormsComponent,
       },
       {

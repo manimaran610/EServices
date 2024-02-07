@@ -4,8 +4,10 @@
     <li class="breadcrumb-item">
       <a (click)="navigateToUrl('Home')" class="text-c-blue"><i class="feather icon-home "></i></a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page">Reports</li>
-    <li class="breadcrumb-item active" aria-current="page">Particle Count ( Three cycle )</li>
+    <li class="breadcrumb-item">
+      <a (click)="navigateToUrl('Reports')" class="text-c-blue">Reports</a>
+    </li>
+    <!-- <li class="breadcrumb-item " aria-current="page">Reports</li> -->    <li class="breadcrumb-item active" aria-current="page">Particle Count ( Three cycle )</li>
   </ol>
 </nav>
 
@@ -18,7 +20,7 @@
 
 <app-card cardTitle="Rooms">
 <button class="btn btn-primary m-2"  (click)="showDynamicPopup(0)" ngbTooltip='Add new room'> Add Room</button>
-<app-grid [title]="'Rooms'" [listOfItems]="listOfRooms" [gridColumnOptions]="gridColumnOptions" [canPreview]="true"  [canDelete]="true"  [canDownload]="true"
+<app-grid [title]="'Rooms'" [listOfItems]="listOfRooms" [gridColumnOptions]="gridColumnOptions" [canPreview]="true"  [canDelete]="true"  [canDownload]="true" [isDownloading]="isReportDownloading"
    (Delete)="onRoomDelete($event)" (Preview)="onRoomPreview($event)" (Download)="onRoomDownload($event)" [dataKey]="'id'" 
     ></app-grid>
   </app-card>

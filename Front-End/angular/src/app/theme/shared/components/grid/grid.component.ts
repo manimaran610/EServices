@@ -46,6 +46,8 @@ export class GridComponent implements OnInit, OnChanges {
     @Input() selected: any;
     @Input() hasRetension: boolean = false;
     @Input() hasColumnGroup: boolean = false;
+    @Input() isDownloading: boolean = false;
+
     @Input() addNewRow: EventEmitter<any> = new EventEmitter<any>();
 
 
@@ -66,6 +68,7 @@ export class GridComponent implements OnInit, OnChanges {
     editableRowData: any = {};
     clonedProducts: { [s: string]: any } = {};
     isNewRowInserted: boolean = false;
+    currentDownloadEventItem :any;
 
     getRowSpan = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).sort((obj1, obj2) => parseInt(obj1.rowspan!) - parseInt(obj2.rowspan!))[0].rowspan;
     getFilteredGroupColumns = () => this.groupedColumnOptions.flatMap(group => group.gridColumnOptions).filter(option => option.hasTableValue && !option.isStandalone).sort((obj1, obj2) => obj1.orderNo! - obj2.orderNo!)
@@ -99,7 +102,10 @@ export class GridComponent implements OnInit, OnChanges {
 
     onRowPreviewEvent(event: any) { this.Preview.emit(event); }
     
-    onRowDownloadEvent(event: any) { this.Download.emit(event); }
+    onRowDownloadEvent(event: any) { 
+        this.currentDownloadEventItem=event;
+        this.Download.emit(event); 
+    }
 
 
     onLazyLoadEvent(event: any) {

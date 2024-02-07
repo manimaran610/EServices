@@ -39,6 +39,7 @@ export class ParticleCountThreeCycleComponent implements OnDestroy, OnInit {
   customerDetailId: number = 0;
   roomId?: number;
   formType:number =4;
+  isReportDownloading:boolean = false;
   listOfRooms: Room[] = [];
 
   constructor(private router: Router,private customerDetailService: CustomerDetailService, private fileService: FileProcessingService,private route: ActivatedRoute, public dialogService: DialogService, private messageService: MessageService, private roomService: RoomService) { }
@@ -163,6 +164,7 @@ export class ParticleCountThreeCycleComponent implements OnDestroy, OnInit {
   }
 
   getReportFromServer() {
+    this.isReportDownloading = true;
     if (this.customerDetailId > 0) {
       this.customerDetailService.getReport(this.customerDetailId.toString(),this.roomId).subscribe({
         next: (response: BaseResponse<any>) => {
@@ -181,7 +183,9 @@ export class ParticleCountThreeCycleComponent implements OnDestroy, OnInit {
             key: 'tc', severity: 'error', summary: 'Failed',
             detail: e.status == 0 ? 'Server connection error' : e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
           });
-        }
+          this.isReportDownloading = false;
+        },
+        complete: () => {  this.isReportDownloading = false;}
       });
     }
   }

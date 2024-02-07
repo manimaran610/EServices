@@ -36,7 +36,7 @@ export class SearchFormsComponent implements OnInit {
     console.log("search-forms-componenet");
     let reqParam =new RequestParameter();
     reqParam.count=5000;
-    //this.getCustomerDetailFromServer(reqParam)
+    this.getCustomerDetailFromServer(reqParam)
   }
  options:GridColumnOptions[]=[
   {field: 'customerNo', header: 'Customer No', isSortable: true, hasFilter: true,hasTableValue:true},

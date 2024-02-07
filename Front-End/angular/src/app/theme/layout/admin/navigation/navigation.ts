@@ -37,9 +37,9 @@ export const NavigationItems: NavigationItem[] = [
       },
       {
         id: 'ApplicationForm',
-        title: 'Search Forms',
+        title: 'Search Reports',
         type: 'item',
-        url: '/search-forms',
+        url: '/Reports',
         icon: 'feather icon-search',
        
       },
