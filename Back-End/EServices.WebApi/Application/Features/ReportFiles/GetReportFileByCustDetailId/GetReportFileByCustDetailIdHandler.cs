@@ -80,9 +80,10 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             else if (customerDetail.FormType == FormType.ParticleCountThreeCycle)
             {
                 string templateName = request.RoomId > 0 ? 
-                (string.Equals(BusinessConstants.AtRestISOClassTypes[0].ClassName,customerDetail.ClassType) ? "PC3_C5_Location.docx":"PC3_C_Location.docx")
+                (BusinessConstants.AtRestISOClassTypes[0].ClassName.Contains(rooms.FirstOrDefault().ClassType,StringComparison.OrdinalIgnoreCase) ?
+                 "PC_3_Location_With_0.5_5_Micron.docx":"PC_3_Location_With_0.5_1_5_Micron.docx")
                  : "PC_3_Location.docx";
-                var templateRows = PopulatePC3TemplateRowConfigs(rooms);
+                var templateRows =request.RoomId > 0 ? PopulatePC3_V2_TemplateRowConfigs(rooms): PopulatePC3TemplateRowConfigs(rooms);
                 PopulatePC3KeyValuePairs(customerDetail, rooms);
                 await _fileProcessingService.MailMergeWorkDocument(GetFullPath(templateName), GetFullPath(outFileName), _keyValuePairs, templateRows, 1);
                 processedFile = ConvertFileToBase64(GetFullPath(outFileName));
@@ -239,6 +240,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 room.RoomGrills.ForEach(grill =>
                 {
                     _keyValuePairs.Add(new keyValue("Upcon", grill.UpStreamConcat.ToString()));
+                      _keyValuePairs.Add(new keyValue("mgl", grill.UpStreamConcatLtr.ToString()));
                     _keyValuePairs.Add(new keyValue("Pen", grill.Penetration > 0 ? grill.Penetration.ToString() : "0.0000"));
 
                     MapPropertiesToKeyValuePair(grill);
@@ -283,6 +285,17 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             }
             return result.OrderByDescending(e => e.OrderNo).ToList();
         }
+         private List<TemplateRowConfig> PopulatePC3_V2_TemplateRowConfigs(IReadOnlyList<Room> rooms)
+        {
+            List<TemplateRowConfig> result = new();
+            int orderNo = 1;
+            foreach (var room in rooms)
+            {
+                result.Add(new(orderNo, 5, 6, room.RoomLocations.Count()));
+                orderNo++;
+            }
+            return result.OrderByDescending(e => e.OrderNo).ToList();
+        }
 
         private List<TemplateRowConfig> PopulatePCTemplateRowConfigs(IReadOnlyList<Room> rooms)
         {
@@ -301,7 +314,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             int orderNo = 1;
             foreach (var room in rooms)
             {
-                result.Add(new(orderNo, 2, 3, room.RoomGrills.Count()));
+                result.Add(new(orderNo, 3, 4, room.RoomGrills.Count()));
                 orderNo++;
             }
             return result.OrderByDescending(e => e.OrderNo).ToList();
