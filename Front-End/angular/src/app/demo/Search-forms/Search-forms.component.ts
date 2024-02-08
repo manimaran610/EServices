@@ -11,6 +11,7 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { BaseResponse } from 'src/Models/response-models/base-response';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-search-forms',
@@ -27,15 +28,25 @@ import { Router } from '@angular/router';
 export class SearchFormsComponent implements OnInit {
   listOfCustomerDetails:CustomerDetail[] =[];
   totalCount:number=0
+  isSearching:boolean = false;
+ searchFormGroup: FormGroup;
   constructor(  
     private customerDetailService: CustomerDetailService,
     private messageService: MessageService,
-    private router: Router) { }
+    private router: Router) { 
+      this.searchFormGroup = new FormGroup({
+        customerNo: new FormControl(),
+        client: new FormControl(),
+        fromDate: new FormControl(),
+        toDate: new FormControl()
+      });
+
+    }
 
   ngOnInit() {
     console.log("search-forms-componenet");
     let reqParam =new RequestParameter();
-    reqParam.count=5000;
+    reqParam.count=100;
     this.getCustomerDetailFromServer(reqParam)
   }
  options:GridColumnOptions[]=[
@@ -47,6 +58,29 @@ export class SearchFormsComponent implements OnInit {
  ]
 
 
+onSubmit(){
+  this.isSearching=true;
+  const filterStrings : string[]= [];
+  if(this.searchFormGroup.value.customerNo !== null){
+      filterStrings.push('CustomerNo:con:' + this.searchFormGroup.value.customerNo);
+  }
+  if(this.searchFormGroup.value.client !== null){
+    filterStrings.push('Client:con:' + this.searchFormGroup.value.client);
+}
+if(this.searchFormGroup.value.fromDate !== null){
+  filterStrings.push( 'DateOfTest:gte:' + this.searchFormGroup.value.fromDate);
+}
+if(this.searchFormGroup.value.toDate !== null){
+  filterStrings.push('DateOfTest:lte:' + this.searchFormGroup.value.toDate);
+}
+
+  const reqParam =new RequestParameter();
+  reqParam.filter=filterStrings.join(',');
+  reqParam.count = 5000;
+  this.getCustomerDetailFromServer(reqParam)
+}
+
+onClear() { this.searchFormGroup.reset() }
 
   getCustomerDetailFromServer(reqParam?:RequestParameter) {
     this.customerDetailService.getAllPagedResponse(reqParam).subscribe({
@@ -59,8 +93,9 @@ export class SearchFormsComponent implements OnInit {
       error: (e) => {
         this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed',
         detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000 });
+      this.isSearching=false;
       },
-      complete: () => { },
+      complete: () => { this.isSearching=false },
     });
   }
 

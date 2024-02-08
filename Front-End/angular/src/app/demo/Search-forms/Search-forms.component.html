@@ -2,40 +2,45 @@
 
 <h5 class="">Search Reports</h5>
 <hr />
-<form class="row row-cols-md-auto g-3 align-items-center ">
+<form class="row row-cols-md-auto g-3 align-items-center"  [formGroup]="searchFormGroup" (ngSubmit)="onSubmit()">
   <div class="col-12">
     <label for="inlineFormInputName" class="sr-only">Customer Number</label>
-    <input type="text"  class="form-control" id="inlineFormInputName" placeholder="Customer Number" />
+    <input type="text"  class="form-control" id="inlineFormInputName"  formControlName="customerNo" placeholder="Customer Number" />
   </div>
   <div class="col-12">
     <label for="inlineFormInputGroupUsername" class="sr-only">Client Name</label>
     <div class="input-group">
-      <div class="input-group-text">@</div>
-      <input type="text"  class="form-control" id="inlineFormInputGroupUsername" placeholder="Client Name" />
+      <input type="text"  class="form-control" id="inlineFormInputGroupUsername"  formControlName="client" placeholder="Client Name" />
     </div>
   </div>
   <div class="col-12">
     <label for="inlineFormInputGroupUsername" class="sr-only">From Date</label>
     <div class="input-group">
       <div class="input-group-text">From</div>
-      <input type="date"  class="form-control" id="inlineFormInputGroupUsername" placeholder="FromDate" />
+      <input type="date"  class="form-control" id="inlineFormInputGroupUsername"  formControlName="fromDate" placeholder="FromDate" />
     </div>
   </div>
   <div class="col-12">
     <label for="inlineFormInputGroupUsername" class="sr-only">To Date</label>
     <div class="input-group">
       <div class="input-group-text">To</div>
-      <input type="date"  class="form-control" id="inlineFormInputGroupUsername" placeholder="ToDate" />
+      <input type="date"  class="form-control" id="inlineFormInputGroupUsername"  formControlName="toDate"  placeholder="ToDate" />
     </div>
   </div>
  
   <div class="col-12">
-    <button type="button" class="btn btn-primary">Search <i class="m-1 feather icon-search"></i></button>
+    <button type="submit" class="btn btn-primary">
+      <span *ngIf="isSearching" class="spinner-border spinner-border-sm me-1"></span>
+      Search <i class="m-1 feather icon-search"></i></button>
+  </div>
+  <div class="col-12">
+    <button type="button" (click)="onClear()" class="btn btn-primary">
+      Clear</button>
   </div>
 </form>
 
 <hr class="mb-5" />
-<app-grid [title]="'CustomerDetails'" [listOfItems]="listOfCustomerDetails" [gridColumnOptions]="options" [totalRecords]="totalCount"
+<app-grid [title]="'CustomerDetails'"  [listOfItems]="listOfCustomerDetails" [gridColumnOptions]="options" [totalRecords]="totalCount"
             [dataKey]="'id'"  [canEdit] ="false" [canPreview]="true"
             [canDelete]="false" [hasColumnGroup]="false" [hasLazyLoading]="false" (LazyLoad)="onLazyLoad($event)" (Preview)="onCustomerPreview($event)"
             ></app-grid>
