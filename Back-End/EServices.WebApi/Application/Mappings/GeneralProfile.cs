@@ -34,6 +34,7 @@ namespace Application.Mappings
 
             CreateMap<CustomerDetail, GetAllCustomerDetailsViewModel>()
             .ForMember(m => m.FormTypeName, opt => opt.MapFrom(entity => entity.FormType.ToString()))
+            .ForMember(m => m.DateOfTest, opt => opt.MapFrom(entity => entity.DateOfTest.ToString("dd/MM/yyyy")))
             .ReverseMap();
             CreateMap<CreateCustomerDetailCommand, CustomerDetail>();
             CreateMap<GetAllCustomerDetailsQuery, RequestParameter>();

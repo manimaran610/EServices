@@ -16,7 +16,7 @@ namespace Application.Features.CustomerDetails.Queries.GetAllCustomerDetails
         public string AreaOfTest { get; set; }
         public FormType FormType { get; set; } 
         public string FormTypeName { get; set; }
-        public DateTime DateOfTest { get; set; }
+        public string DateOfTest { get; set; }
         public DateTime DateOfTestDue { get; set; }
         public int InstrumentId { get; set; }
     }
