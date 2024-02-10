@@ -39,36 +39,7 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
   onCloseEventFire: EventEmitter<any> = new EventEmitter<any>();
   addNewRowEvent: EventEmitter<any> = new EventEmitter<any>();
 
-  groupedColumnOptions: GroupedColumnOptions[] = [
-    {
-      gridColumnOptions: [
-        { field: 'locationNo', header: 'Location No.', rowspan: '2', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
-        { field: 'pointFive', header: '0.5 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
-        { field: 'one', header: '1 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
-        { field: 'five', header: '5 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
-        { field: 'result', header: 'Result', rowspan: '2', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 14},
-        { field: '', header: 'Action', rowspan: '2', isEditable: false, hasTableValue: false, isStandalone: false }
-
-      ]
-    },
-    {
-      gridColumnOptions: [
-        { field: 'ptOne', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true, inputType: 'number',isStandalone: false, orderNo: 2 },
-        { field: 'ptTwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 3 },
-        { field: 'ptThree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 4 },
-        { field: 'ptAverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 5 },
-        { field: 'oneone', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 6 },
-        { field: 'onetwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 7 },
-        { field: 'onethree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 8 },
-        { field: 'oneaverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 9 },
-
-        { field: 'fiveone', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 10 },
-        { field: 'fivetwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true, inputType: 'number',isStandalone: false, orderNo: 11 },
-        { field: 'fivethree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 12 },
-        { field: 'fiveaverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 13 },
-      ]
-    }
-  ]
+  groupedColumnOptions: GroupedColumnOptions[] =this.class5_GroupColumnOptions();
 
   constructor(
     private messageService: MessageService,
@@ -122,7 +93,26 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
     this.roomsFormGroup.controls['classType'].addValidators([Validators.required,])
   }
   reEvaluateCalcResults() {
+   const option = {
+      gridColumnOptions: [
+        { field: 'ptOne', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true, inputType: 'number',isStandalone: false, orderNo: 2 },
+        { field: 'ptTwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 3 },
+        { field: 'ptThree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 4 },
+        { field: 'ptAverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 5 },
+        { field: 'oneone', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 6 },
+        { field: 'onetwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 7 },
+        { field: 'onethree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 8 },
+        { field: 'oneaverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 9 },
+        { field: 'fiveone', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 10 },
+        { field: 'fivetwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true, inputType: 'number',isStandalone: false, orderNo: 11 },
+        { field: 'fivethree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 12 },
+        { field: 'fiveaverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 13 },
+      ]
+    }
+    const className:string = this.roomsFormGroup.controls['classType'].value;
+    this.groupedColumnOptions =className.includes('5') ? this.class5_GroupColumnOptions():this.class6_7_8_GroupColumnOptions();
     this.listOflocations.forEach(e => e = this.evaluateFinalResult(e));
+    this.changeRef.detectChanges();
   }
 
   hasMinimumCleanRoomSampling(): boolean {
@@ -198,7 +188,9 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
   evaluateFinalResult(rowData: any) {
     const className = this.roomsFormGroup.controls['classType'].value;
     const classType = this.classficationList.find(e => e.name == className);
-    const isPassed = rowData.ptAverage <= classType.pointFiveMicron && rowData.oneaverage <= classType.oneMicron && rowData.fiveaverage <= classType.fiveMicron ;
+    const isPassed = className.includes('5') ? (rowData.ptAverage <= classType.pointFiveMicron && rowData.oneaverage <= classType.oneMicron && rowData.fiveaverage <= classType.fiveMicron)
+    : (rowData.ptAverage <= classType.pointFiveMicron && rowData.fiveaverage <= classType.fiveMicron)
+    ;
     rowData.result = isPassed ? 'Complies' : 'Non Complies';
     rowData.resultClass = isPassed ? 'text-c-green' : 'text-c-red';
 
@@ -286,11 +278,11 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
     const result = new RoomLocation();
     result.referenceNumber = location.locationNo;
     result.pointFiveMicronCycles = location.ptOne + ',' + location.ptTwo + ',' + location.ptThree;
-    result.oneMicronCycles = location.oneone + ',' + location.onetwo + ',' + location.onethree;
+    result.oneMicronCycles =  this.roomModel?.classType.includes('5')  ? location.oneone + ',' + location.onetwo + ',' + location.onethree : '';
     result.fiveMicronCycles = location.fiveone + ',' + location.fivetwo + ',' + location.fivethree;
     result.averagePointFiveMicron = location.ptAverage
     result.averageFiveMicron = location.fiveaverage
-    result.averageOneMicron = location.oneaverage
+    result.averageOneMicron =  this.roomModel?.classType.includes('5') ? location.oneaverage : 0
     result.result = location.result;
     return result;
 
@@ -333,4 +325,63 @@ export class ParticleRoomLocationsThreeCycleComponent implements OnInit {
   }
 
   //#endregion
+
+  class5_GroupColumnOptions():GroupedColumnOptions[]{
+    return  [
+      {
+        gridColumnOptions: [
+          { field: 'locationNo', header: 'Location No.', rowspan: '2', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
+          { field: 'pointFive', header: '0.5 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
+          { field: 'one', header: '1 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
+          { field: 'five', header: '5 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
+          { field: 'result', header: 'Result', rowspan: '2', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 14},
+          { field: '', header: 'Action', rowspan: '2', isEditable: false, hasTableValue: false, isStandalone: false }
+  
+        ]
+      },
+      {
+        gridColumnOptions: [
+          { field: 'ptOne', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true, inputType: 'number',isStandalone: false, orderNo: 2 },
+          { field: 'ptTwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 3 },
+          { field: 'ptThree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 4 },
+          { field: 'ptAverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 5 },
+          { field: 'oneone', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 6 },
+          { field: 'onetwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 7 },
+          { field: 'onethree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 8 },
+          { field: 'oneaverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 9 },
+          { field: 'fiveone', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 10 },
+          { field: 'fivetwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true, inputType: 'number',isStandalone: false, orderNo: 11 },
+          { field: 'fivethree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 12 },
+          { field: 'fiveaverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 13 },
+        ]
+      }
+    ]
+  }
+
+  class6_7_8_GroupColumnOptions():GroupedColumnOptions[]{
+    return  [
+      {
+        gridColumnOptions: [
+          { field: 'locationNo', header: 'Location No.', rowspan: '2', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
+          { field: 'pointFive', header: '0.5 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
+          { field: 'five', header: '5 Micron and above', colspan: '4', hasTableValue: false, isStandalone: false },
+          { field: 'result', header: 'Result', rowspan: '2', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 14},
+          { field: '', header: 'Action', rowspan: '2', isEditable: false, hasTableValue: false, isStandalone: false }
+  
+        ]
+      },
+      {
+        gridColumnOptions: [
+          { field: 'ptOne', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true, inputType: 'number',isStandalone: false, orderNo: 2 },
+          { field: 'ptTwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 3 },
+          { field: 'ptThree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 4 },
+          { field: 'ptAverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 5 },
+          { field: 'fiveone', width: '15%', header: '1st Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 10 },
+          { field: 'fivetwo', width: '15%', header: '2nd Cycle', isEditable: true, hasTableValue: true, inputType: 'number',isStandalone: false, orderNo: 11 },
+          { field: 'fivethree', width: '15%', header: '3rd Cycle', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false, orderNo: 12 },
+          { field: 'fiveaverage', width: '15%', header: 'Average', isEditable: false, hasTableValue: true, isStandalone: false, orderNo: 13 },
+        ]
+      }
+    ]
+  }
 }
