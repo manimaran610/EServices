@@ -72,6 +72,25 @@ export class BusinessConstants {
         'Aerosol Photometer'   
     ]
 
+   public static getFormNameByFormTypeId(typeId: number): string {
+        switch (typeId) {
+          case 1:
+            return 'ACPH';
+          case 2:
+            return 'FilterIntegrity';
+          case 3:
+            return 'ParticleCountSingleCycle';
+          case 4:
+            return 'ParticleCountThreeCycle';
+          case 5:
+            return 'TempMapping';
+          case 6:
+            return 'ParticleCountRecvCycle';
+          default:
+            return 'NotSupported';
+        }
+      }
+
 }
 
 

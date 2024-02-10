@@ -62,9 +62,10 @@ export class FilterIntegrityRoomGrillsComponent implements OnInit {
   gridColumnOptions: GridColumnOptions[] = [
 
     { field: 'grillNo', header: 'Terminal Filter ID', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
-    { field: 'size', header: 'Size',isEditable: true, hasTableValue: true, isStandalone: false },
-    { field: 'upStreamConcat', header: 'Up Stream Concatenation %',isEditable: true,  hasTableValue: true, isStandalone: false },
-    { field: 'penetration', header: 'Penetration %',isEditable: true,  hasTableValue: true, isStandalone: false },
+    { field: 'size', header: 'Size',isEditable: true, hasTableValue: true,inputType:'number', isStandalone: false },
+    { field: 'upStreamConcatLtr', header: 'Up Stream Concatenation in mg/l',isEditable: true,  hasTableValue: true,inputType:'number', isStandalone: false },
+    { field: 'upStreamConcat', header: 'Up Stream Concatenation %',isEditable: true,  hasTableValue: true, inputType:'number',isStandalone: false },
+    { field: 'penetration', header: 'Penetration %',isEditable: true,  hasTableValue: true,inputType:'number', isStandalone: false },
     { field: 'effective', header: 'Effective %',isEditable: false,  hasTableValue: true, isStandalone: false },
     { field: 'result', header: 'Result', isEditable: false, hasTableValue: true, isStandalone: false, },
     { field: '', header: 'Action', isEditable: false, hasTableValue: false, isStandalone: false }
@@ -227,7 +228,8 @@ export class FilterIntegrityRoomGrillsComponent implements OnInit {
   MapToRoomGrill(grill: any): RoomGrill {
     const result = new RoomGrill();
     result.size = parseInt(grill.size);
-    result.upStreamConcat = parseInt(grill.upStreamConcat);
+    result.upStreamConcat = parseFloat(grill.upStreamConcat);
+    result.upStreamConcatLtr = parseFloat(grill.upStreamConcatLtr);
     result.penetration = parseFloat(grill.penetration);
     result.referenceNumber = grill.grillNo;
     result.effective=grill.effective;
@@ -245,6 +247,7 @@ export class FilterIntegrityRoomGrillsComponent implements OnInit {
       id: 0,
       size: 0,
       upStreamConcat: 0,
+      upStreamConcatLtr: 0,
       result:'',
       penetration: 0,
       grillNo: '',
@@ -253,6 +256,7 @@ export class FilterIntegrityRoomGrillsComponent implements OnInit {
     gridResult.id =roomGrill.id;
     gridResult.size = roomGrill.size;
     gridResult.upStreamConcat = roomGrill.upStreamConcat;
+    gridResult.upStreamConcatLtr = roomGrill.upStreamConcatLtr;
     gridResult.penetration = roomGrill.penetration;
     gridResult.grillNo = roomGrill.referenceNumber;
     gridResult.effective=roomGrill.effective;

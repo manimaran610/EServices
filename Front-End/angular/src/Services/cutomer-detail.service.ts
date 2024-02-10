@@ -48,8 +48,8 @@ export class CustomerDetailService {
     return this.httpService.put<CustomerDetail, number>(id, data)
   }
 
-  getReport(id: string): Observable<BaseResponse<string>> {
-    this.httpService.mapURLPath(`CustomerDetail/${id}/Report`)
-    return this.httpService.get();
+  getReport(customerDetailId: string,roomId:number = 0): Observable<BaseResponse<string>> {
+    this.httpService.mapURLPath(`CustomerDetail/${customerDetailId}/Report`)
+    return this.httpService.get(roomId);
   }
 }

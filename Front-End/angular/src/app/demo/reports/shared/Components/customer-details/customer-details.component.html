@@ -116,7 +116,7 @@
 
       <div class="col-md-6">
         <div class="form-group">
-          <label for="exampleInputPassword1">Test Reference:</label>
+          <label for="exampleInputPassword1">Classification:</label>
           <input type="text" class="form-control" name="city" formControlName="classType" list="classficationList" placeholder="Enter Test Reference">
           <datalist id="classficationList">
             <option *ngFor="let item of classficationList">
@@ -185,10 +185,10 @@
           <div class="col text-center">
             <button class="btn btn-primary m-2" type="button" pButton pRipple ngbTooltip='Clear all'
               (click)="onClear()">Clear</button>
-            <button class="btn btn-success" type="submit" [disabled]="isSaved" ngbTooltip='Save'>
-              <i *ngIf="isSaved" class="feather icon-check-circle me-1"></i>
+            <button class="btn btn-success" type="submit" ngbTooltip='Save'>
+              <i *ngIf="isSaved && !isSaveLoading" class="feather icon-check-circle me-1"></i>
               <span *ngIf="isSaveLoading" class="spinner-border spinner-border-sm me-1"></span>
-              Save Customer</button>
+             {{isSaved ? 'Update Customer':'Save Customer'}} </button>
           </div>
         </div>
       </div>

@@ -88,10 +88,12 @@ export class BaseHttpClientServiceService {
     return this.http.delete<BaseResponse<Res>>(`${this.url}/${id}`, { headers: headers });
   }
 
-  public get<T>(): Observable<BaseResponse<T>> {
+  public get<T>(roomId:number = 0): Observable<BaseResponse<T>> {
     const headers = this.populateHttpHeaders;
     return this.http.get<BaseResponse<T>>(`${this.url}`, {
       headers: headers,
+      params: new HttpParams()
+      .set('roomId', roomId)
     });
   }
 }
