@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Filters;
 using Application.Interfaces.Repositories;
 using Application.Wrappers;
 using AutoMapper;
-using Domain.Entities;
-using FluentValidation;
 using MediatR;
 
 namespace Application.Features.CustomerDetails.Queries.GetAllCustomerDetails

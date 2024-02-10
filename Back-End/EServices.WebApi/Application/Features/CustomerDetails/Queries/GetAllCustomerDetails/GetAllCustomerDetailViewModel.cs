@@ -11,11 +11,12 @@ namespace Application.Features.CustomerDetails.Queries.GetAllCustomerDetails
         public string CustomerNo { get; set; }
         public string TestReference { get; set; }
         public string ClassTypes { get; set; }
-        public string plant { get; set; }
+        public string Plant { get; set; }
         public string EquipmentId { get; set; }
         public string AreaOfTest { get; set; }
-        public FormType FormType { get; set; }
-        public DateTime DateOfTest { get; set; }
+        public FormType FormType { get; set; } 
+        public string FormTypeName { get; set; }
+        public string DateOfTest { get; set; }
         public DateTime DateOfTestDue { get; set; }
         public int InstrumentId { get; set; }
     }

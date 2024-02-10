@@ -58,12 +58,13 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             if (customerDetail == null)
                 throw new ApiException($"CustomerDetail does not exists with CustomerDetailId -{request.CustomerDetailId}");
 
+            var roomIdFilter = request.RoomId > 0 ? $",Id:eq:{request.RoomId}" : string.Empty;
             var rooms = await _roomRepository.GetPagedReponseAsync
             (
                 0,
-                 int.MaxValue, 
-                 $"CustomerDetailId:eq:{request.CustomerDetailId}",
-                 "Created:asc", 
+                 int.MaxValue,
+                 $"CustomerDetailId:eq:{request.CustomerDetailId}" + roomIdFilter,
+                 "Created:asc",
                  GetRoomSelectExpression(customerDetail.FormType)
             );
 
@@ -71,27 +72,30 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             {
                 var templateRows = PopulateACPHTemplateRowConfigs(rooms);
                 PopulateACPHKeyValuePairs(customerDetail, rooms);
-                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("ACPH.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows,1);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("ACPH.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows, 1);
                 processedFile = ConvertFileToBase64(GetFullPath(outFileName));
                 uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
 
             }
             else if (customerDetail.FormType == FormType.ParticleCountThreeCycle)
             {
-
-                var templateRows = PopulatePC3TemplateRowConfigs(rooms);
+                string templateName = request.RoomId > 0 ? 
+                (BusinessConstants.AtRestISOClassTypes[0].ClassName.Contains(rooms.FirstOrDefault().ClassType,StringComparison.OrdinalIgnoreCase) ?
+                 "PC_3_Location_With_0.5_5_Micron.docx":"PC_3_Location_With_0.5_1_5_Micron.docx")
+                 : "PC_3_Location.docx";
+                var templateRows =request.RoomId > 0 ? PopulatePC3_V2_TemplateRowConfigs(rooms): PopulatePC3TemplateRowConfigs(rooms);
                 PopulatePC3KeyValuePairs(customerDetail, rooms);
-                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_3_Location.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows,1);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath(templateName), GetFullPath(outFileName), _keyValuePairs, templateRows, 1);
                 processedFile = ConvertFileToBase64(GetFullPath(outFileName));
                 uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
 
             }
-             else if (customerDetail.FormType == FormType.ParticleCountRecvCycle)
+            else if (customerDetail.FormType == FormType.ParticleCountRecvCycle)
             {
 
                 var templateRows = PopulatePCTemplateRowConfigs(rooms);
                 PopulatePCKeyValuePairs(customerDetail, rooms);
-                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_Recv.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows,1);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_Recv.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows, 1);
                 processedFile = ConvertFileToBase64(GetFullPath(outFileName));
                 uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
 
@@ -101,7 +105,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
 
                 var templateRows = PopulatePCTemplateRowConfigs(rooms);
                 PopulatePCKeyValuePairs(customerDetail, rooms);
-                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_1_Location.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows,1);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("PC_1_Location.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows, 1);
                 processedFile = ConvertFileToBase64(GetFullPath(outFileName));
                 uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
             }
@@ -110,19 +114,19 @@ namespace Application.Features.Rooms.Commands.CreateRoom
 
                 var templateRows = PopulateFITemplateRowConfigs(rooms);
                 PopulateFIKeyValuePairs(customerDetail, rooms);
-                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("FI.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows,1);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("FI.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows, 1);
                 processedFile = ConvertFileToBase64(GetFullPath(outFileName));
                 uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
             }
 
-            return new Response<object>(new { File = processedFile, URL = uploadedFileUrl }, "File Processed successfully");
+            return new Response<object>(new { File = processedFile, URL = uploadedFileUrl, FileName = customerDetail.CustomerNo + ".docx" }, "File Processed successfully");
         }
 
 
         #region  Key value populators
         private void PopulateACPHKeyValuePairs(CustomerDetail customerDetail, IReadOnlyList<Room> rooms)
         {
-             int count = 1;
+            int count = 1;
             MapPropertiesToKeyValuePair(customerDetail);
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
             _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString("dd-MM-yyyy")));
@@ -131,8 +135,8 @@ namespace Application.Features.Rooms.Commands.CreateRoom
 
             for (int i = 1; i <= rooms.Count; i++)
             {
-                 _keyValuePairs.Add(new keyValue("sno", count.ToString()));
-                 count++;
+                _keyValuePairs.Add(new keyValue("sno", count.ToString()));
+                count++;
 
                 string keyPrefix = $"R-";
                 MapPropertiesToKeyValuePair(rooms[i - 1], keyPrefix);
@@ -152,7 +156,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
         {
             int count = 1;
             MapPropertiesToKeyValuePair(customerDetail);
-            if(customerDetail.ClassType != null) PopulatePCReportISOClassTypes(customerDetail.ClassType);
+            if (customerDetail.ClassType != null) PopulatePCReportISOClassTypes(customerDetail.ClassType);
 
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
             _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString("dd-MM-yyyy")));
@@ -161,8 +165,8 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             foreach (var room in rooms)
             {
                 MapPropertiesToKeyValuePair(room);
-                 _keyValuePairs.Add(new keyValue("sno", count.ToString()));
-                 count++;
+                _keyValuePairs.Add(new keyValue("sno", count.ToString()));
+                count++;
 
                 room.RoomLocations.ForEach(location =>
                 {
@@ -197,7 +201,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
         {
             int count = 1;
             MapPropertiesToKeyValuePair(customerDetail);
-             if(customerDetail.ClassType != null) PopulatePCReportISOClassTypes(customerDetail.ClassType);
+            if (customerDetail.ClassType != null) PopulatePCReportISOClassTypes(customerDetail.ClassType);
             MapPropertiesToKeyValuePair(customerDetail.Instrument);
             _keyValuePairs.Add(new keyValue("c-due", customerDetail.DateOfTestDue.ToString("dd-MM-yyyy")));
             _keyValuePairs.Add(new keyValue("TestedBy", customerDetail.Trainee?.Name));
@@ -205,10 +209,10 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             foreach (var room in rooms)
             {
                 MapPropertiesToKeyValuePair(room);
-                         
-                 _keyValuePairs.Add(new keyValue("lmt", DisplayWithSuffix(room.Limit)));
-                 _keyValuePairs.Add(new keyValue("sno", count.ToString()));
-                 count++;
+
+                _keyValuePairs.Add(new keyValue("lmt", DisplayWithSuffix(room.Limit)));
+                _keyValuePairs.Add(new keyValue("sno", count.ToString()));
+                count++;
 
                 room.RoomLocations.ForEach(location =>
                 {
@@ -231,12 +235,13 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             foreach (var room in rooms)
             {
                 MapPropertiesToKeyValuePair(room);
-                 _keyValuePairs.Add(new keyValue("sno", count.ToString()));
-                 count++;
+                _keyValuePairs.Add(new keyValue("sno", count.ToString()));
+                count++;
                 room.RoomGrills.ForEach(grill =>
                 {
                     _keyValuePairs.Add(new keyValue("Upcon", grill.UpStreamConcat.ToString()));
-                    _keyValuePairs.Add(new keyValue("Pen", grill.Penetration.ToString()));
+                      _keyValuePairs.Add(new keyValue("mgl", grill.UpStreamConcatLtr.ToString()));
+                    _keyValuePairs.Add(new keyValue("Pen", grill.Penetration > 0 ? grill.Penetration.ToString() : "0.0000"));
 
                     MapPropertiesToKeyValuePair(grill);
                 });
@@ -244,11 +249,12 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             }
         }
 
-        private void PopulatePCReportISOClassTypes(string className){
-            var atRestClass = BusinessConstants.AtRestISOClassTypes.FirstOrDefault(e=>e.ClassName.Contains(className,StringComparison.OrdinalIgnoreCase));
-            var inOperationClass = BusinessConstants.InOperationISOClassTypes.FirstOrDefault(e=>e.ClassName.Contains(className,StringComparison.OrdinalIgnoreCase));
-           if(atRestClass != null) MapPropertiesToKeyValuePair(atRestClass,"R-");
-           if(inOperationClass != null) MapPropertiesToKeyValuePair(inOperationClass,"O-");
+        private void PopulatePCReportISOClassTypes(string className)
+        {
+            var atRestClass = BusinessConstants.AtRestISOClassTypes.FirstOrDefault(e => e.ClassName.Contains(className, StringComparison.OrdinalIgnoreCase));
+            var inOperationClass = BusinessConstants.InOperationISOClassTypes.FirstOrDefault(e => e.ClassName.Contains(className, StringComparison.OrdinalIgnoreCase));
+            if (atRestClass != null) MapPropertiesToKeyValuePair(atRestClass, "R-");
+            if (inOperationClass != null) MapPropertiesToKeyValuePair(inOperationClass, "O-");
 
         }
         #endregion
@@ -279,6 +285,17 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             }
             return result.OrderByDescending(e => e.OrderNo).ToList();
         }
+         private List<TemplateRowConfig> PopulatePC3_V2_TemplateRowConfigs(IReadOnlyList<Room> rooms)
+        {
+            List<TemplateRowConfig> result = new();
+            int orderNo = 1;
+            foreach (var room in rooms)
+            {
+                result.Add(new(orderNo, 5, 6, room.RoomLocations.Count()));
+                orderNo++;
+            }
+            return result.OrderByDescending(e => e.OrderNo).ToList();
+        }
 
         private List<TemplateRowConfig> PopulatePCTemplateRowConfigs(IReadOnlyList<Room> rooms)
         {
@@ -297,7 +314,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             int orderNo = 1;
             foreach (var room in rooms)
             {
-                result.Add(new(orderNo, 2, 3, room.RoomGrills.Count()));
+                result.Add(new(orderNo, 3, 4, room.RoomGrills.Count()));
                 orderNo++;
             }
             return result.OrderByDescending(e => e.OrderNo).ToList();
@@ -317,13 +334,13 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 RoomVolume = e.RoomVolume,
                 CustomerDetailId = e.CustomerDetailId,
                 Name = e.Name,
-                Limit=e.Limit,
-                ClassType=e.ClassType,
+                Limit = e.Limit,
+                ClassType = e.ClassType,
                 AreaM2 = e.AreaM2,
                 TotalAirFlowCFM = e.TotalAirFlowCFM,
                 RoomGrills = e.RoomGrills.Where(e => !e.IsDeleted).OrderBy(e => e.ReferenceNumber).ToList(),
                 RoomLocations = formType == FormType.ParticleCountRecvCycle ?
-                  e.RoomLocations.Where(e => !e.IsDeleted).OrderBy(e => e.Time).ToList():
+                  e.RoomLocations.Where(e => !e.IsDeleted).OrderBy(e => e.Time).ToList() :
                 e.RoomLocations.Where(e => !e.IsDeleted).OrderBy(e => e.ReferenceNumber).ToList()
 
             };
@@ -362,7 +379,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             {
                 obj.GetType().GetProperties().ToList().ForEach(prop =>
                 {
-                    this._keyValuePairs.Add(new(keyPrefix + prop.Name, prop.PropertyType == DateTime.Now.GetType() ? ((DateTime)prop.GetValue(obj,default)).ToString("dd-MM-yyyy"):Convert.ToString(prop.GetValue(obj, default))));
+                    this._keyValuePairs.Add(new(keyPrefix + prop.Name, prop.PropertyType == DateTime.Now.GetType() ? ((DateTime)prop.GetValue(obj, default)).ToString("dd-MM-yyyy") : Convert.ToString(prop.GetValue(obj, default))));
                 });
             }
         }
@@ -374,19 +391,19 @@ namespace Application.Features.Rooms.Commands.CreateRoom
         }
 
         private string GetFullPath(string filename) => Path.Combine("WordTemplates", filename);
+
+
+        private string DisplayWithSuffix(string number)
+        {
+            if (number.EndsWith("11")) return number + "th";
+            if (number.EndsWith("12")) return number + "th";
+            if (number.EndsWith("13")) return number + "th";
+            if (number.EndsWith("1")) return number + "st";
+            if (number.EndsWith("2")) return number + "nd";
+            if (number.EndsWith("3")) return number + "rd";
+            return number + "th";
+        }
         #endregion
-
-    private  string DisplayWithSuffix(string number)
-    {
-        if (number.EndsWith("11")) return number + "th";
-        if (number.EndsWith("12")) return number + "th";
-        if (number.EndsWith("13")) return number + "th";
-        if (number.EndsWith("1")) return number + "st";
-        if (number.EndsWith("2")) return number + "nd";
-        if (number.EndsWith("3")) return number + "rd";
-        return number + "th";
-    }
-
         private async Task<string> UploadFileForSharing(string filePath)
         {
             string result = string.Empty;
@@ -404,7 +421,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 }
 
             }
-          File.Delete(filePath);
+            File.Delete(filePath);
             return result;
         }
     }

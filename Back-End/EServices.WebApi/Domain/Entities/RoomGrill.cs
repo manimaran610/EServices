@@ -17,8 +17,8 @@ namespace Domain.Entities
         public double Penetration { get; set; }
         public double Effective { get; set; }
         public double UpStreamConcat { get; set; }
+        public double UpStreamConcatLtr { get; set; }
         public string Result { get; set; }
-
 
         public virtual Room Room { get; set; } = default!;
 
