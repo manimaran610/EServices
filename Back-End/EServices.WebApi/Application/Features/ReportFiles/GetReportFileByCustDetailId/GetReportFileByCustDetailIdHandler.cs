@@ -81,7 +81,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             {
                 string templateName = request.RoomId > 0 ? 
                 (BusinessConstants.AtRestISOClassTypes[0].ClassName.Contains(rooms.FirstOrDefault().ClassType,StringComparison.OrdinalIgnoreCase) ?
-                 "PC_3_Location_With_0.5_5_Micron.docx":"PC_3_Location_With_0.5_1_5_Micron.docx")
+                 "PC_3_Location_With_0.5_1_5_Micron.docx":"PC_3_Location_With_0.5_5_Micron.docx")
                  : "PC_3_Location.docx";
                 var templateRows =request.RoomId > 0 ? PopulatePC3_V2_TemplateRowConfigs(rooms): PopulatePC3TemplateRowConfigs(rooms);
                 PopulatePC3KeyValuePairs(customerDetail, rooms);
