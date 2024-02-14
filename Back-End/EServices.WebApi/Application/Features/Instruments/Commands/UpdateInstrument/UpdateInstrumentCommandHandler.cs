@@ -33,6 +33,7 @@ namespace Application.Features.Instruments.Commands.UpdateInstrument
                 instrument.CalibratedOn = command.CalibratedOn;
                 instrument.CalibratedDueOn = command.CalibratedDueOn;
                 instrument.CertificateName =command.CertificateName;
+                instrument.CertificateFile =command.CertificateFile;
               
                 await _instrumentRepository.UpdateAsync(instrument);
                 return new Response<int>(instrument.Id);
