@@ -44,6 +44,14 @@ export const NavigationItems: NavigationItem[] = [
        
       },
       {
+        id: 'Instruments',
+        title: 'Instruments',
+        type: 'item',
+        url: '/Instruments',
+        icon: 'feather icon-layers',
+       
+      },
+      {
         id: 'ApplicationForm',
         title: 'Your Forms',
         type: 'item',

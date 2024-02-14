@@ -1,0 +1,35 @@
+<div class="col-sm-12">
+  <h5 class="">Instrument Details</h5>
+  <hr />
+  <!-- BreadCrumb -->
+  <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>'">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a (click)="navigateToUrl('Home')" class="text-c-blue"><i class="feather icon-home"></i></a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">Instruments</li>
+    </ol>
+  </nav>
+  <p-toast position="bottom-right" key="tc"></p-toast>
+  <div class="col text-end">
+
+    <button class="btn btn-primary m-2"  type="button" (click)="navigateToUrl('Instruments/Add')"
+       ngbTooltip='Add new instrument'>
+        Add Instrument
+    <i class="m-2 feather icon-plus"></i>
+  </button>
+  </div>
+  <app-grid
+    [title]="'Instrument Details'"
+    [listOfItems]="listOfInstrumentDetails"
+    [gridColumnOptions]="options"
+    [dataKey]="'id'"
+    [canDelete]="true"
+    [canPreview]="true"
+    [canDownload]="true"
+    [isDownloading]="isDownloading"
+    (Delete)="onDelete($event)"
+    (Download)="onDownload($event)"
+    (Preview)="onPreview($event)"
+  ></app-grid>
+</div>

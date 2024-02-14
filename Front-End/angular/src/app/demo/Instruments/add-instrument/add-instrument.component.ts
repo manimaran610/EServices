@@ -1,20 +1,21 @@
+import { data } from './../../../fack-db/series-data';
 import { FileProcessingService } from './../../../../Services/Shared/file-processing.service';
 /* eslint-disable @angular-eslint/no-empty-lifecycle-method */
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CommonModule } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, Message, MessageService } from 'primeng/api';
 import { MessagesModule } from 'primeng/messages';
 import { SharedModule } from 'src/app/theme/shared/shared.module';
-import { Instrument } from 'src/Models/instrument.Model';
-import { InstrumentService } from 'src/Services/Instrument.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ToastModule } from 'primeng/toast';
 import { BaseResponse } from 'src/Models/response-models/base-response';
-import {  Router } from '@angular/router';
+import {  ActivatedRoute, Router } from '@angular/router';
 import { BaseHttpClientServiceService } from 'src/Services/Shared/base-http-client-service.service';
 import { BusinessConstants } from '../../reports/shared/Constants/business-constants';
+import { InstrumentService } from '../../../../Services/Instrument.service';
+import { Instrument } from '../../../../Models/instrument.Model';
 
 
 @Component({
@@ -27,13 +28,14 @@ import { BusinessConstants } from '../../reports/shared/Constants/business-const
     styleUrls: ['./add-instrument.component.css']
 })
 export class AddInstrumentComponent implements OnInit {
-
+    @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
     instrumentFormGroup: FormGroup;
     msgs: Message[] = [];
     instrumentTypes :string[]=BusinessConstants.InstrumentTypes;
     isAddInstrument: boolean = true;
     isSaveLoading:boolean=false;
     isSaved: boolean = false;
+    instrumentId:number = 0;
 
     tempFileName?: string;
     tempFile?: string;
@@ -44,7 +46,8 @@ export class AddInstrumentComponent implements OnInit {
         private instrumentService: InstrumentService,
         private messageService: MessageService,
         private fileProcessingService:FileProcessingService,
-        public router: Router
+        public router: Router,
+        private route: ActivatedRoute
     ) {
 
         this.instrumentFormGroup = new FormGroup(
@@ -61,7 +64,16 @@ export class AddInstrumentComponent implements OnInit {
         this.addFormControlValidators();
     }
 
-    ngOnInit() { }
+    ngOnInit() {
+        this.route.params.subscribe(params => {
+            if (params['id'] !== undefined && params['id'] > 0) {
+              this.instrumentId = params['id'];
+              if (this.instrumentId > 0) {
+                this.getInstrumentById(this.instrumentId.toString());
+              }
+            }
+          });
+     }
     navigateToUrl = (url: string | undefined) => this.router.navigateByUrl(url!);
 
 
@@ -87,7 +99,7 @@ export class AddInstrumentComponent implements OnInit {
             acceptButtonStyleClass: 'btn btn-success m-2',
             rejectButtonStyleClass: 'btn btn-danger',
             accept: () => {
-                this.postInstrumentToAPIServer()
+              this.instrumentId > 0 ? this.UpdateInstrument(): this.postInstrumentToAPIServer() 
             },
             reject: () => { }
         });
@@ -113,6 +125,47 @@ export class AddInstrumentComponent implements OnInit {
             },
         });
     }
+
+    UpdateInstrument() {
+        this.isSaveLoading =true;
+        this.instrumentModel.id=this.instrumentId;
+        this.instrumentService.updateInstrument(this.instrumentId.toString(),this.instrumentModel).subscribe({
+            next: (response: BaseResponse<number>) => {
+                if (response.succeeded) this.messageService.add({ key: 'tc', severity: 'success', summary: 'Success', detail: 'Instrument details updated', life: 4000 }); 
+                this.isSaved=true;      
+            },
+            error: (e) => {
+                console.log(e)
+                this.messageService.add({ key: 'tc', severity: 'error', summary: 'Failed',
+                detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000 });
+                this.isSaveLoading =false;
+
+            },
+            complete: () => {
+                this.isSaveLoading =false;
+                // this.router.navigateByUrl("/Home-page")
+            },
+        });
+    }
+    
+    getInstrumentById(id:string) {
+        this.instrumentService.getInstrumentById(id).subscribe({
+          next: (response: BaseResponse<Instrument>) => {
+            if (response.succeeded) {
+                  this.instrumentModel=response.data;  
+                  this.mapInstrumentDetailToForm();   
+            }
+          },
+          error: (e) => {
+            this.messageService.add({
+              key: 'tc', severity: 'error', summary: 'Failed',
+              detail: e.status ==0? 'Server connection error': e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
+            });
+          },
+          complete: () => {  
+          },
+        });
+      }
     async uploadFile(event: any) {
 
         if (event.files.length > 0 && event.files[0].size < 5120000) {
@@ -143,7 +196,33 @@ export class AddInstrumentComponent implements OnInit {
         this.instrumentFormGroup.controls['certificate'].addValidators([Validators.required])
 
     }
+    
 
+    mapInstrumentDetailToForm() {
+        this.instrumentFormGroup.controls['serialNo'].patchValue(this.instrumentModel.serialNumber);
+        this.instrumentFormGroup.controls['make'].patchValue(this.instrumentModel.make);
+        this.instrumentFormGroup.controls['model'].patchValue(this.instrumentModel.model);
+        this.instrumentFormGroup.controls['type'].patchValue(this.instrumentModel.type);
+        this.instrumentFormGroup.controls['calibratedOn'].patchValue(this.formatDate(this.instrumentModel.calibratedOn!));
+        this.instrumentFormGroup.controls['calibratedDueOn'].patchValue(this.formatDate(this.instrumentModel.calibratedDueOn!));
+        const file = this.fileProcessingService.base64ToFile(this.instrumentModel.certificateFile,this.instrumentModel.certificateName!,'application/pdf');
+        console.log(file);
+
+
+
+        
+
+}
+
+private formatDate(date: Date) {
+    const d = new Date(date);
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+    const year = d.getFullYear();
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+    return [year, month, day].join('-');
+  }
 }
 
   
