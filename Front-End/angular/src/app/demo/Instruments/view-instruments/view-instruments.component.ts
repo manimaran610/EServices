@@ -48,6 +48,7 @@ export class ViewInstrumentsComponent implements OnInit {
     { field: 'serialNo', header: 'Serial No', isSortable: true, hasFilter: true, hasTableValue: true },
     { field: 'make', header: 'Make', isSortable: true, hasFilter: true, hasTableValue: true },
     { field: 'model', header: 'Model', isSortable: true, hasFilter: true, hasTableValue: true },
+    { field: 'type', header: 'Type', isSortable: true, hasFilter: true, hasTableValue: true },
     { field: 'calibratedOnStr', header: 'calibratedOn', isSortable: true, hasFilter: true, hasTableValue: true },
     { field: 'calibratedDueOnStr', header: 'calibrated Due', isSortable: true, hasFilter: true, hasTableValue: true },
     { field: 'certificateName', header: 'certificateName', isSortable: true, hasFilter: true, hasTableValue: true }
