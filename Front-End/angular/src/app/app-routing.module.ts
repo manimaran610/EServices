@@ -15,6 +15,7 @@ import { AddTraineeComponent } from './demo/trainee-details/add-trainee/add-trai
 import { FilterIntegrityComponent } from './demo/reports/filter-integrity/filter-integrity/filter-integrity.component';
 import { TempMappingComponent } from './demo/reports/temp-mapping/temp-mapping.component';
 import { ParticleCountRecvCycleComponent } from './demo/reports/particle-count/recv-cycle/particle-count-recv-cycle/particle-count-recv-cycle.component';
+import { ViewInstrumentsComponent } from './demo/Instruments/view-instruments/view-instruments.component';
 
 
 const routes: Routes = [
@@ -65,19 +66,27 @@ const routes: Routes = [
         component: Form1Component,
       },
       {
-        path: 'Instrument',
+        path: 'Instruments',
         children: [
           {
-            path: 'Add-Instrument',
+            path: 'Add',
             component: AddInstrumentComponent
-          }
+          },
+          {
+            path: '',
+            component: ViewInstrumentsComponent
+          },
+          {
+            path: 'Update/:id',
+            component: AddInstrumentComponent
+          },
         ]
       },
       {
         path: 'Employee',
         children: [
           {
-            path: 'Add-Employee',
+            path: 'Add',
             component: AddTraineeComponent
           }
         ]

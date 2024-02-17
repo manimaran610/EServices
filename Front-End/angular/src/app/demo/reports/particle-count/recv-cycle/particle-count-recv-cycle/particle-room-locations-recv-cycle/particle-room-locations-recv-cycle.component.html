@@ -34,7 +34,7 @@
         <div class="form-group">
           <label for="exampleInputPassword1">Area (m2):</label>
           <input type="number" class="form-control" id="exampleInputPassword1" formControlName="areaM2"
-            placeholder="Enter areaM2 ACPH"
+            placeholder="Enter area m2"
             [ngClass]="{'is-invalid': roomsFormGroup.controls['areaM2'].errors  && (roomsFormGroup.controls['areaM2'].touched || roomsFormGroup.controls['areaM2'].dirty), 'is-valid':roomsFormGroup.controls['areaM2'].valid}" />
           <div class="invalid-feedback" *ngIf="roomsFormGroup.controls['areaM2'].hasError('required')">
             Required

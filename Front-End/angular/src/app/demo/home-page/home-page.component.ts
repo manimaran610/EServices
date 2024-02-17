@@ -270,9 +270,9 @@ export default class HomePageComponent implements OnInit {
           {
             title: 'Add Instrument',
             background: 'bg-c-blue',
-            icon: 'icon icon-framer',
+            icon: 'icon icon-layers',
             accentColor: '#0D6EFD',
-            navigateTo: '/Instrument/Add-Instrument'
+            navigateTo: '/Instruments/Add'
           },
         ]
       },
@@ -282,9 +282,9 @@ export default class HomePageComponent implements OnInit {
           {
             title: 'Add Employee',
             background: 'bg-c-blue',
-            icon: 'icon icon-framer',
+            icon: 'icon icon-users',
             accentColor: '#0D6EFD',
-            navigateTo: '/Employee/Add-Employee'
+            navigateTo: '/Employee/Add'
           },
         ]
       }

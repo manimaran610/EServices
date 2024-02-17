@@ -6,7 +6,8 @@
 export const environment = {
   appVersion: 'v1',
   production: true,
-  apiUrl: 'http://v-point.tech:9000/api'
+ apiUrl: 'http://v-point.tech:9000/api'
+// apiUrl:'https://localhost:9001/api'
 };
 
 /*

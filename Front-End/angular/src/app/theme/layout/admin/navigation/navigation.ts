@@ -43,6 +43,14 @@ export const NavigationItems: NavigationItem[] = [
         icon: 'feather icon-search',
        
       },
+      // {
+      //   id: 'Instruments',
+      //   title: 'Instruments',
+      //   type: 'item',
+      //   url: '/Instruments',
+      //   icon: 'feather icon-layers',
+       
+      // },
       {
         id: 'ApplicationForm',
         title: 'Your Forms',
