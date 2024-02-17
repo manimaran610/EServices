@@ -16,6 +16,7 @@ import { FilterIntegrityComponent } from './demo/reports/filter-integrity/filter
 import { TempMappingComponent } from './demo/reports/temp-mapping/temp-mapping.component';
 import { ParticleCountRecvCycleComponent } from './demo/reports/particle-count/recv-cycle/particle-count-recv-cycle/particle-count-recv-cycle.component';
 import { ViewInstrumentsComponent } from './demo/Instruments/view-instruments/view-instruments.component';
+import { AcphHootComponent } from './demo/reports/acph-hoot/acph-hoot/acph-hoot.component';
 
 
 const routes: Routes = [
@@ -101,6 +102,14 @@ const routes: Routes = [
           {
             path: 'ACPH/:id',
             component: AcphComponent
+          },
+          {
+            path: 'ACPH-Hoot',
+            component: AcphHootComponent
+          },
+          {
+            path: 'ACPH-Hoot/:id',
+            component: AcphHootComponent
           },
           {
             path: 'ParticleCount',
