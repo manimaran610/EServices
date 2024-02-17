@@ -36,7 +36,8 @@ namespace Application.Features.Instruments.Queries.GetAllInstruments
                 Model = e.Model,
                 Type = e.Type,
                 CalibratedOn = e.CalibratedOn,
-                CalibratedDueOn = e.CalibratedDueOn
+                CalibratedDueOn = e.CalibratedDueOn,
+                CertificateName=e.CertificateName
             };
 
             var instrumentPagedResponse = await _instrumentRepository.GetPagedReponseAsync(reqParam.Offset, reqParam.Count, reqParam.Filter, reqParam.Sort, selectExpression);
