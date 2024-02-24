@@ -17,6 +17,7 @@ import { TempMappingComponent } from './demo/reports/temp-mapping/temp-mapping.c
 import { ParticleCountRecvCycleComponent } from './demo/reports/particle-count/recv-cycle/particle-count-recv-cycle/particle-count-recv-cycle.component';
 import { ViewInstrumentsComponent } from './demo/Instruments/view-instruments/view-instruments.component';
 import { AcphHootComponent } from './demo/reports/acph-hoot/acph-hoot/acph-hoot.component';
+import { ViewTraineesComponent } from './demo/trainee-details/view-trainees/view-trainees.component';
 
 
 const routes: Routes = [
@@ -84,11 +85,19 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'Employee',
+        path: 'Employees',
         children: [
           {
             path: 'Add',
             component: AddTraineeComponent
+          },
+          {
+            path: 'Update/:id',
+            component: AddTraineeComponent
+          },
+          {
+            path: '',
+            component: ViewTraineesComponent
           }
         ]
       },

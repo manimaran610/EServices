@@ -221,7 +221,7 @@ export class AcphHootRoomGrillsComponent implements OnInit {
 
   performGrillCalculations(grill: any) {
     const avgVelocityInFPM =parseInt(grill.avgVelocityInFPM);
-    grill.avgVelocityInFPM = Math.round(avgVelocityInFPM / 5);
+    grill.avgVelocityInFPM = Math.round(avgVelocityInFPM);
     grill.airFlowCFM = Math.round(parseFloat(grill.sqrt) * grill.avgVelocityInFPM);
     let totalAirFlowCFM = grill.airFlowCFM;
     this.listOfGrills.forEach((e) => (totalAirFlowCFM += parseInt(e.airFlowCFM)));
