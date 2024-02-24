@@ -7,7 +7,8 @@ namespace Domain.Enums
         ParticleCountSingleCycle,
         ParticleCountThreeCycle,
         TempMapping,
-        ParticleCountRecvCycle
+        ParticleCountRecvCycle,
+        ACPHHoot
 
     }
 }

@@ -65,7 +65,7 @@ namespace Application.Features.Rooms.Commands.UpdateRoom
                 await _roomRepository.UpdateAsync(room);
 
 
-                if ((customerDetail.FormType == FormType.ACPH) ||
+                if ((customerDetail.FormType == FormType.ACPH) || (customerDetail.FormType == FormType.ACPHHoot) ||
                     (customerDetail.FormType == FormType.FilterIntegrity))
                 {
                     var domainEvent = new RoomGrillsUpsertRangeEvent()

@@ -72,6 +72,9 @@ namespace Application.Features.CustomerDetails.Commands.CreateCustomerDetail
                 case FormType.ACPH:
                     result = "ACPH";
                     break;
+                case FormType.ACPHHoot:
+                    result = "ACPHHoot";
+                    break;
                 case FormType.FilterIntegrity:
                     result = "FI";
                     break;

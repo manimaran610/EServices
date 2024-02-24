@@ -46,7 +46,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
 
             await _roomRepository.AddAsync(room);
 
-            if ((customerDetail.FormType == FormType.ACPH) || 
+            if ((customerDetail.FormType == FormType.ACPH) || (customerDetail.FormType == FormType.ACPHHoot) ||
                 (customerDetail.FormType == FormType.FilterIntegrity))
             {
                 var domainEvent = new RoomGrillsUpsertRangeEvent()
