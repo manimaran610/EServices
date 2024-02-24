@@ -131,6 +131,8 @@ onClear() { this.searchFormGroup.reset() }
         return 'TempMapping';
       case 6:
         return `/Reports/ParticleCount/RecvCycle/${customerDetailId}`;
+      case 7:
+          return `/Reports/ACPH-Hoot/${customerDetailId}`;
       default:
         return 'NotSupported';
     }

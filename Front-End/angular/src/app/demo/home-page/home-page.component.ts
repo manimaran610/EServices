@@ -231,6 +231,13 @@ export default class HomePageComponent implements OnInit {
             navigateTo: '/Reports/ACPH'
           },
           {
+            title: 'ACPH Hoot',
+            background: 'bg-c-blue',
+            accentColor: '#0D6EFD',
+            icon: 'icon icon-anchor ',
+            navigateTo: '/Reports/ACPH-Hoot'
+          },
+          {
             title: 'Filter Integrity',
             background: 'bg-c-green',
             icon: 'icon icon-filter',
@@ -284,7 +291,7 @@ export default class HomePageComponent implements OnInit {
             background: 'bg-c-blue',
             icon: 'icon icon-users',
             accentColor: '#0D6EFD',
-            navigateTo: '/Employee/Add'
+            navigateTo: '/Employees/Add'
           },
         ]
       }

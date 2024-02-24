@@ -1,5 +1,5 @@
 <div class="col-sm-12">
-  <h5 class="">Instrument Details</h5>
+  <h5 class="">Emplopyee Details</h5>
   <hr />
   <!-- BreadCrumb -->
   <nav aria-label="breadcrumb" style="--bs-breadcrumb-divider: '>'">
@@ -7,21 +7,21 @@
       <li class="breadcrumb-item">
         <a (click)="navigateToUrl('Home')" class="text-c-blue"><i class="feather icon-home"></i></a>
       </li>
-      <li class="breadcrumb-item active" aria-current="page">Instruments</li>
+      <li class="breadcrumb-item active" aria-current="page">Employees</li>
     </ol>
   </nav>
   <p-toast position="bottom-right" key="tc"></p-toast>
   <div class="col text-end">
 
-    <button class="btn btn-primary m-2"  type="button" (click)="navigateToUrl('Instruments/Add')"
+    <button class="btn btn-primary m-2"  type="button" (click)="navigateToUrl('Employees/Add')"
        ngbTooltip='Add new instrument'>
-        Add Instrument
+        Add Employee
     <i class="m-2 feather icon-plus"></i>
   </button>
   </div>
   <app-grid
     [title]="'Instrument Details'"
-    [listOfItems]="listOfInstrumentDetails"
+    [listOfItems]="listOfemployees"
     [gridColumnOptions]="options"
     [dataKey]="'id'"
     [canDelete]="true"

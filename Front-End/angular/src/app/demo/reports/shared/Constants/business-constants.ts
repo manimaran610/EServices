@@ -86,6 +86,8 @@ export class BusinessConstants {
             return 'TempMapping';
           case 6:
             return 'ParticleCountRecvCycle';
+          case 7:
+              return 'ACPH-Hoot';
           default:
             return 'NotSupported';
         }
