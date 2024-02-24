@@ -76,6 +76,14 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 processedFile = ConvertFileToBase64(GetFullPath(outFileName));
                 uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
 
+            }else if (customerDetail.FormType == FormType.ACPHHoot)
+            {
+                var templateRows = PopulateACPHHootTemplateRowConfigs(rooms);
+                PopulateACPHKeyValuePairs(customerDetail, rooms);
+                await _fileProcessingService.MailMergeWorkDocument(GetFullPath("ACPH_Hoot.docx"), GetFullPath(outFileName), _keyValuePairs, templateRows, 1);
+                processedFile = ConvertFileToBase64(GetFullPath(outFileName));
+                uploadedFileUrl = await UploadFileForSharing(GetFullPath(outFileName));
+
             }
             else if (customerDetail.FormType == FormType.ParticleCountThreeCycle)
             {
@@ -267,6 +275,21 @@ namespace Application.Features.Rooms.Commands.CreateRoom
             foreach (var room in rooms)
             {
                 result.Add(new(orderNo, 3, 4, room.RoomGrills.Count()));
+                orderNo++;
+            }
+
+            return result.OrderByDescending(e => e.OrderNo).ToList();
+
+
+        }
+
+        private List<TemplateRowConfig> PopulateACPHHootTemplateRowConfigs(IReadOnlyList<Room> rooms)
+        {
+            List<TemplateRowConfig> result = new();
+            int orderNo = 1;
+            foreach (var room in rooms)
+            {
+                result.Add(new(orderNo, 2, 3, room.RoomGrills.Count()));
                 orderNo++;
             }
 
