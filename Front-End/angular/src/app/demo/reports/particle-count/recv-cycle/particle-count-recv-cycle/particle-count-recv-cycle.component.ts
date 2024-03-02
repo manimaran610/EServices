@@ -42,8 +42,6 @@ export class ParticleCountRecvCycleComponent implements OnDestroy,OnInit {
 
   gridColumnOptions: GridColumnOptions[] = [
     { field: 'name', header: 'Room Name', isSortable: true, hasTableValue: true, isStandalone: false },
-    { field: 'areaM2', header: 'Area M2', hasTableValue: true, isStandalone: false },
-    { field: 'noOfLocations', header: 'No. of Locations', hasTableValue: true, isStandalone: false },
     { field: 'classType', header: 'Classification', hasTableValue: true, isStandalone: false },
     { field: 'limit', header: 'Limit', hasTableValue: true, isStandalone: false },
     { field: '', header: '', hasTableValue: false, isStandalone: false }

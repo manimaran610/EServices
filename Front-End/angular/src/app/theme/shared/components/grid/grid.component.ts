@@ -52,6 +52,7 @@ export class GridComponent implements OnInit, OnChanges {
 
 
     @Output() Save: EventEmitter<any> = new EventEmitter<any>();
+    @Output() Cancel: EventEmitter<any> = new EventEmitter<any>();
     @Output() Delete: EventEmitter<any> = new EventEmitter<any>();
     @Output() RadioChanges: EventEmitter<any> = new EventEmitter<any>();
     @Output() LazyLoad: EventEmitter<any> = new EventEmitter<any>();
@@ -133,6 +134,7 @@ export class GridComponent implements OnInit, OnChanges {
     }
 
     onRowEditCancel(rowData: any, index: number) {
+         this.Cancel.emit(rowData);
         if (this.clonedProducts[rowData[this.dataKey]] != null &&
             this.clonedProducts[rowData[this.dataKey]] !== undefined) {
             this.listOfItems[index] = this.clonedProducts[rowData[this.dataKey]];

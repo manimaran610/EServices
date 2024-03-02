@@ -17,7 +17,7 @@ import { GridComponent } from '../../../../../../theme/shared/components/grid/gr
 import { BaseResponse } from '../../../../../../../Models/response-models/base-response';
 import { BaseHttpClientServiceService } from '../../../../../../../Services/Shared/base-http-client-service.service';
 import { BusinessConstants } from '../../../../shared/Constants/business-constants';
-import { generateKey } from 'crypto';
+import { RequestParameter } from 'src/Models/request-parameter';
 
 @Component({
   selector: 'app-particle-room-locations-recv-cycle',
@@ -44,17 +44,20 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
   classficationList: any[] = BusinessConstants.ClassificationTypes;
   listOflocations: any[] = [];
   roomId: number = 0;
+  grillAddedCount: number = 0;
   isSaveLoading: boolean = false;
+  listOflocationsForLimitsCalculation: any[] = [];
+
 
   onCloseEventFire: EventEmitter<any> = new EventEmitter<any>();
   addNewRowEvent: EventEmitter<any> = new EventEmitter<any>();
 
   gridColumnOptions: GridColumnOptions[] = [
     { field: 'condition', header: 'Condition', isEditable: true, hasTableValue: true, isStandalone: false, orderNo: 1 },
-    { field: 'time', header: 'Time', isEditable: true, isSortable: true, hasTableValue: true, isStandalone: false },
-    { field: 'ptAverage', header: '0.5 Micron and above', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false },
-    { field: 'oneAverage', header: '1 Micron and above', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false },
-    { field: 'fiveAverage', header: '5 Micron and above', isEditable: true, hasTableValue: true,inputType: 'number', isStandalone: false },
+    { field: 'time', header: 'Time', isEditable: true, isSortable: true, hasTableValue: true, inputType: 'time', isStandalone: false },
+    { field: 'ptAverage', header: '0.5 Micron and above', isEditable: true, hasTableValue: true, inputType: 'number', isStandalone: false },
+    { field: 'oneAverage', header: '1 Micron and above', isEditable: true, hasTableValue: true, inputType: 'number', isStandalone: false },
+    { field: 'fiveAverage', header: '5 Micron and above', isEditable: true, hasTableValue: true, inputType: 'number', isStandalone: false },
     { field: 'result', header: 'Result', isEditable: false, hasTableValue: true, isStandalone: false },
     { field: '', header: 'Action', isEditable: false, hasTableValue: false, isStandalone: false }
   ];
@@ -84,12 +87,10 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
   //#region Forms controls
   onSubmit() {
     if (this.roomsFormGroup.valid && this.listOflocations.length > 0) {
-      if (this.hasMinimumCleanRoomSampling()) {
-        this.mapFormToRoomObject();
-        this.performTimeDifferenceCalculations();
-        console.log(this.roomModel);
-        this.roomId > 0 ? this.updateRoomToAPIServer() : this.postRoomToAPIServer();
-      }
+      this.mapFormToRoomObject();
+      this.performTimeDifferenceCalculations();
+      console.log(this.roomModel);
+      this.roomId > 0 ? this.updateRoomToAPIServer() : this.postRoomToAPIServer();
     } else if (this.listOflocations.length <= 0) {
       this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'Please Add the Locations', life: 4000 });
     } else {
@@ -103,7 +104,6 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
   }
   addFormControlValidators() {
     this.roomsFormGroup.controls['roomName'].addValidators([Validators.required]);
-    this.roomsFormGroup.controls['areaM2'].addValidators([Validators.required, Validators.min(1)]);
     this.roomsFormGroup.controls['classType'].addValidators([Validators.required]);
   }
   reEvaluateCalcResults() {
@@ -161,9 +161,17 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
 
   //#region Grill Rows
   addGridRow() {
-    this.roomsFormGroup.valid && this.roomsFormGroup.controls['classType'].value !== '0'
-      ? this.addNewRowEvent.emit(true)
-      : this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'Room Details Invalid', life: 4000 });
+    if (this.roomsFormGroup.valid && this.roomsFormGroup.controls['classType'].value !== '0') {
+      if (this.grillAddedCount === 0 && this.listOflocations.length === 0) {
+        this.addNewRowEvent.emit(true);
+        this.grillAddedCount++;
+      } else {
+        this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'location cannot be added more than 1', life: 4000 });
+
+      }
+    } else {
+      this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'Room Details Invalid', life: 4000 });
+    }
   }
 
   onGridRowSave(event: any) {
@@ -179,9 +187,13 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
     this.changeRef.detectChanges();
   }
 
+  onGridRowSaveCancel() {
+    this.grillAddedCount--;
+  }
   onGridRowDelete(event: any) {
     if (this.listOflocations.find((e) => e.id === event.id) !== undefined) {
       this.listOflocations = this.listOflocations.filter((e) => e.id !== event.id);
+      this.grillAddedCount--;
     }
     this.roomsFormGroup.controls['noOfLocations'].patchValue(this.listOflocations.length);
     this.changeRef.detectChanges();
@@ -199,28 +211,29 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
     rowData.locationNo = rowData.locationNo !== undefined || rowData.locationNo !== '' ? this.generateRandomId() : rowData.locationNo;
   }
 
-  performTimeDifferenceCalculations() {
+ async performTimeDifferenceCalculations() {
+    this.listOflocationsForLimitsCalculation=[...this.listOflocationsForLimitsCalculation,this.listOflocations];
     let result: number = 0;
-    this.listOflocations = this.listOflocations.sort((obj1,obj2)=> obj1.time - obj2.time)
-    const failedList = this.listOflocations.filter((e) => e.result !== undefined && e.result ==='Fail');
-    const lastFailedIndex = failedList.length > 0 ? this.listOflocations.findIndex((e) => e.id == failedList[failedList.length - 1].id) : -1
-    const finalPassedEntries = lastFailedIndex > -1 ?  this.listOflocations.slice(lastFailedIndex + 1) : [];
+    this.listOflocationsForLimitsCalculation = this.listOflocationsForLimitsCalculation.sort((obj1, obj2) => obj1.time - obj2.time)
+    const failedList = this.listOflocationsForLimitsCalculation.filter((e) => e.result !== undefined && e.result === 'Fail');
+    const lastFailedIndex = failedList.length > 0 ? this.listOflocationsForLimitsCalculation.findIndex((e) => e.id == failedList[failedList.length - 1].id) : -1
+    const finalPassedEntries = lastFailedIndex > -1 ? this.listOflocationsForLimitsCalculation.slice(lastFailedIndex + 1) : [];
     const belowInitialPassedValues = finalPassedEntries.filter(
-      (e) => parseInt(e.ptAverage) < parseInt(this.listOflocations[0].ptAverage)
+      (e) => parseInt(e.ptAverage) < parseInt(this.listOflocationsForLimitsCalculation[0].ptAverage)
     );
     if (belowInitialPassedValues.length > 0) {
-      const lastPassIndex = this.listOflocations.findIndex((e) => e.id === belowInitialPassedValues[0].id);
-      const finalResult = this.listOflocations.slice(lastFailedIndex + 1, lastPassIndex + 1);
-      result =  finalResult.length - 1;
+      const lastPassIndex = this.listOflocationsForLimitsCalculation.findIndex((e) => e.id === belowInitialPassedValues[0].id);
+      const finalResult = this.listOflocationsForLimitsCalculation.slice(lastFailedIndex + 1, lastPassIndex + 1);
+      result = finalResult.length - 1;
       console.log(finalResult);
     } else {
       if (finalPassedEntries.length > 0) {
-        const lastPassIndex = this.listOflocations.findIndex((e) => e.id === finalPassedEntries[finalPassedEntries.length - 1].id);
-        const finalResult = this.listOflocations.slice(lastFailedIndex + 1, lastPassIndex + 1);
-        result =  finalResult.length - 1;
+        const lastPassIndex = this.listOflocationsForLimitsCalculation.findIndex((e) => e.id === finalPassedEntries[finalPassedEntries.length - 1].id);
+        const finalResult = this.listOflocationsForLimitsCalculation.slice(lastFailedIndex + 1, lastPassIndex + 1);
+        result = finalResult.length - 1;
         console.log(finalResult);
       } else {
-        this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'Invalid Entries', life: 4000 });
+        // this.messageService.add({ key: 'tc', severity: 'warn', summary: 'Warning', detail: 'Invalid Entries', life: 4000 });
       }
     }
     this.roomModel!.limit = result.toString();
@@ -303,16 +316,37 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
           life: 4000
         });
       },
-      complete: () => {}
+      complete: () => { }
     });
   }
+
+  getRoomsFromServer() {
+    const reqparam = new RequestParameter();
+    reqparam.filter = `customerDetailId:eq:${this.ref.data?.customerDetailId}`
+    this.roomService.getAllPagedResponse(reqparam).subscribe({
+      next: (response: BaseResponse<Room[]>) => {
+        if (response.succeeded) {
+          response.data.forEach(e => {
+            e.roomLocations.forEach(l => this.reverseMapRoomLocationToGridForCalc(l))
+          })
+        }
+      },
+      error: (e) => {
+        this.messageService.add({
+          key: 'tc', severity: 'error', summary: 'Failed',
+          detail: e.status == 0 ? 'Server connection error' : e.error.Message !== undefined ? e.error.Message : e.error.title, life: 4000
+        });
+      },
+      complete: () => { },
+    });
+  }
+
   //#endregion
 
   //#region mappers
   mapFormToRoomObject() {
     this.roomModel = new Room();
     this.roomModel.name = this.roomsFormGroup.controls['roomName'].value;
-    this.roomModel.areaM2 = this.roomsFormGroup.controls['areaM2'].value;
     this.roomModel.noOfLocations = this.roomsFormGroup.controls['noOfLocations'].value;
     this.roomModel.classType = this.roomsFormGroup.controls['classType'].value;
     this.roomModel.customerDetailId = this.ref.data.customerDetailId;
@@ -333,10 +367,10 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
   }
   reverseMapRoomObjectToForm() {
     this.roomsFormGroup.controls['roomName'].patchValue(this.roomModel!.name);
-    this.roomsFormGroup.controls['areaM2'].patchValue(this.roomModel!.areaM2);
     this.roomsFormGroup.controls['noOfLocations'].patchValue(this.roomModel!.noOfLocations);
     this.roomsFormGroup.controls['classType'].patchValue(this.roomModel!.classType);
     this.roomModel!.roomLocations.forEach((e) => this.reverseMapRoomLocationToGrid(e));
+    this.grillAddedCount = this.roomModel!.roomLocations.length;
     this.reEvaluateCalcResults();
 
     console.log(this.roomsFormGroup.value);
@@ -369,6 +403,35 @@ export class ParticleRoomLocationsRecvCycleComponent implements OnInit {
     result.result = location.result;
 
     this.listOflocations = [...this.listOflocations, result];
+    this.changeRef.detectChanges();
+  }
+
+  reverseMapRoomLocationToGridForCalc(location: RoomLocation) {
+    const result: any = {
+      id: 0,
+      locationNo: 0,
+      condition: '',
+      time: '',
+      ptOne: 0,
+      ptTwo: 0,
+      ptThree: 0,
+      ptAverage: 0,
+      one: 0,
+      two: 0,
+      three: 0,
+      Average: 0,
+      result: ''
+    };
+    result.id = location.id;
+    result.locationNo = location.referenceNumber;
+    result.condition = location.condition;
+    result.time = location.time;
+    result.ptAverage = location.averagePointFiveMicron;
+    result.oneAverage = location.averageOneMicron;
+    result.fiveAverage = location.averageFiveMicron;
+    result.result = location.result;
+
+    this.listOflocationsForLimitsCalculation = [...this.listOflocationsForLimitsCalculation, result];
     this.changeRef.detectChanges();
   }
 
