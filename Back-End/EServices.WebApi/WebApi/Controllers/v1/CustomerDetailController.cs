@@ -6,6 +6,7 @@ using Application.Features.CustomerDetails.Commands.UpdateCustomerDetail;
 using Application.Features.CustomerDetails.Queries.GetAllCustomerDetails;
 using Application.Features.CustomerDetails.Queries.GetCustomerDetailById;
 using Application.Features.ReportFiles.GetReportFileByCustDetailId;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers.v1

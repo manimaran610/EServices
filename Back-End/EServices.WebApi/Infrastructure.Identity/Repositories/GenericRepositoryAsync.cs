@@ -1,25 +1,22 @@
 ﻿using Application.Interfaces;
 using Domain.Common;
-using Infrastructure.Persistence.Contexts;
-using Infrastructure.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq.Dynamic.Core;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
-using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore.DynamicLinq;
 using System;
-using OpenXmlPowerTools;
+using Infrastructure.Shared.Extensions;
+using Infrastructure.Identity.Contexts;
 
 namespace Infrastructure.Persistence.Repository
 {
     public class GenericRepositoryAsync<T> : IGenericRepositoryAsync<T> where T : AuditableBaseEntity
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IdentityContext _dbContext;
 
-        public GenericRepositoryAsync(ApplicationDbContext dbContext)
+        public GenericRepositoryAsync(IdentityContext dbContext)
         {
             _dbContext = dbContext;
         }

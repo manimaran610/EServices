@@ -9,7 +9,7 @@ using System.Linq;
 
 
 
-namespace Infrastructure.Persistence.Extensions
+namespace Infrastructure.Shared.Extensions
 {
     public static class EFCoreDynamicSortExtension
     {

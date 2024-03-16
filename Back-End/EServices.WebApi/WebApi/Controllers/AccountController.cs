@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿
 using System.Threading.Tasks;
 using Application.DTOs.Account;
 using Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +37,7 @@ namespace WebApi.Controllers
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest model)
         {
+           
             await _accountService.ForgotPassword(model, Request.Headers["origin"]);
             return Ok();
         }
@@ -46,6 +46,14 @@ namespace WebApi.Controllers
         {
             
             return Ok(await _accountService.ResetPassword(model));
+        }
+
+          [HttpPost("create-user")]
+         // [Authorize(Roles ="SuperAdmin")]
+        public async Task<IActionResult> CreateNewUser(CreateUserRequest model)
+        {
+             var origin = Request.Headers["origin"];
+            return Ok(await _accountService.CreateUserAsync(model,origin));
         }
         private string GenerateIPAddress()
         {

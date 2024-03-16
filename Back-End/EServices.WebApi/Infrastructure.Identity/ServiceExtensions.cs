@@ -1,11 +1,13 @@
 ﻿using Application.Exceptions;
 using Application.Interfaces;
+using Application.Interfaces.Repositories;
 using Application.Wrappers;
+using Domain.Entities;
 using Domain.Settings;
 using Infrastructure.Identity.Contexts;
 using Infrastructure.Identity.Helpers;
-using Infrastructure.Identity.Models;
 using Infrastructure.Identity.Services;
+using Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -40,6 +42,8 @@ namespace Infrastructure.Identity
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<IdentityContext>().AddDefaultTokenProviders();
             #region Services
             services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IGroupRepositoryAsync, GroupRepositoryAsync>();
+
             #endregion
             services.Configure<JWTSettings>(configuration.GetSection("JWTSettings"));
             services.AddAuthentication(options =>

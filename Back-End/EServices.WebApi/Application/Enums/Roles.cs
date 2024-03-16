@@ -8,7 +8,16 @@ namespace Application.Enums
     {
         SuperAdmin,
         Admin,
-        Moderator,
-        Basic
+        Supervisor,
+        Operator
     }
+
+    public enum UserRoles
+    {
+        Admin,
+        Supervisor,
+        Operator
+    }
+
+    
 }

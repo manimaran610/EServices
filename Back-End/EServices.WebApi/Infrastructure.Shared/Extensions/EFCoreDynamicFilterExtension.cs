@@ -5,7 +5,7 @@ using Domain.Common;
 using Infrastructure.Shared.Extensions.Filters;
 
 
-namespace Infrastructure.Persistence.Extensions
+namespace Infrastructure.Shared.Extensions
 {
     public static class EFCoreDynamicFilterExtension
     {

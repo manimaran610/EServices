@@ -1,10 +1,10 @@
-﻿using Infrastructure.Identity.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Enums;
+using Domain.Entities;
 
 namespace Infrastructure.Identity.Seeds
 {
@@ -15,8 +15,8 @@ namespace Infrastructure.Identity.Seeds
             //Seed Roles
             await roleManager.CreateAsync(new IdentityRole(Roles.SuperAdmin.ToString()));
             await roleManager.CreateAsync(new IdentityRole(Roles.Admin.ToString()));
-            await roleManager.CreateAsync(new IdentityRole(Roles.Moderator.ToString()));
-            await roleManager.CreateAsync(new IdentityRole(Roles.Basic.ToString()));
+            await roleManager.CreateAsync(new IdentityRole(Roles.Supervisor.ToString()));
+            await roleManager.CreateAsync(new IdentityRole(Roles.Operator.ToString()));
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Infrastructure.Shared.Extensions
     public static class DynamicSortExtension
     {
         private const BindingFlags DefaultBindingFlags = BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
-        public static  IEnumerable<T> GetSortedList<T>(this IEnumerable<T> collection, string sort) where T :AuditableBaseEntity
+        public static  IEnumerable<T> GetDynamicSortedList<T>(this IEnumerable<T> collection, string sort) where T :AuditableBaseEntity
         {
             if (string.IsNullOrEmpty(sort)) return collection;
             var array = sort.Contains(',') ? sort.Split(",") : new string[] { sort };

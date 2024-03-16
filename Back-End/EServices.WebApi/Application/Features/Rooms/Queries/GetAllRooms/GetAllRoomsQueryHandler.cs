@@ -41,7 +41,8 @@ namespace Application.Features.Rooms.Queries.GetAllRooms
                 Limit=e.Limit,
                 CustomerDetailId = e.CustomerDetailId,
                 Name = e.Name,
-                TotalAirFlowCFM = e.TotalAirFlowCFM
+                TotalAirFlowCFM = e.TotalAirFlowCFM,
+                // RoomLocations=e.RoomLocations.Where(e=>!e.IsDeleted).ToList()
 
             };
 

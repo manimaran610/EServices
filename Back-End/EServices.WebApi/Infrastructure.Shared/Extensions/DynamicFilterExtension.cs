@@ -11,7 +11,7 @@ namespace Infrastructure.Shared.Extensions
     {
         private const BindingFlags DefaultBindingFlags = BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
 
-        public static List<T> GetFilteredList<T>(this IEnumerable<T> collection, string propertyName, string filterString) where T:AuditableBaseEntity
+        public static List<T> GetDynamicFilteredList<T>(this IEnumerable<T> collection, string propertyName, string filterString) where T:AuditableBaseEntity
         {
             var filteredResult = new List<T>();
             var filterName = string.Empty;
@@ -124,7 +124,7 @@ namespace Infrastructure.Shared.Extensions
             return filteredResult;
         }
 
-        public static List<T> GetChildFilteredList<T>(IEnumerable<T> collection, string propertyName, string filterString)
+        public static List<T> GetDynamicChildFilteredList<T>(IEnumerable<T> collection, string propertyName, string filterString)
         {
             var filteredResult = new List<T>();
             var filterName = string.Empty;

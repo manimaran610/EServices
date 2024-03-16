@@ -1,5 +1,5 @@
 ﻿using Application.Enums;
-using Infrastructure.Identity.Models;
+using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -29,7 +29,7 @@ namespace Infrastructure.Identity.Seeds
                 if (user == null)
                 {
                     await userManager.CreateAsync(defaultUser, "123Pa$$word!");
-                    await userManager.AddToRoleAsync(defaultUser, Roles.Basic.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Roles.Operator.ToString());
                 }
 
             }

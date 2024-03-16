@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Infrastructure.Persistence.Extensions;
+using Infrastructure.Shared.Extensions;
 using System.Threading.Tasks;
 using Application.Interfaces.Repositories;
 using Domain.Entities;

@@ -1,5 +1,5 @@
 ﻿using Application.Enums;
-using Infrastructure.Identity.Models;
+using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Crypto.Prng.Drbg;
@@ -31,8 +31,8 @@ namespace Infrastructure.Identity.Seeds
                 if (user == null)
                 {
                     await userManager.CreateAsync(defaultUser, "123Pa$$word!");
-                    await userManager.AddToRoleAsync(defaultUser, Roles.Basic.ToString());
-                    await userManager.AddToRoleAsync(defaultUser, Roles.Moderator.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Roles.Operator.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Roles.Supervisor.ToString());
                     await userManager.AddToRoleAsync(defaultUser, Roles.Admin.ToString());
                     await userManager.AddToRoleAsync(defaultUser, Roles.SuperAdmin.ToString());
                 }

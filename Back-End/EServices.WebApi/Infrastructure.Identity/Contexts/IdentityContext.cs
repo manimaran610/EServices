@@ -1,18 +1,29 @@
-﻿using Infrastructure.Identity.Models;
+﻿using Application.Interfaces;
+using Domain.Common;
+using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Infrastructure.Identity.Contexts
 {
     public class IdentityContext : IdentityDbContext<ApplicationUser>
     {
-        public IdentityContext(DbContextOptions<IdentityContext> options) : base(options)
+        private readonly IAuthenticatedUserService _authenticatedUser;
+
+        public IdentityContext(DbContextOptions<IdentityContext> options, IAuthenticatedUserService authenticatedUser) : base(options)
         {
+            _authenticatedUser = authenticatedUser;
         }
+
+         public DbSet<Group> Groups { get; set; }
+         public DbSet<UserGroup> UserGroups { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -20,6 +31,25 @@ namespace Infrastructure.Identity.Contexts
             builder.Entity<ApplicationUser>(entity =>
             {
                 entity.ToTable(name: "User");
+            });
+
+
+            builder.Entity<UserGroup>()
+                .HasOne(e => e.User)
+                .WithMany(e => e.userGroups)
+                .HasForeignKey(e => e.UserId)
+                .HasPrincipalKey(e => e.Id);
+
+            builder.Entity<UserGroup>()
+                .HasOne(e => e.Group)
+                .WithMany(e => e.GroupUsers)
+                .HasForeignKey(e => e.GroupId)
+                .HasPrincipalKey(e => e.Id);
+
+
+             builder.Entity<Group>(entity =>
+            {
+                entity.ToTable(name: "Group");
             });
 
             builder.Entity<IdentityRole>(entity =>
@@ -38,7 +68,7 @@ namespace Infrastructure.Identity.Contexts
 
             builder.Entity<IdentityUserLogin<string>>(entity =>
             {
-                entity.ToTable("UserLogins");     
+                entity.ToTable("UserLogins");
             });
 
             builder.Entity<IdentityRoleClaim<string>>(entity =>
@@ -51,6 +81,24 @@ namespace Infrastructure.Identity.Contexts
             {
                 entity.ToTable("UserTokens");
             });
+        }
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+            foreach (var entry in ChangeTracker.Entries<AuditableBaseEntity>())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Entity.Created = DateTime.UtcNow;
+                        entry.Entity.CreatedBy = _authenticatedUser.UserId;
+                        break;
+                    case EntityState.Modified:
+                        entry.Entity.LastModified =  DateTime.UtcNow;
+                        entry.Entity.LastModifiedBy = _authenticatedUser.UserId;
+                        break;
+                }
+            }
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }

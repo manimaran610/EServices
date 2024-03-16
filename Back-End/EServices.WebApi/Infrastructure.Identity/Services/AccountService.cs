@@ -4,7 +4,6 @@ using Application.Interfaces;
 using Application.Wrappers;
 using Domain.Settings;
 using Infrastructure.Identity.Helpers;
-using Infrastructure.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -23,6 +22,9 @@ using Application.Enums;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Primitives;
 using Application.DTOs.Email;
+using System.Text.RegularExpressions;
+using Domain.Entities;
+using Domain.DTO;
 
 namespace Infrastructure.Identity.Services
 {
@@ -34,10 +36,10 @@ namespace Infrastructure.Identity.Services
         private readonly IEmailService _emailService;
         private readonly JWTSettings _jwtSettings;
         private readonly IDateTimeService _dateTimeService;
-        public AccountService(UserManager<ApplicationUser> userManager, 
-            RoleManager<IdentityRole> roleManager, 
-            IOptions<JWTSettings> jwtSettings, 
-            IDateTimeService dateTimeService, 
+        public AccountService(UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IOptions<JWTSettings> jwtSettings,
+            IDateTimeService dateTimeService,
             SignInManager<ApplicationUser> signInManager,
             IEmailService emailService)
         {
@@ -99,7 +101,7 @@ namespace Infrastructure.Identity.Services
                 var result = await _userManager.CreateAsync(user, request.Password);
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, Roles.Basic.ToString());
+                    await _userManager.AddToRoleAsync(user, Roles.Operator.ToString());
                     var verificationUri = await SendVerificationEmail(user, origin);
                     //TODO: Attach Email Service here and configure it via appsettings
                     // await _emailService.SendAsync(new Application.DTOs.Email.EmailRequest() { From = "mail@codewithmukesh.com", To = user.Email, Body = $"Please confirm your account by visiting this URL {verificationUri}", Subject = "Confirm Registration" });
@@ -112,9 +114,39 @@ namespace Infrastructure.Identity.Services
             }
             else
             {
-                throw new ApiException($"Email {request.Email } is already registered.");
+                throw new ApiException($"Email {request.Email} is already registered.");
             }
         }
+
+        public async Task<Response<string>> CreateUserAsync(CreateUserRequest request, string origin)
+        {
+            var user = new ApplicationUser
+            {
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+            };
+            var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
+            if (userWithSameEmail == null)
+            {
+                var userPassword =CreateRandomPassword();
+                var result = await _userManager.CreateAsync(user, userPassword);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, request.UserRole.ToString());
+                }
+                else
+                {
+                    throw new ApiException($"{result.Errors}");
+                }
+            }
+            else
+            {
+                throw new ApiException($"Email {request.Email} is already registered.");
+            }
+            return new Response<string>($"User successfully created");
+        }
+
 
         private async Task<JwtSecurityToken> GenerateJWToken(ApplicationUser user)
         {
@@ -161,7 +193,7 @@ namespace Infrastructure.Identity.Services
             // convert random bytes to hex string
             return BitConverter.ToString(randomBytes).Replace("-", "");
         }
-        
+
         private async Task<string> SendVerificationEmail(ApplicationUser user, string origin)
         {
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -179,7 +211,7 @@ namespace Infrastructure.Identity.Services
             var user = await _userManager.FindByIdAsync(userId);
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ConfirmEmailAsync(user, code);
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
                 return new Response<string>(user.Id, message: $"Account Confirmed for {user.Email}. You can now use the /api/Account/authenticate endpoint.");
             }
@@ -224,7 +256,7 @@ namespace Infrastructure.Identity.Services
             var account = await _userManager.FindByEmailAsync(model.Email);
             if (account == null) throw new ApiException($"No Accounts Registered with {model.Email}.");
             var result = await _userManager.ResetPasswordAsync(account, model.Token, model.Password);
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
                 return new Response<string>(model.Email, message: $"Password Resetted.");
             }
@@ -232,6 +264,27 @@ namespace Infrastructure.Identity.Services
             {
                 throw new ApiException($"Error occured while reseting the password.");
             }
+        }
+
+        private string CreateRandomPassword(int length = 10)
+        {
+            // Create a string of characters, numbers, and special characters that are allowed in the password
+            string validChars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*?";
+            Random random = new Random();
+
+            // Select one random character at a time from the string
+            // and create an array of chars
+            char[] chars = new char[length];
+            for (int i = 0; i < length; i++)
+            {
+                chars[i] = validChars[random.Next(0, validChars.Length)];
+            }
+            return new string(chars);
+        }
+
+        public Task<Response<string>> CreateManagementUserAsync(CreateManagementUserRequest request, string origin)
+        {
+            throw new NotImplementedException();
         }
     }
 

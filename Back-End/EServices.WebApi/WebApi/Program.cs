@@ -6,9 +6,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Microsoft.AspNetCore.Identity;
-using Infrastructure.Identity.Models;
 using Microsoft.Extensions.DependencyInjection;
 using WebApi.Extensions;
+using Domain.Entities;
+using Log = Serilog.Log;
 
 namespace WebApi
 {
@@ -41,8 +42,6 @@ namespace WebApi
                     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
                     await Infrastructure.Identity.Seeds.DefaultRoles.SeedAsync(userManager, roleManager);
-                    await Infrastructure.Identity.Seeds.DefaultSuperAdmin.SeedAsync(userManager, roleManager);
-                    await Infrastructure.Identity.Seeds.DefaultBasicUser.SeedAsync(userManager, roleManager);
                     Log.Information("Finished Seeding Default Data");
                     Log.Information("Application Starting");
                     host.Run();

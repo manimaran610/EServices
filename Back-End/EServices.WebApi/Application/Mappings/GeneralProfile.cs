@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Application.Features.Account.Groups.Command.createGroup;
 using Application.Features.CustomerDetails.Commands.CreateCustomerDetail;
 using Application.Features.CustomerDetails.Queries.GetAllCustomerDetails;
 using Application.Features.Instruments.Commands.CreateInstrument;
@@ -64,10 +65,14 @@ namespace Application.Mappings
 
             CreateMap<GetAllLogsQuery, RequestParameter>();
 
-            
+
             CreateMap<Trainee, GetAllTraineesViewModel>().ReverseMap();
             CreateMap<CreateTraineeCommand, Trainee>();
             CreateMap<GetAllTraineesQuery, RequestParameter>();
+
+
+            CreateMap<CreateGroupCommand, Group>();
+
 
 
 
