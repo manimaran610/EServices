@@ -43,6 +43,8 @@ namespace Infrastructure.Identity
             #region Services
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IGroupRepositoryAsync, GroupRepositoryAsync>();
+            services.AddTransient<IUserGroupRepositoryAsync, UserGroupRepositoryAsync>();
+
 
             #endregion
             services.Configure<JWTSettings>(configuration.GetSection("JWTSettings"));

@@ -25,6 +25,10 @@ using Application.DTOs.Email;
 using System.Text.RegularExpressions;
 using Domain.Entities;
 using Domain.DTO;
+using MediatR;
+using Application.Features.DomainEvents.OnUserCreatedDomainEvent;
+using Infrastructure.Shared.Services;
+using Application.Interfaces.Repositories;
 
 namespace Infrastructure.Identity.Services
 {
@@ -36,12 +40,16 @@ namespace Infrastructure.Identity.Services
         private readonly IEmailService _emailService;
         private readonly JWTSettings _jwtSettings;
         private readonly IDateTimeService _dateTimeService;
+        private readonly IMediator _mediator;
+        private readonly IGroupRepositoryAsync _groupRepositoryAsync;
         public AccountService(UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             IOptions<JWTSettings> jwtSettings,
             IDateTimeService dateTimeService,
             SignInManager<ApplicationUser> signInManager,
-            IEmailService emailService)
+            IEmailService emailService,
+            IMediator mediator,
+            IGroupRepositoryAsync groupRepositoryAsync)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -49,6 +57,8 @@ namespace Infrastructure.Identity.Services
             _dateTimeService = dateTimeService;
             _signInManager = signInManager;
             this._emailService = emailService;
+            _mediator = mediator;
+            _groupRepositoryAsync = groupRepositoryAsync;
         }
 
         public async Task<Response<AuthenticationResponse>> AuthenticateAsync(AuthenticationRequest request, string ipAddress)
@@ -63,10 +73,7 @@ namespace Infrastructure.Identity.Services
             {
                 throw new ApiException($"Invalid Credentials for '{request.Email}'.");
             }
-            if (!user.EmailConfirmed)
-            {
-                throw new ApiException($"Account Not Confirmed for '{request.Email}'.");
-            }
+
             JwtSecurityToken jwtSecurityToken = await GenerateJWToken(user);
             AuthenticationResponse response = new AuthenticationResponse();
             response.Id = user.Id;
@@ -125,15 +132,24 @@ namespace Infrastructure.Identity.Services
                 Email = request.Email,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
+                UserName= request.Email,
             };
+            string userPassword = string.Empty;
             var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
             if (userWithSameEmail == null)
             {
-                var userPassword =CreateRandomPassword();
+                userPassword = PasswordGenerator.CreateRandomPassword();
                 var result = await _userManager.CreateAsync(user, userPassword);
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, request.UserRole.ToString());
+                    var createdUser = await _userManager.FindByEmailAsync(request.Email);
+
+                    await _mediator.Publish(new OnUserCreatedDomainEvent()
+                    {
+                        UserId = createdUser.Id
+                    });
+
                 }
                 else
                 {
@@ -144,9 +160,67 @@ namespace Infrastructure.Identity.Services
             {
                 throw new ApiException($"Email {request.Email} is already registered.");
             }
-            return new Response<string>($"User successfully created");
+            return new Response<string>($"User successfully created - {userPassword}");
         }
 
+        public async Task<Response<string>> CreateManagementUserAsync(CreateManagementUserRequest request, string origin)
+        {
+            if (request.UserRole != Roles.SuperAdmin)
+            {
+                var groups = await _groupRepositoryAsync.GetPagedReponseAsync(0, 1, $"UniqueId:eq:{request.GroupId}");
+                if (!groups.Any())
+                {
+                    throw new ApiException($"Invalid User Details.");
+                }
+            }
+            var user = new ApplicationUser
+            {
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                UserName = request.Email
+            };
+
+            string userPassword = string.Empty;
+            var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
+            if (userWithSameEmail == null)
+            {
+                userPassword = PasswordGenerator.CreateRandomPassword();
+                var result = await _userManager.CreateAsync(user, userPassword);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, request.UserRole.ToString());
+
+                    var createdUser = await _userManager.FindByEmailAsync(request.Email);
+
+                    if (request.GroupId is null && request.UserRole == Roles.SuperAdmin)
+                    {
+                        await _mediator.Publish(new OnUserCreatedDomainEvent()
+                        {
+                            UserId = createdUser.Id
+                        });
+                    }
+                    else if (request.UserRole != Roles.SuperAdmin)
+                    {
+                        await _mediator.Publish(new OnUserCreatedDomainEvent()
+                        {
+                            UserId = createdUser.Id,
+                            GroupId = request.GroupId.ToString()
+                        });
+                    }
+
+                }
+                else
+                {
+                    throw new ApiException($"{result.Errors}");
+                }
+            }
+            else
+            {
+                throw new ApiException($"Email {request.Email} is already registered.");
+            }
+            return new Response<string>($"User created successfully-{userPassword}");
+        }
 
         private async Task<JwtSecurityToken> GenerateJWToken(ApplicationUser user)
         {
@@ -266,26 +340,7 @@ namespace Infrastructure.Identity.Services
             }
         }
 
-        private string CreateRandomPassword(int length = 10)
-        {
-            // Create a string of characters, numbers, and special characters that are allowed in the password
-            string validChars = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*?";
-            Random random = new Random();
 
-            // Select one random character at a time from the string
-            // and create an array of chars
-            char[] chars = new char[length];
-            for (int i = 0; i < length; i++)
-            {
-                chars[i] = validChars[random.Next(0, validChars.Length)];
-            }
-            return new string(chars);
-        }
-
-        public Task<Response<string>> CreateManagementUserAsync(CreateManagementUserRequest request, string origin)
-        {
-            throw new NotImplementedException();
-        }
     }
 
 }

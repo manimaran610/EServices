@@ -10,7 +10,7 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController : BaseApiController
     {
         private readonly IAccountService _accountService;
         public AccountController(IAccountService accountService)
@@ -49,7 +49,7 @@ namespace WebApi.Controllers
         }
 
           [HttpPost("create-user")]
-         // [Authorize(Roles ="SuperAdmin")]
+         [Authorize]
         public async Task<IActionResult> CreateNewUser(CreateUserRequest model)
         {
              var origin = Request.Headers["origin"];

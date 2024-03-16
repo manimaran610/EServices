@@ -19,6 +19,5 @@ public class CreateUserRequest
     [Required]
     public UserRoles UserRole {get;set;}
 
-    public Guid UserId {get;set;}
 
 }

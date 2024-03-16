@@ -6,7 +6,7 @@ namespace Application.Enums
 {
     public enum Roles
     {
-        SuperAdmin,
+        SuperAdmin=1,
         Admin,
         Supervisor,
         Operator
@@ -14,7 +14,7 @@ namespace Application.Enums
 
     public enum UserRoles
     {
-        Admin,
+        Admin=1,
         Supervisor,
         Operator
     }
