@@ -160,7 +160,7 @@ namespace Infrastructure.Identity.Services
             {
                 throw new ApiException($"Email {request.Email} is already registered.");
             }
-            return new Response<string>($"User successfully created - {userPassword}");
+            return new Response<string>(null,$"User successfully created - {userPassword}");
         }
 
         public async Task<Response<string>> CreateManagementUserAsync(CreateManagementUserRequest request, string origin)
@@ -219,7 +219,7 @@ namespace Infrastructure.Identity.Services
             {
                 throw new ApiException($"Email {request.Email} is already registered.");
             }
-            return new Response<string>($"User created successfully-{userPassword}");
+            return new Response<string>(null,$"User created successfully-{userPassword}");
         }
 
         private async Task<JwtSecurityToken> GenerateJWToken(ApplicationUser user)

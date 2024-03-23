@@ -15,6 +15,7 @@ using OpenXmlPowerTools;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Infrastructure.Identity.Contexts;
 using DocumentFormat.OpenXml.Wordprocessing;
+using Infrastructure.Persistence.Extensions;
 
 namespace Infrastructure.Persistence.Repository
 {
@@ -22,11 +23,13 @@ namespace Infrastructure.Persistence.Repository
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IdentityContext _identityContext;
+        private readonly IAuthenticatedUserService _authenticatedUserService;
 
-
-        public GenericRepositoryAsync(ApplicationDbContext dbContext)
+        public GenericRepositoryAsync(ApplicationDbContext dbContext, IdentityContext identityContext, IAuthenticatedUserService authenticatedUserService)
         {
             _dbContext = dbContext;
+            _identityContext = identityContext;
+            _authenticatedUserService = authenticatedUserService;
         }
 
         public virtual async Task<T> GetByIdAsync(int id, Expression<System.Func<T, T>> selectExpression = null)
@@ -34,6 +37,7 @@ namespace Infrastructure.Persistence.Repository
             selectExpression = selectExpression == null ? e => e : selectExpression;
             return await _dbContext.Set<T>()
             .Where(e => e.Id == id && !e.IsDeleted)
+            .FilterByUserGroups(_identityContext, _authenticatedUserService.UserId)
             .Select(selectExpression)
             .FirstOrDefaultAsync();
 
@@ -48,14 +52,16 @@ namespace Infrastructure.Persistence.Repository
             Expression<System.Func<T, T>> selectExpression = null,
             string filterOperator = null
         )
+
         {
+
             selectExpression = selectExpression == null ? e => e : selectExpression;
             sort = sort == null ? "Created:desc" : sort + ",Created:desc";
 
             return await _dbContext
                 .Set<T>()
                 .Where(e => !e.IsDeleted)
-            //    .Join(_identityContext.UserGroups,e=>e.Created,sf=>sf.UserId,(entity,usergroup)=>new {})
+                .FilterByUserGroups(_identityContext, _authenticatedUserService.UserId)
                 .GetFilteredList(filter, filterOperator)
                 .GetSortedList(sort)
                 .Select(selectExpression)
@@ -116,6 +122,7 @@ namespace Infrastructure.Persistence.Repository
          .Set<T>()
          .AnyAsync(e => !e.IsDeleted && e.Id == id);
         }
+
 
     }
 }

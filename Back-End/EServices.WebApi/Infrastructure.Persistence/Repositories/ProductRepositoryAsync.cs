@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Infrastructure.Identity.Contexts;
+using Application.Interfaces;
 
 namespace Infrastructure.Persistence.Repositories
 {
@@ -14,7 +16,11 @@ namespace Infrastructure.Persistence.Repositories
     {
         private readonly DbSet<Product> _products;
 
-        public ProductRepositoryAsync(ApplicationDbContext dbContext) : base(dbContext)
+        public ProductRepositoryAsync (
+            ApplicationDbContext dbContext,
+            IdentityContext identityContext,
+            IAuthenticatedUserService authenticatedUserService
+        ) :  base(dbContext, identityContext, authenticatedUserService)
         {
             _products = dbContext.Set<Product>();
         }

@@ -1,6 +1,8 @@
 using System.Threading.Tasks;
+using Application.Interfaces;
 using Application.Interfaces.Repositories;
 using Domain.Entities;
+using Infrastructure.Identity.Contexts;
 using Infrastructure.Persistence.Contexts;
 using Infrastructure.Persistence.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +15,11 @@ namespace Infrastructure.Persistence.Repositories
         private readonly DbSet<RoomGrill> _roomGrills;
 
 
-        public RoomGrillRepositoryAsync(ApplicationDbContext dbContext) : base(dbContext)
+        public RoomGrillRepositoryAsync(
+            ApplicationDbContext dbContext,
+            IdentityContext identityContext,
+            IAuthenticatedUserService authenticatedUserService
+        ) :  base(dbContext, identityContext, authenticatedUserService)
         {
             _roomGrills = dbContext.Set<RoomGrill>();
 
