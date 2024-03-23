@@ -193,7 +193,7 @@ namespace Infrastructure.Identity.Services
 
                     var createdUser = await _userManager.FindByEmailAsync(request.Email);
 
-                    if (request.GroupId is null && request.UserRole == Roles.SuperAdmin)
+                    if (request.UserRole == Roles.SuperAdmin)
                     {
                         await _mediator.Publish(new OnUserCreatedDomainEvent()
                         {

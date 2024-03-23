@@ -12,12 +12,17 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore.DynamicLinq;
 using System;
 using OpenXmlPowerTools;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Infrastructure.Identity.Contexts;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Infrastructure.Persistence.Repository
 {
     public class GenericRepositoryAsync<T> : IGenericRepositoryAsync<T> where T : AuditableBaseEntity
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly IdentityContext _identityContext;
+
 
         public GenericRepositoryAsync(ApplicationDbContext dbContext)
         {
@@ -50,6 +55,7 @@ namespace Infrastructure.Persistence.Repository
             return await _dbContext
                 .Set<T>()
                 .Where(e => !e.IsDeleted)
+            //    .Join(_identityContext.UserGroups,e=>e.Created,sf=>sf.UserId,(entity,usergroup)=>new {})
                 .GetFilteredList(filter, filterOperator)
                 .GetSortedList(sort)
                 .Select(selectExpression)
@@ -104,7 +110,7 @@ namespace Infrastructure.Persistence.Repository
          .Count(e => !e.IsDeleted));
         }
 
-         public async Task<bool> IsExistsAsync(int id)
+        public async Task<bool> IsExistsAsync(int id)
         {
             return await _dbContext
          .Set<T>()
