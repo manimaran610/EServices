@@ -35,9 +35,9 @@ namespace Application.Features.Trainees.Commands.CreateTrainee
 
             var traineePagedResponse = await _traineeRepository.GetPagedReponseAsync(0, 1, $"employeeId:eq:{request.EmployeeId}", null, selectExpression);
 
-            if (traineePagedResponse.Count > 0)
+            if (traineePagedResponse.pagedResponse.Count > 0)
             {
-                trainee.Id = traineePagedResponse.FirstOrDefault().Id;
+                trainee.Id = traineePagedResponse.pagedResponse.FirstOrDefault().Id;
                 await _traineeRepository.UpdateAsync(trainee);
             }
             else await _traineeRepository.AddAsync(trainee);

@@ -46,11 +46,10 @@ namespace Application.Features.Rooms.Queries.GetAllRooms
 
             };
 
-            var RoomPagedResponse = await _roomRepository.GetPagedReponseAsync(reqParam.Offset, reqParam.Count, reqParam.Filter, reqParam.Sort, selectExpression);
-            var totalCount = await _roomRepository.TotalCountAsync();
+            var rooms = await _roomRepository.GetPagedReponseAsync(reqParam.Offset, reqParam.Count, reqParam.Filter, reqParam.Sort, selectExpression);
 
-            var RoomViewModel = _mapper.Map<IEnumerable<GetAllRoomsViewModel>>(RoomPagedResponse);
-            return new PagedResponse<IEnumerable<GetAllRoomsViewModel>>(RoomViewModel, request.Offset, request.Count, RoomViewModel.Count(), totalCount);
+            var RoomViewModel = _mapper.Map<IEnumerable<GetAllRoomsViewModel>>(rooms.pagedResponse);
+            return new PagedResponse<IEnumerable<GetAllRoomsViewModel>>(RoomViewModel, request.Offset, request.Count, RoomViewModel.Count(), rooms.totalCount);
         }
     }
 }

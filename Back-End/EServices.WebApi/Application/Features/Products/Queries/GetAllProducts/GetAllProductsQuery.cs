@@ -33,7 +33,7 @@ namespace Application.Features.Products.Queries.GetAllProducts
         {
             var validFilter = _mapper.Map<GetAllProductsParameter>(request);
             var product = await _productRepository.GetPagedReponseAsync(validFilter.Offset, validFilter.Count);
-            var productViewModel = _mapper.Map<IEnumerable<GetAllProductsViewModel>>(product);
+            var productViewModel = _mapper.Map<IEnumerable<GetAllProductsViewModel>>(product.pagedResponse);
             return new PagedResponse<IEnumerable<GetAllProductsViewModel>>(productViewModel, validFilter.Offset, validFilter.Count);
         }
     }

@@ -168,7 +168,7 @@ namespace Infrastructure.Identity.Services
             if (request.UserRole != Roles.SuperAdmin)
             {
                 var groups = await _groupRepositoryAsync.GetPagedReponseAsync(0, 1, $"UniqueId:eq:{request.GroupId}");
-                if (!groups.Any())
+                if (!groups.pagedResponse.Any())
                 {
                     throw new ApiException($"Invalid User Details.");
                 }

@@ -36,11 +36,10 @@ namespace Application.Features.Trainees.Queries.GetAllTrainees
                 CertificateName=e.CertificateName
             };
 
-            var TraineePagedResponse = await _traineeRepository.GetPagedReponseAsync(reqParam.Offset, reqParam.Count, reqParam.Filter, reqParam.Sort, selectExpression);
-            var totalCount = await _traineeRepository.TotalCountAsync();
+            var trainees = await _traineeRepository.GetPagedReponseAsync(reqParam.Offset, reqParam.Count, reqParam.Filter, reqParam.Sort, selectExpression);
 
-            var TraineeViewModel = _mapper.Map<IEnumerable<GetAllTraineesViewModel>>(TraineePagedResponse);
-            return new PagedResponse<IEnumerable<GetAllTraineesViewModel>>(TraineeViewModel, request.Offset, request.Count, TraineeViewModel.Count(), totalCount);
+            var TraineeViewModel = _mapper.Map<IEnumerable<GetAllTraineesViewModel>>(trainees.pagedResponse);
+            return new PagedResponse<IEnumerable<GetAllTraineesViewModel>>(TraineeViewModel, request.Offset, request.Count, TraineeViewModel.Count(), trainees.totalCount);
         }
     }
 }

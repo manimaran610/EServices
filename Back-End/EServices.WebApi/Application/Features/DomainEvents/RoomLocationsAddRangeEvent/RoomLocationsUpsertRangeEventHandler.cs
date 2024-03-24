@@ -29,7 +29,7 @@ namespace Application.Features.DomainEvents.RoomLocationsAddRangeEvent
 
             foreach (var Location in request.Locations)
             {
-                var actualRoomLocation = existingRoomLocations.FirstOrDefault(e => e.ReferenceNumber == Location.ReferenceNumber);
+                var actualRoomLocation = existingRoomLocations.pagedResponse.FirstOrDefault(e => e.ReferenceNumber == Location.ReferenceNumber);
                 var roomLocation = _mapper.Map<RoomLocation>(Location);
                 roomLocation.RoomId = request.RoomId;
 
@@ -42,7 +42,7 @@ namespace Application.Features.DomainEvents.RoomLocationsAddRangeEvent
                 await _roomLocationRepositoryAsync.UpdateAsync(roomLocation);
             }
 
-            await SoftDeleteExisitingRecords(existingRoomLocations, request.Locations);
+            await SoftDeleteExisitingRecords(existingRoomLocations.pagedResponse, request.Locations);
 
 
         }

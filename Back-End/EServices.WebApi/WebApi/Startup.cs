@@ -55,10 +55,10 @@ namespace WebApi
             app.UseCors("MyPolicy");
             app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseErrorHandlingMiddleware();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSwaggerExtension();
-            app.UseErrorHandlingMiddleware();
             app.UseHealthChecks("/health");
 
             app.UseEndpoints(endpoints =>

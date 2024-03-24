@@ -27,7 +27,7 @@ public class OnUserCreatedDomainEventHandler : INotificationHandler<OnUserCreate
         if (string.IsNullOrEmpty(request.GroupId))
         {
             var existingUserGroups = await _userGroupRepositoryAsync.GetPagedReponseAsync(0, int.MaxValue, $"UserId:eq:{_authenticatedUserService.UserId}");
-            foreach (var group in existingUserGroups)
+            foreach (var group in existingUserGroups.pagedResponse)
             {
                 var userGroup = new UserGroup()
                 {
@@ -42,7 +42,7 @@ public class OnUserCreatedDomainEventHandler : INotificationHandler<OnUserCreate
         {
             var existingGroups = await _groupRepositoryAsync.GetPagedReponseAsync(0, int.MaxValue, $"UniqueId:eq:{request.GroupId}");
             
-            foreach (var group in existingGroups)
+            foreach (var group in existingGroups.pagedResponse)
             {
                 var userGroup = new UserGroup()
                 {

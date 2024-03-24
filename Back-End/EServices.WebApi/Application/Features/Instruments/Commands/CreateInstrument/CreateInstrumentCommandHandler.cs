@@ -28,7 +28,7 @@ namespace Application.Features.Instruments.Commands.CreateInstrument
             var instrument = _mapper.Map<Domain.Entities.Instrument>(request);
             var instruments = await _instrumentRepository.GetPagedReponseAsync(0, 1, $"Type:eq:{request.Type},SerialNumber:eq:{request.SerialNumber}");
            
-            if (instruments.Any())
+            if (instruments.pagedResponse.Any())
                 throw new ApiException($"Instrument already exists with type {request.Type} and serial number {request.SerialNumber}");
                 
             await _instrumentRepository.AddAsync(instrument);

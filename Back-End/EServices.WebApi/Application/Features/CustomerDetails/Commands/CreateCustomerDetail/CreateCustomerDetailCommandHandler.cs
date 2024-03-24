@@ -51,9 +51,9 @@ namespace Application.Features.CustomerDetails.Commands.CreateCustomerDetail
             string id = "001";
             string prefix = $"VP-{GetTypeName(request.FormType)}-{request.Client.Substring(0, 3).ToUpper()}-{DateTime.Now.Year - 2000}{DateTime.Now.ToString("MM")}-";
             var customerDetails = await _customerDetailRepository.GetPagedReponseAsync(0, 1, $"CustomerNo:con:{prefix}", "CustomerNo:desc");
-            if (customerDetails.Count > 0)
+            if (customerDetails.pagedResponse.Count > 0)
             {
-                var existsCustNo = customerDetails.FirstOrDefault().CustomerNo;
+                var existsCustNo = customerDetails.pagedResponse.FirstOrDefault().CustomerNo;
                 if (existsCustNo.Split('-').Length == 5)
                 {
                     int existsId = Convert.ToInt32(existsCustNo.Split('-')[4]);

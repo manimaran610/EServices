@@ -40,11 +40,10 @@ namespace Application.Features.Instruments.Queries.GetAllInstruments
                 CertificateName=e.CertificateName
             };
 
-            var instrumentPagedResponse = await _instrumentRepository.GetPagedReponseAsync(reqParam.Offset, reqParam.Count, reqParam.Filter, reqParam.Sort, selectExpression);
-            var totalCount = await _instrumentRepository.TotalCountAsync();
+            var instruments = await _instrumentRepository.GetPagedReponseAsync(reqParam.Offset, reqParam.Count, reqParam.Filter, reqParam.Sort, selectExpression);
 
-            var instrumentViewModel = _mapper.Map<IEnumerable<GetAllInstrumentsViewModel>>(instrumentPagedResponse);
-            return new PagedResponse<IEnumerable<GetAllInstrumentsViewModel>>(instrumentViewModel, request.Offset, request.Count, instrumentViewModel.Count(), totalCount);
+            var instrumentViewModel = _mapper.Map<IEnumerable<GetAllInstrumentsViewModel>>(instruments.pagedResponse);
+            return new PagedResponse<IEnumerable<GetAllInstrumentsViewModel>>(instrumentViewModel, request.Offset, request.Count, instrumentViewModel.Count(), instruments.totalCount);
         }
     }
 }

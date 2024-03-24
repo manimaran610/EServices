@@ -28,7 +28,7 @@ namespace Application.Features.DomainEvents.RoomGrillsAddRangeEvent
 
             foreach (var grill in request.Grills)
             {
-                var actualRoomGrill = existingRoomGrills.FirstOrDefault(e => e.ReferenceNumber == grill.ReferenceNumber);
+                var actualRoomGrill = existingRoomGrills.pagedResponse.FirstOrDefault(e => e.ReferenceNumber == grill.ReferenceNumber);
                 var roomGrill = _mapper.Map<RoomGrill>(grill);
                 roomGrill.RoomId = request.RoomId;
 
@@ -42,7 +42,7 @@ namespace Application.Features.DomainEvents.RoomGrillsAddRangeEvent
             }
 
             //Soft Delete existing grills 
-            foreach (var existingGrill in existingRoomGrills)
+            foreach (var existingGrill in existingRoomGrills.pagedResponse)
             {
                 if (!request.Grills.Any(e => e.ReferenceNumber == existingGrill.ReferenceNumber))
                 {

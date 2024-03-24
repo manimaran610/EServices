@@ -26,10 +26,10 @@ namespace Application.Features.CustomerDetails.Queries.GetAllCustomerDetails
 
             var reqParam = _mapper.Map<RequestParameter>(request);
 
-            var CustomerDetailPagedResponse = await _xustomerDetailRepository.GetPagedReponseAsync(reqParam.Offset, reqParam.Count, reqParam.Filter, reqParam.Sort);
-            var totalCount = await _xustomerDetailRepository.TotalCountAsync();
+            var CustomerDetail = await _xustomerDetailRepository.GetPagedReponseAsync(reqParam.Offset, reqParam.Count, reqParam.Filter, reqParam.Sort);
+            var totalCount =  CustomerDetail.totalCount;
 
-            var CustomerDetailViewModel = _mapper.Map<IEnumerable<GetAllCustomerDetailsViewModel>>(CustomerDetailPagedResponse);
+            var CustomerDetailViewModel = _mapper.Map<IEnumerable<GetAllCustomerDetailsViewModel>>(CustomerDetail.pagedResponse);
             return new PagedResponse<IEnumerable<GetAllCustomerDetailsViewModel>>(CustomerDetailViewModel, request.Offset, request.Count, CustomerDetailViewModel.Count(), totalCount);
         }
     }

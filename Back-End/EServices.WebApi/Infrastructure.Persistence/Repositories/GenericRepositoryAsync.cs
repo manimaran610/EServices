@@ -43,33 +43,39 @@ namespace Infrastructure.Persistence.Repository
 
         }
 
-        public async Task<IReadOnlyList<T>> GetPagedReponseAsync
-        (
-            int offset,
-            int count,
-            string filter = null,
-            string sort = null,
-            Expression<System.Func<T, T>> selectExpression = null,
-            string filterOperator = null
-        )
+      public async Task<(IReadOnlyList<T> pagedResponse, int totalCount)> GetPagedReponseAsync
+(
+    int offset,
+    int count,
+    string filter = null,
+    string sort = null,
+    Expression<Func<T, T>> selectExpression = null,
+    string filterOperator = null
+)
+{
+    selectExpression = selectExpression == null ? e => e : selectExpression;
+    sort = sort == null ? "Created:desc" : sort + ",Created:desc";
 
-        {
+    var query = _dbContext
+        .Set<T>()
+        .Where(e => !e.IsDeleted)
+        .FilterByUserGroups(_identityContext, _authenticatedUserService.UserId)
+        .GetFilteredList(filter, filterOperator);
 
-            selectExpression = selectExpression == null ? e => e : selectExpression;
-            sort = sort == null ? "Created:desc" : sort + ",Created:desc";
+    // Get the total count
+    var totalCount = await query.CountAsync();
 
-            return await _dbContext
-                .Set<T>()
-                .Where(e => !e.IsDeleted)
-                .FilterByUserGroups(_identityContext, _authenticatedUserService.UserId)
-                .GetFilteredList(filter, filterOperator)
-                .GetSortedList(sort)
-                .Select(selectExpression)
-                .AsNoTracking()
-                .Skip(offset)
-                .Take(count)
-                .ToDynamicListAsync<T>();
-        }
+    // Get the paged response
+    var pagedResponse = await query
+        .GetSortedList(sort)
+        .Select(selectExpression)
+        .AsNoTracking()
+        .Skip(offset)
+        .Take(count)
+        .ToDynamicListAsync<T>();
+
+    return (pagedResponse, totalCount);
+}
 
         public async Task<T> AddAsync(T entity)
         {
@@ -113,6 +119,7 @@ namespace Infrastructure.Persistence.Repository
         {
             return await Task.FromResult(_dbContext
          .Set<T>()
+        //  .FilterByUserGroups(_identityContext, _authenticatedUserService.UserId)
          .Count(e => !e.IsDeleted));
         }
 
@@ -120,6 +127,7 @@ namespace Infrastructure.Persistence.Repository
         {
             return await _dbContext
          .Set<T>()
+         .FilterByUserGroups(_identityContext, _authenticatedUserService.UserId)
          .AnyAsync(e => !e.IsDeleted && e.Id == id);
         }
 

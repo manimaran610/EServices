@@ -59,7 +59,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                 throw new ApiException($"CustomerDetail does not exists with CustomerDetailId -{request.CustomerDetailId}");
 
             var roomIdFilter = request.RoomId > 0 ? $",Id:eq:{request.RoomId}" : string.Empty;
-            var rooms = await _roomRepository.GetPagedReponseAsync
+            var roomPagedResponse = await _roomRepository.GetPagedReponseAsync
             (
                 0,
                  int.MaxValue,
@@ -67,6 +67,7 @@ namespace Application.Features.Rooms.Commands.CreateRoom
                  "Created:asc",
                  GetRoomSelectExpression(customerDetail.FormType)
             );
+            var rooms = roomPagedResponse.pagedResponse;
 
             if (customerDetail.FormType == FormType.ACPH)
             {

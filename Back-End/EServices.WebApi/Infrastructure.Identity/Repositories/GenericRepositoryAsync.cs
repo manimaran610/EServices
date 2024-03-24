@@ -31,29 +31,37 @@ namespace Infrastructure.Persistence.Repository
 
         }
 
-        public async Task<IReadOnlyList<T>> GetPagedReponseAsync
+        public async Task<(IReadOnlyList<T> pagedResponse, int totalCount)> GetPagedReponseAsync
         (
             int offset,
             int count,
             string filter = null,
             string sort = null,
-            Expression<System.Func<T, T>> selectExpression = null,
+            Expression<Func<T, T>> selectExpression = null,
             string filterOperator = null
         )
         {
             selectExpression = selectExpression == null ? e => e : selectExpression;
             sort = sort == null ? "Created:desc" : sort + ",Created:desc";
 
-            return await _dbContext
+            var query = _dbContext
                 .Set<T>()
                 .Where(e => !e.IsDeleted)
-                .GetFilteredList(filter, filterOperator)
+                .GetFilteredList(filter, filterOperator);
+
+            // Get the total count
+            var totalCount = await query.CountAsync();
+
+            // Get the paged response
+            var pagedResponse = await query
                 .GetSortedList(sort)
                 .Select(selectExpression)
                 .AsNoTracking()
                 .Skip(offset)
                 .Take(count)
                 .ToDynamicListAsync<T>();
+
+            return (pagedResponse, totalCount);
         }
 
         public async Task<T> AddAsync(T entity)
@@ -101,7 +109,7 @@ namespace Infrastructure.Persistence.Repository
          .Count(e => !e.IsDeleted));
         }
 
-         public async Task<bool> IsExistsAsync(int id)
+        public async Task<bool> IsExistsAsync(int id)
         {
             return await _dbContext
          .Set<T>()

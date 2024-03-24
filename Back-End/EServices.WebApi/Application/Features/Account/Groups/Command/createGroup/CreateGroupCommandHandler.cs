@@ -32,7 +32,7 @@ namespace Application.Features.Account.Groups.Command.createGroup
             var group = _mapper.Map<Domain.Entities.Group>(request);
             var existingGroups = await _groupRepository.GetPagedReponseAsync(0, 1, $"Name:eq:{request.Name}");
 
-            if (existingGroups.Any())
+            if (existingGroups.pagedResponse.Any())
                 throw new ApiException($"Group already exists with name - {request.Name}");
 
             var response = await _groupRepository.AddAsync(group);
