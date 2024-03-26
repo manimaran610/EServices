@@ -28,13 +28,29 @@ namespace WebApi.Controllers.v1
             return Created("Created", await Mediator.Send(command));
         }
 
-         [HttpPost("create-user")]
+         [HttpPost("User")]
          // [Authorize(Roles ="SuperAdmin")]
         public async Task<IActionResult> CreateNewUser(CreateManagementUserRequest model)
         {
            var origin = Request.Headers["origin"];
             return Ok(await _accountService.CreateManagementUserAsync(model,origin));
         }
+
+         [HttpPost("send-mail")]
+         // [Authorize(Roles ="SuperAdmin")]
+        public async Task<IActionResult> CreateNewMail()
+        {
+            await _accountService.CheckMailServer();
+            return Ok("Mail sent");
+        }
+
+         [HttpPost("User/{Id}/Restrict")]
+         // [Authorize(Roles ="SuperAdmin")]
+        public async Task<IActionResult> RestrictUser(string Id)
+        {
+            return Ok( await _accountService.UpdateUserRestrictionAsync(Id,true));
+        }
+
 
     }
 }

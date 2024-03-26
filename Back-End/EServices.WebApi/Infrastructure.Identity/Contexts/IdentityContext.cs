@@ -36,7 +36,7 @@ namespace Infrastructure.Identity.Contexts
 
             builder.Entity<UserGroup>()
                 .HasOne(e => e.User)
-                .WithMany(e => e.userGroups)
+                .WithMany(e => e.UserGroups)
                 .HasForeignKey(e => e.UserId)
                 .HasPrincipalKey(e => e.Id);
 

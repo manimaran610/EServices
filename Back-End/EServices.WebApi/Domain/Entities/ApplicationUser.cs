@@ -10,8 +10,9 @@ namespace Domain.Entities
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public bool IsRestricted { get; set; }
         public List<RefreshToken> RefreshTokens { get; set; }
-        public virtual List<UserGroup> userGroups { get; set; } = default;
+        public virtual List<UserGroup> UserGroups { get; set; } = default;
         public bool OwnsToken(string token)
         {
             return this.RefreshTokens?.Find(x => x.Token == token) != null;

@@ -42,6 +42,10 @@ namespace Infrastructure.Identity.Services
         private readonly IDateTimeService _dateTimeService;
         private readonly IMediator _mediator;
         private readonly IGroupRepositoryAsync _groupRepositoryAsync;
+        private readonly IAuthenticatedUserService _authenticatedUserService;
+        private readonly IUserGroupRepositoryAsync _userGroupRepositoryAsync;
+
+
         public AccountService(UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             IOptions<JWTSettings> jwtSettings,
@@ -49,7 +53,10 @@ namespace Infrastructure.Identity.Services
             SignInManager<ApplicationUser> signInManager,
             IEmailService emailService,
             IMediator mediator,
-            IGroupRepositoryAsync groupRepositoryAsync)
+            IGroupRepositoryAsync groupRepositoryAsync,
+            IAuthenticatedUserService authenticatedUserService
+,
+            IUserGroupRepositoryAsync userGroupRepositoryAsync)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -59,6 +66,8 @@ namespace Infrastructure.Identity.Services
             this._emailService = emailService;
             _mediator = mediator;
             _groupRepositoryAsync = groupRepositoryAsync;
+            _authenticatedUserService = authenticatedUserService;
+            _userGroupRepositoryAsync = userGroupRepositoryAsync;
         }
 
         public async Task<Response<AuthenticationResponse>> AuthenticateAsync(AuthenticationRequest request, string ipAddress)
@@ -68,6 +77,11 @@ namespace Infrastructure.Identity.Services
             {
                 throw new ApiException($"No Accounts Registered with {request.Email}.");
             }
+            else if (user.IsRestricted)
+            {
+                throw new ApiException($"User restricted - {request.Email}.Please contact system Administrator");
+            }
+
             var result = await _signInManager.PasswordSignInAsync(user.UserName, request.Password, false, lockoutOnFailure: false);
             if (!result.Succeeded)
             {
@@ -125,6 +139,46 @@ namespace Infrastructure.Identity.Services
             }
         }
 
+        public async Task<Response<string>> UpdateUserRestrictionAsync(string userId, bool isRestricted)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                throw new ApiException($"User does not exists.");
+            }
+            else if (_authenticatedUserService.UserId == user.Id)
+            {
+                throw new ApiException($"User cannot restrict themselves.");
+            }
+            else if (!await _userGroupRepositoryAsync.CheckUserAccessInSameGroup(_authenticatedUserService.UserId, userId))
+            {
+                throw new ApiException($"You are not permitted to restrict user - {userId}");
+            }
+
+            user.IsRestricted = isRestricted;
+            await _userManager.UpdateAsync(user);
+            return new Response<string>(userId, isRestricted ? "User restricted successfully" : "User restriction removed successfully");
+        }
+
+
+
+        public async Task CheckMailServer()
+        {
+
+            var start = DateTime.Now;
+            await _emailService.SendAsync(new Application.DTOs.Email.EmailRequest()
+            {
+                To = "yokkudopsu@gufum.com",
+                Body = $"Please confirm your account by visiting this URL",
+                Subject = "Confirm Registration"
+            });
+
+        }
+
+
+
+
         public async Task<Response<string>> CreateUserAsync(CreateUserRequest request, string origin)
         {
             var user = new ApplicationUser
@@ -132,7 +186,7 @@ namespace Infrastructure.Identity.Services
                 Email = request.Email,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
-                UserName= request.Email,
+                UserName = request.Email,
             };
             string userPassword = string.Empty;
             var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
@@ -160,7 +214,7 @@ namespace Infrastructure.Identity.Services
             {
                 throw new ApiException($"Email {request.Email} is already registered.");
             }
-            return new Response<string>(null,$"User successfully created - {userPassword}");
+            return new Response<string>(null, $"User successfully created - {userPassword}");
         }
 
         public async Task<Response<string>> CreateManagementUserAsync(CreateManagementUserRequest request, string origin)
@@ -219,7 +273,7 @@ namespace Infrastructure.Identity.Services
             {
                 throw new ApiException($"Email {request.Email} is already registered.");
             }
-            return new Response<string>(null,$"User created successfully-{userPassword}");
+            return new Response<string>(null, $"User created successfully-{userPassword}");
         }
 
         private async Task<JwtSecurityToken> GenerateJWToken(ApplicationUser user)
